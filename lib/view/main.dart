@@ -9,6 +9,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import '../database/AlbumDataBase.dart';
 import '../view_model/MyHomePage_view_models.dart';
 import '../view_model/main_view_models.dart';
 import '../view_model/multi_language.dart';
@@ -18,6 +19,7 @@ import 'LoginPage.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: "assets/.env.development");
+  await AlbumDataBase.createTables();
   //await dotenv.load(fileName: Environment.env);
   WidgetsFlutterBinding.ensureInitialized();
 

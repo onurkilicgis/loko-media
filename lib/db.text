@@ -1,0 +1,36 @@
+Albümler Tablosunun Sütunları
+1 - id (serial olucak her kayıtta bir bir artacak) - Integer
+2 - uid (user_firebase_id) - String
+3 - name : String - Albümün Adı
+4 - isPublic : boolean true-false -> default : false
+5 - url : string -> default '' boş
+6 - image : string -> default : 'assets'e bir tane resim koy'
+7 - status : boolean true-false -> default : true
+
+sqlite yeni tablo oluştur yeni albüm için
+table-id -> id bilgisini kayıt ettiğin yukarıdaki tablodan alacaksın
+Bu tablonun sütunları
+
+1 - id : (serial olucak her kayıtta bir bir artacak) - Integer
+2 - album_id: integer -> albümün numarasını buraya kaydedeceksin.
+3 - name : Dosya adı
+4 - filetyoe : string .eşitler 'image','video','audio'
+5 - path : Dosya Path'i
+6 - isPublic : boolean true-false -> default : false
+7 - url : string -> default  '' boş
+8 - api_id -> integer -> default : 0
+9 - status : boolean true-false -> default true
+
+1 - Sol menüde draweerda bir menuitem oluştur Adı : Albüm Oluştur
+2 - Bu iteme tıklandığında bir tane popup dialog aç ve içerisine kullanıcı albüm adını girsin.
+3 - AAlbüm adını girip ok'lediğinde sqlite de albümün tablosunu oluştur
+4 - son oluşturulan tablo her zaman aktif albümdür. bu nedenle shared preferenceste activealbum adında bir integer tipinde kaydın olsun
+5 - yani bu şu anlama geliyor. albüm oluşturulduktan sonra albüm'ün id bilgisi activealbum ile saklanacak
+
+Resim çekme işleminde
+1 - Kullanıcıya resim çektir.
+2 - resim çekildiğinde bu resmin bilgilerini gönderirken activealbum'dan albüm id bilgisini al
+3 - resmi aktif albümün olduğu tabloya ekle.
+
+id bilgisini alma için şunu araştır
+sqlite flutter get last inserted id

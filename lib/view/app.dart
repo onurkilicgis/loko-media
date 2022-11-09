@@ -173,9 +173,21 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         bottomNavigationBar: BottomNavigationBar(
           key: scaffoldState,
           currentIndex: currentIndex,
-          onTap: (index) {
+          onTap: (index) async {
             if (index == 0) {
-              // return BottomSheetItems(icon, title, function);
+              return BottomSheetItems(Icons.camera_alt, 'Fotoğraf Çek ve Yükle',
+                  Icons.photo, 'Galiriden Fotoğraf Yükle', (num) {
+                switch (num) {
+                  case 0:
+                    {
+                      break;
+                    }
+                  case 1:
+                    {
+                      break;
+                    }
+                }
+              });
             }
             setState(() {
               currentIndex = index;
@@ -187,16 +199,16 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
           unselectedFontSize: context.dynamicHeight(75),
           items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.mic),
-              label: 'Ses Kaydet ve Yükle',
+              icon: Icon(Icons.camera_alt),
+              label: 'Fotoğraf Çek ve Yükle',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.video_camera_back),
               label: 'Video Kaydet ve Yükle',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.camera_alt),
-              label: 'Fotoğraf Çek ve Yükle',
+              icon: Icon(Icons.mic),
+              label: 'Ses Kaydet ve Yükle',
             ),
           ],
         ),
@@ -220,16 +232,29 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     );
   }
 
-  Future<dynamic> BottomSheetItems(
-      IconData icon, String title, Function function) {
+  Future<void> BottomSheetItems(IconData icon, String title, IconData icon1,
+      String title1, Function callback) {
     return showModalBottomSheet(
         useRootNavigator: true,
         context: context,
-        builder: (context) => ListTile(
-            leading: Icon(icon),
-            title: Text(title),
-            onTap: () {
-              function;
-            }));
+        builder: (context) => Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                    leading: Icon(icon),
+                    title: Text(title),
+                    onTap: () {
+                      Navigator.pop(context);
+                      callback(0);
+                    }),
+                ListTile(
+                    leading: Icon(icon1),
+                    title: Text(title1),
+                    onTap: () async {
+                      Navigator.pop(context);
+                      callback(1);
+                    }),
+              ],
+            ));
   }
 }
