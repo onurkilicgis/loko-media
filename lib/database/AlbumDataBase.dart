@@ -62,7 +62,6 @@ class AlbumDataBase {
   Future<List<Album>?> getAlbums() async {
     List<Map> albumMaps = await database.query(albumTableName);
     return albumMaps.map((e) => Album.fromJson(e)).toList();
-    // geri dönüş değerli List<Album> olacak
   }
 
   static getFiles() {

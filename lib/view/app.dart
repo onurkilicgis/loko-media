@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:getwidget/components/card/gf_card.dart';
+import 'package:getwidget/components/list_tile/gf_list_tile.dart';
+import 'package:loko_media/database/AlbumDataBase.dart';
+import 'package:loko_media/models/Album.dart';
 import 'package:loko_media/view_model/layout.dart';
 import 'package:provider/provider.dart';
 
@@ -7,7 +11,6 @@ import '../services/auth.dart';
 import '../view_model/main_view_models.dart';
 
 class App extends StatefulWidget {
-  // final VoidCallback function;
   const App({
     Key? key,
   }) : super(key: key);
@@ -18,6 +21,22 @@ class App extends StatefulWidget {
 
 class _App extends State<App> with SingleTickerProviderStateMixin {
   late TabController controller;
+  TextEditingController albumNameController = TextEditingController();
+
+  late String albumName;
+
+  AlbumDataBase albumDataBase = AlbumDataBase();
+  Album album = Album();
+  List<Album>? albumList = [];
+  List<Album>? albumData = [];
+
+  getAlbumList() async {
+    albumList = await albumDataBase.getAlbums();
+    for (int i = 0; i < albumList!.length; i++) {
+      var data = albumList![i] as List<Album>;
+      return albumData?.add(data as Album);
+    }
+  }
 
   final GlobalKey<ScaffoldState> scaffoldState = GlobalKey<ScaffoldState>();
 
@@ -26,9 +45,11 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
   AuthService _authService = AuthService();
 
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // getApiCompany();
-    });
+    albumDataBase.insertAlbum(album);
+
+    /* WidgetsBinding.instance.addPostFrameCallback((_) {
+      getDialog();
+    });*/
     controller = TabController(length: 2, vsync: this);
 
     controller.addListener(() {
@@ -78,11 +99,8 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                   /* onDetailsPressed: () {},
                     arrowColor: Colors.black,*/
                 ),
-                listMenuItems(
-                    Icons.event_note, "Bildirimlerim", "/notifications"),
-                listMenuItems(
-                    Icons.event_note, "Çalışmalarım", "/notifications"),
-                listMenuItems(Icons.event_note, "Görevlerim", "/notifications"),
+                listMenuItems(Icons.event_note, "Albüm Oluştur", getDialog),
+
                 // SizedBox(height: context.dynamicHeight(3)),
                 Container(
                   child: Row(
@@ -168,7 +186,23 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
             child: TabBarView(
           controller: controller,
           physics: BouncingScrollPhysics(),
-          children: [],
+          children: [
+            GFCard(
+              boxFit: BoxFit.cover,
+              showImage: true,
+              /* image: Image.network(
+
+                fit: BoxFit.cover,
+              ),*/
+              title: GFListTile(
+                title: Text(''),
+              ),
+              content: SizedBox(
+                height: 45,
+                child: Text(''),
+              ),
+            )
+          ],
         )),
         bottomNavigationBar: BottomNavigationBar(
           key: scaffoldState,
@@ -216,20 +250,22 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget listMenuItems(IconData icon, String title, String routeName) {
+  Widget listMenuItems(IconData icon, String title, Function callback) {
     return ListTile(
-      leading: Icon(icon, color: Colors.black),
-      title: Text(title,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          )),
-      //trailing: Text(trailing),
-      onTap: () {
+        leading: Icon(icon, color: Colors.black),
+        title: Text(title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            )),
+        //trailing: Text(trailing),
+        onTap: () {
+          callback();
+          //Navigator.pop(context);
+        }
         //  Navigator.pushNamed(context, routeName);
-        setState(() {});
-      },
-    );
+
+        );
   }
 
   Future<void> BottomSheetItems(IconData icon, String title, IconData icon1,
@@ -256,5 +292,46 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                     }),
               ],
             ));
+  }
+
+  getDialog() {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Albüm Adı'),
+          backgroundColor:
+              Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+          content: Text('albüm adını giriniz'),
+          actions: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: albumNameController,
+                    keyboardType: TextInputType.text,
+                    textAlign: TextAlign.center,
+                    cursorColor: const Color(0xff80C783),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'yazınız',
+                    ),
+                    onChanged: (text) {
+                      albumName = text;
+                    },
+                  ),
+                ),
+                TextButton(
+                  child: Text('tamam'),
+                  onPressed: () {
+                    Navigator.of(context).pop;
+                  },
+                )
+              ],
+            )
+          ],
+        );
+      },
+    );
   }
 }
