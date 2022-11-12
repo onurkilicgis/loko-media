@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../database/AlbumDataBase.dart';
+import '../services/MyLocal.dart';
 import '../view_model/MyHomePage_view_models.dart';
 import '../view_model/main_view_models.dart';
 import '../view_model/multi_language.dart';
@@ -20,13 +21,18 @@ import 'LoginPage.dart';
 Future<void> main() async {
   await dotenv.load(fileName: "assets/.env.development");
   await AlbumDataBase.createTables();
+  String isDark = await MyLocal.getStringData('theme');
+  if (isDark == '') {
+    await MyLocal.setStringData('theme', 'dark');
+    isDark = 'dark';
+  }
   //await dotenv.load(fileName: Environment.env);
   WidgetsFlutterBinding.ensureInitialized();
 
   FlutterNativeSplash.remove();
 
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(MyApp(isDark: isDark));
   HttpOverrides.global = MyHttpOverrides();
 }
 
@@ -45,7 +51,8 @@ Future initialization(BuildContext, context) async {
 
 class MyApp extends StatelessWidget {
   SwitchModel switchModels = SwitchModel();
-  // MyApp({super.key});
+  late String isDark;
+  MyApp({required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +64,7 @@ class MyApp extends StatelessWidget {
         ],
         child: Consumer<SwitchModel>(builder: (context, switchModels, child) {
           return GetMaterialApp(
-            theme: switchModels.isSwitchControl == false
-                ? MyTheme.darkTheme
-                : MyTheme.lightTheme,
+            theme: isDark == 'dark' ? MyTheme.darkTheme : MyTheme.lightTheme,
             title: 'Flutter Demo',
             debugShowCheckedModeBanner: false,
             translations: Messages(),

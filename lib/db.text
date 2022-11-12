@@ -1,3 +1,28 @@
+GFcard albüm listesinin üstünde bir alan bırak(yatay) sonra oraya sıralama ve filtreleme butonları ekle
+sıralamayı sonra bakarız
+
+
+Butonlar
+1 - Paylaş Butonu
+2 - User Butonu
+3 - Harita Butonu
+4 - Silme Butonu
+5 - Gösterme Butonu
+Soldan Sağa Sırası -> 4,1,2,3,5
+
+1 - paylaş butonuna basınca bir dialog açılacak. Bu dialogda en üstte sırayla
+"Herkesle Paylaş", "Bağlantıyı Paylaş", "Mail Olarak Gönder", "Sosyal Medyada Paylaş"
+
+2 - User butonu tıklanınca bu albümün paylaşıldığı kişileri listeleyecek. bu kişiler listeden çıkartılabilecek
+
+3 - Tıklanan albüm haritada gösterilecek
+
+4 - Silme butonua basarsa emin misiniz diye soracak sonra içerisinde va rolan tüm medyalarla birlikte silinecek
+
+5 - Göster butonu resim, ses, videoları GF card gibi listeleyecek
+
+--------------------------------------------------------
+
 Albümler Tablosunun Sütunları
 1 - id (serial olucak her kayıtta bir bir artacak) - Integer
 2 - uid (user_firebase_id) - String

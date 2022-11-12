@@ -93,7 +93,8 @@ flutter:
     - images/korte_logo.png
     - assets/.env.production
     - assets/.env.development
-    - assets/
+    - assets/images/album_dark.png
+    - assets/images/album_light.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

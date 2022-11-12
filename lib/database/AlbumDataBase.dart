@@ -2,7 +2,7 @@ import 'package:loko_media/models/Album.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AlbumDataBase {
-  static const String _albumDatabaseName = 'albumdatabase1.db';
+  static const String _albumDatabaseName = 'albumdatabase4.db';
   static const String albumTableName = 'albums';
   static const String fileTableName = 'files';
   static const int _version = 1;
@@ -36,12 +36,11 @@ class AlbumDataBase {
     });
   }
 
-  Future<Album> insertAlbum(Album album) async {
-    album.id = await database.insert(albumTableName, album.toJson());
-    return album;
-    // sorguyu yaz,
-    // cevabı al
-    // geri dönüş değeri eklenmiş kayıdın id'si olacak
+  static insertAlbum(Album album, Function callback) async {
+    Database database = await openDatabase(_albumDatabaseName,
+        version: _version, onCreate: (Database db, int version) async {});
+    int lastid = await database.insert(albumTableName, album.toJson());
+    callback(lastid);
   }
 
   static insertFile() {}
@@ -59,9 +58,15 @@ class AlbumDataBase {
     return result.toList();
   }*/
 
-  Future<List<Album>?> getAlbums() async {
-    List<Map> albumMaps = await database.query(albumTableName);
-    return albumMaps.map((e) => Album.fromJson(e)).toList();
+  Future<List<Album>> getAlbums() async {
+    List<Album> liste = [];
+    Database db = await openDatabase(_albumDatabaseName,
+        version: _version, onCreate: (Database db, int version) async {});
+    List<Map> albumMaps = await db.query(albumTableName);
+    if (albumMaps.length > 0) {
+      liste = albumMaps.map((e) => Album.fromJson(e)).toList();
+    }
+    return liste;
   }
 
   static getFiles() {

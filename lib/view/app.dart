@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:getwidget/components/avatar/gf_avatar.dart';
+import 'package:getwidget/components/button/gf_button_bar.dart';
 import 'package:getwidget/components/card/gf_card.dart';
 import 'package:getwidget/components/list_tile/gf_list_tile.dart';
+import 'package:getwidget/position/gf_position.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
+import 'package:loko_media/services/MyLocal.dart';
 import 'package:loko_media/view_model/layout.dart';
 import 'package:provider/provider.dart';
 
@@ -23,19 +27,15 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
   late TabController controller;
   TextEditingController albumNameController = TextEditingController();
 
-  late String albumName;
-
   AlbumDataBase albumDataBase = AlbumDataBase();
-  Album album = Album();
-  List<Album>? albumList = [];
-  List<Album>? albumData = [];
+
+  List<Album> albumList = [];
 
   getAlbumList() async {
-    albumList = await albumDataBase.getAlbums();
-    for (int i = 0; i < albumList!.length; i++) {
-      var data = albumList![i] as List<Album>;
-      return albumData?.add(data as Album);
-    }
+    List<Album> dbAlbums = await albumDataBase.getAlbums();
+    setState(() {
+      albumList = dbAlbums;
+    });
   }
 
   final GlobalKey<ScaffoldState> scaffoldState = GlobalKey<ScaffoldState>();
@@ -44,12 +44,76 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
 
   AuthService _authService = AuthService();
 
-  void initState() {
-    albumDataBase.insertAlbum(album);
+  List<GFCard> createAlbumCards() {
+    String isDark = 'dark';
+    List<GFCard> cards = [];
+    for (int i = 0; i < albumList.length; i++) {
+      var album = albumList[i];
+      Image image;
+      if (album.image == '') {
+        if (isDark == 'dark') {
+          image = Image.asset('assets/images/album_dark.png');
+        } else {
+          image = Image.asset('assets/images/album_light.png');
+        }
+      } else {
+        //image = new Image.file(File(album.image));
+        image = Image.asset('assets/images/album_dark.png');
+      }
+      GFCard card = GFCard(
+        boxFit: BoxFit.contain,
+        titlePosition: GFPosition.start,
+        image: Image.asset(
+          'assets/images/album_dark.png',
+          height: MediaQuery.of(context).size.height * 0.2,
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
+        ),
+        showImage: true,
+        title: GFListTile(
+          listItemTextColor: Color(0xffbecbe7),
+          titleText: album.name,
+          subTitleText: album.date,
+        ),
+        //content: Text("Some quick example text to build on the card"),
+        buttonBar: GFButtonBar(
+          alignment: WrapAlignment.spaceEvenly,
+          crossAxisAlignment: WrapCrossAlignment.start,
+          children: <Widget>[
+            GFAvatar(
+              backgroundColor: Color(0xff202b40),
+              child: Icon(
+                Icons.share,
+                color: Color(0xff017eba),
+              ),
+            ),
+            GFAvatar(
+              backgroundColor: Color(0xff202b40),
+              child: Icon(
+                Icons.map,
+                color: Color(0xff017eba),
+              ),
+            ),
+            GFAvatar(
+              backgroundColor: Color(0xff202b40),
+              child: Icon(
+                Icons.phone,
+                color: Color(0xff017eba),
+              ),
+            ),
+          ],
+        ),
+      );
+      cards.add(card);
+    }
+    return cards;
+  }
 
+  void initState() {
     /* WidgetsBinding.instance.addPostFrameCallback((_) {
       getDialog();
     });*/
+    getAlbumList();
     controller = TabController(length: 2, vsync: this);
 
     controller.addListener(() {
@@ -67,7 +131,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       initialIndex: 0,
       child: Scaffold(
         drawer: Container(
@@ -121,7 +185,13 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                             activeColor: Colors.green,
                             inactiveTrackColor: Colors.black54,
                             inactiveThumbColor: Colors.black,
-                            onChanged: (bool data) {
+                            onChanged: (bool data) async {
+                              if (data == true) {
+                                MyLocal.setStringData('theme', 'light');
+                              } else {
+                                MyLocal.setStringData('theme', 'dark');
+                              }
+
                               switchModel.switchChanged(data); // dinleyici
                             });
                       }),
@@ -147,11 +217,21 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
           ),
         ),
         appBar: AppBar(
-          title: controller.index == 0
-              ? Text('Size Ait Olan Projeler',
-                  style: Theme.of(context).textTheme.headlineSmall)
-              : Text('Bağlı Olduğunuz Projeler',
-                  style: Theme.of(context).textTheme.headlineSmall),
+          title: getAppController(),
+          /*if(controller.index == 0){
+            Text('Size Ait Olan Projeler',
+      style: Theme.of(context).textTheme.headlineSmall)}
+        else{
+
+       if(controller.index == 1){
+        Text('Albüme Ait Medyalar',
+        style: Theme.of(context).textTheme.headlineSmall)}
+        else{
+          Text('Bağlı Olduğunuz Projeler',
+           style: Theme.of(context).textTheme.headlineSmall),
+       }
+       }*/
+
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(context.dynamicHeight(16)),
@@ -173,8 +253,14 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                     icon: Icon(Icons.list_alt),
                   ),
                   Tab(
+                    child: Text(
+                      'Medya',
+                    ),
+                    icon: Icon(Icons.media_bluetooth_off),
+                  ),
+                  Tab(
                       child: Text(
-                        'Albüm Haritası',
+                        'Harita',
                       ),
                       icon: Icon(Icons.map)),
                 ],
@@ -184,26 +270,16 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         ),
         body: SafeArea(
             child: TabBarView(
-          controller: controller,
-          physics: BouncingScrollPhysics(),
-          children: [
-            GFCard(
-              boxFit: BoxFit.cover,
-              showImage: true,
-              /* image: Image.network(
-
-                fit: BoxFit.cover,
-              ),*/
-              title: GFListTile(
-                title: Text(''),
+                controller: controller,
+                physics: BouncingScrollPhysics(),
+                children: [
+              ListView(
+                padding: const EdgeInsets.all(8),
+                scrollDirection: Axis.vertical,
+                children: createAlbumCards(),
               ),
-              content: SizedBox(
-                height: 45,
-                child: Text(''),
-              ),
-            )
-          ],
-        )),
+              Container()
+            ])),
         bottomNavigationBar: BottomNavigationBar(
           key: scaffoldState,
           currentIndex: currentIndex,
@@ -234,15 +310,19 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
           items: [
             BottomNavigationBarItem(
               icon: Icon(Icons.camera_alt),
-              label: 'Fotoğraf Çek ve Yükle',
+              label: 'Fotoğraf Ekle',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.video_camera_back),
-              label: 'Video Kaydet ve Yükle',
+              label: 'Video Ekle',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.mic),
-              label: 'Ses Kaydet ve Yükle',
+              label: 'Ses Ekle',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.file_copy),
+              label: 'Yazı Ekle',
             ),
           ],
         ),
@@ -295,6 +375,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
   }
 
   getDialog() {
+    Navigator.pop(context);
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -316,15 +397,21 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                       border: OutlineInputBorder(),
                       hintText: 'yazınız',
                     ),
-                    onChanged: (text) {
-                      albumName = text;
-                    },
+                    onChanged: (value) {},
                   ),
                 ),
                 TextButton(
-                  child: Text('tamam'),
-                  onPressed: () {
-                    Navigator.of(context).pop;
+                  child: Text('Oluştur'),
+                  onPressed: () async {
+                    if (albumNameController.text != '') {
+                      Navigator.pop(context);
+                      Album album = Album();
+                      album.insertData(albumNameController.text, 'asdasdasd');
+                      await AlbumDataBase.insertAlbum(album, (lastId) {
+                        album.id = lastId;
+                        getAlbumList();
+                      });
+                    }
                   },
                 )
               ],
@@ -333,5 +420,20 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         );
       },
     );
+  }
+
+  getAppController() {
+    if (controller.index == 0) {
+      return Text('Size Ait Olan Projeler',
+          style: Theme.of(context).textTheme.headlineSmall);
+    } else {
+      if (controller.index == 1) {
+        return Text('Albüme Ait Medyalar',
+            style: Theme.of(context).textTheme.headlineSmall);
+      } else {
+        return Text('Bağlı Olduğunuz Projeler',
+            style: Theme.of(context).textTheme.headlineSmall);
+      }
+    }
   }
 }
