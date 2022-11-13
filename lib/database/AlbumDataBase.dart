@@ -45,19 +45,6 @@ class AlbumDataBase {
 
   static insertFile() {}
 
-  /* Future<List<Map<String, Object?>>> getAlbums() async {
-    var result = await database.query("Album", columns: [
-      "id",
-      "uid",
-      "albumName",
-      "isPublic",
-      "url",
-      "image",
-      "status"
-    ]);
-    return result.toList();
-  }*/
-
   Future<List<Album>> getAlbums() async {
     List<Album> liste = [];
     Database db = await openDatabase(_albumDatabaseName,

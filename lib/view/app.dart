@@ -26,6 +26,7 @@ class App extends StatefulWidget {
 class _App extends State<App> with SingleTickerProviderStateMixin {
   late TabController controller;
   TextEditingController albumNameController = TextEditingController();
+  late Color boxColor;
 
   AlbumDataBase albumDataBase = AlbumDataBase();
 
@@ -57,7 +58,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
           image = Image.asset('assets/images/album_light.png');
         }
       } else {
-        //image = new Image.file(File(album.image));
+        // image = new Image.file(imageFile);
         image = Image.asset('assets/images/album_dark.png');
       }
       GFCard card = GFCard(
@@ -71,9 +72,28 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         ),
         showImage: true,
         title: GFListTile(
-          listItemTextColor: Color(0xffbecbe7),
-          titleText: album.name,
-          subTitleText: album.date,
+          title: Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 8),
+            child: Container(
+              child: Text(
+                album.name!,
+                style: TextStyle(
+                  color: Color(0xffbecbe7),
+                ),
+              ),
+            ),
+          ),
+
+          subTitle: Container(
+            child: Text(
+              album.date!,
+              style: TextStyle(
+                color: Color(0xffbecbe7),
+              ),
+            ),
+          ),
+
+          // subTitleText: album.date,
         ),
         //content: Text("Some quick example text to build on the card"),
         buttonBar: GFButtonBar(
@@ -83,7 +103,28 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
             GFAvatar(
               backgroundColor: Color(0xff202b40),
               child: Icon(
-                Icons.share,
+                Icons.delete,
+                color: Color(0xff017eba),
+              ),
+            ),
+            InkWell(
+              borderRadius: BorderRadius.circular(25),
+              hoverColor: Colors.red,
+              highlightColor: Colors.red.withOpacity(0.8),
+              //splashColor: Colors.deepPurple.withOpacity(0.5),
+              onTap: getShareDialog,
+              child: GFAvatar(
+                backgroundColor: Color(0xff202b40),
+                child: Icon(
+                  Icons.share,
+                  color: Color(0xff017eba),
+                ),
+              ),
+            ),
+            GFAvatar(
+              backgroundColor: Color(0xff202b40),
+              child: Icon(
+                Icons.supervised_user_circle,
                 color: Color(0xff017eba),
               ),
             ),
@@ -97,7 +138,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
             GFAvatar(
               backgroundColor: Color(0xff202b40),
               child: Icon(
-                Icons.phone,
+                Icons.list_alt,
                 color: Color(0xff017eba),
               ),
             ),
@@ -218,20 +259,6 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         ),
         appBar: AppBar(
           title: getAppController(),
-          /*if(controller.index == 0){
-            Text('Size Ait Olan Projeler',
-      style: Theme.of(context).textTheme.headlineSmall)}
-        else{
-
-       if(controller.index == 1){
-        Text('Albüme Ait Medyalar',
-        style: Theme.of(context).textTheme.headlineSmall)}
-        else{
-          Text('Bağlı Olduğunuz Projeler',
-           style: Theme.of(context).textTheme.headlineSmall),
-       }
-       }*/
-
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(context.dynamicHeight(16)),
@@ -243,7 +270,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                     TextStyle(fontSize: context.dynamicHeight(55)),
                 indicatorColor: Colors.deepPurple,
                 controller: controller,
-                labelColor: Color(0xff80C783),
+                labelColor: Color(0xff0e91ce),
                 unselectedLabelColor: Color(0xff697a9b),
                 tabs: [
                   Tab(
@@ -321,7 +348,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
               label: 'Ses Ekle',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.file_copy),
+              icon: Icon(Icons.insert_drive_file_sharp),
               label: 'Yazı Ekle',
             ),
           ],
@@ -385,35 +412,72 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
               Theme.of(context).bottomNavigationBarTheme.backgroundColor,
           content: Text('albüm adını giriniz'),
           actions: [
-            Row(
+            Column(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: albumNameController,
-                    keyboardType: TextInputType.text,
-                    textAlign: TextAlign.center,
-                    cursorColor: const Color(0xff80C783),
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'yazınız',
-                    ),
-                    onChanged: (value) {},
+                TextField(
+                  controller: albumNameController,
+                  keyboardType: TextInputType.text,
+                  textAlign: TextAlign.center,
+                  cursorColor: const Color(0xff80C783),
+                  decoration: InputDecoration(
+                    hintText: 'yazınız',
                   ),
+                  onChanged: (value) {},
                 ),
-                TextButton(
-                  child: Text('Oluştur'),
-                  onPressed: () async {
-                    if (albumNameController.text != '') {
-                      Navigator.pop(context);
-                      Album album = Album();
-                      album.insertData(albumNameController.text, 'asdasdasd');
-                      await AlbumDataBase.insertAlbum(album, (lastId) {
-                        album.id = lastId;
-                        getAlbumList();
-                      });
-                    }
-                  },
-                )
+                Row(children: [
+                  ElevatedButton(
+                    child: Text('tamam'),
+                    onPressed: () async {
+                      if (albumNameController.text != '') {
+                        Navigator.pop(context);
+                        Album album = Album();
+                        album.insertData(albumNameController.text, 'asdasdasd');
+                        await AlbumDataBase.insertAlbum(album, (lastId) {
+                          album.id = lastId;
+                          getAlbumList();
+                        });
+                      }
+                    },
+                  ),
+                  ElevatedButton(onPressed: () {}, child: Text('iptal'))
+                ])
+              ],
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  getShareDialog() {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          //title: Text('Albüm Adı'),
+          backgroundColor:
+              Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+          // content: Text('albüm adını giriniz'),
+          actions: [
+            Column(
+              children: [
+                ListTile(
+                  leading: Icon(Icons.mail),
+                  title: Text('Herkesle paylaş'),
+                  onTap: () {},
+                ),
+                ListTile(
+                    leading: Icon(Icons.mail),
+                    title: Text('Bağlantıyı paylaş'),
+                    onTap: () {}),
+                ListTile(
+                    leading: Icon(Icons.mail),
+                    title: Text('Mail olarak gönder'),
+                    onTap: () {}),
+                ListTile(
+                    leading: Icon(Icons.mail),
+                    title: Text('Sosyal medyada paylaş'),
+                    onTap: () {}),
               ],
             )
           ],
