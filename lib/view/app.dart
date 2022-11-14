@@ -100,11 +100,17 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
           alignment: WrapAlignment.spaceEvenly,
           crossAxisAlignment: WrapCrossAlignment.start,
           children: <Widget>[
-            GFAvatar(
-              backgroundColor: Color(0xff202b40),
-              child: Icon(
-                Icons.delete,
-                color: Color(0xff017eba),
+            InkWell(
+              borderRadius: BorderRadius.circular(25),
+              hoverColor: Colors.red,
+              highlightColor: Colors.red.withOpacity(0.8),
+              onTap: getDeleteDialog,
+              child: GFAvatar(
+                backgroundColor: Color(0xff202b40),
+                child: Icon(
+                  Icons.delete,
+                  color: Color(0xff017eba),
+                ),
               ),
             ),
             InkWell(
@@ -155,7 +161,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
       getDialog();
     });*/
     getAlbumList();
-    controller = TabController(length: 2, vsync: this);
+    controller = TabController(length: 3, vsync: this);
 
     controller.addListener(() {
       setState(() {});
@@ -261,7 +267,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
           title: getAppController(),
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           bottom: PreferredSize(
-            preferredSize: Size.fromHeight(context.dynamicHeight(16)),
+            preferredSize: Size.fromHeight(context.dynamicHeight(11)),
             child: Material(
               color: Color(0xff202b40),
               child: TabBar(
@@ -407,10 +413,13 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+
           title: Text('Albüm Adı'),
           backgroundColor:
               Theme.of(context).bottomNavigationBarTheme.backgroundColor,
-          content: Text('albüm adını giriniz'),
+          // content: Text('albüm adını giriniz'),
           actions: [
             Column(
               children: [
@@ -420,12 +429,15 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                   textAlign: TextAlign.center,
                   cursorColor: const Color(0xff80C783),
                   decoration: InputDecoration(
-                    hintText: 'yazınız',
+                    labelText: 'albüm adını giriniz',
                   ),
                   onChanged: (value) {},
                 ),
-                Row(children: [
+                Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xff80C783),
+                    ),
                     child: Text('tamam'),
                     onPressed: () async {
                       if (albumNameController.text != '') {
@@ -439,7 +451,16 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                       }
                     },
                   ),
-                  ElevatedButton(onPressed: () {}, child: Text('iptal'))
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff6f070f)),
+                        onPressed: () {},
+                        child: Text(
+                          'iptal',
+                        )),
+                  )
                 ])
               ],
             )
@@ -455,6 +476,8 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
       builder: (BuildContext context) {
         return AlertDialog(
           //title: Text('Albüm Adı'),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(14.0))),
           backgroundColor:
               Theme.of(context).bottomNavigationBarTheme.backgroundColor,
           // content: Text('albüm adını giriniz'),
@@ -462,12 +485,14 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
             Column(
               children: [
                 ListTile(
-                  leading: Icon(Icons.mail),
+                  leading: Icon(
+                    Icons.people,
+                  ),
                   title: Text('Herkesle paylaş'),
                   onTap: () {},
                 ),
                 ListTile(
-                    leading: Icon(Icons.mail),
+                    leading: Icon(Icons.link),
                     title: Text('Bağlantıyı paylaş'),
                     onTap: () {}),
                 ListTile(
@@ -475,7 +500,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                     title: Text('Mail olarak gönder'),
                     onTap: () {}),
                 ListTile(
-                    leading: Icon(Icons.mail),
+                    leading: Icon(FontAwesomeIcons.message),
                     title: Text('Sosyal medyada paylaş'),
                     onTap: () {}),
               ],
@@ -484,6 +509,34 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         );
       },
     );
+  }
+
+  getDeleteDialog() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(14.0))),
+            backgroundColor:
+                Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+            title: Text('Albüm Silme'),
+            content: Text('Albümü silmeye emin misiniz?'),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                      onPressed: () {},
+                      child: Text('Yes', style: TextStyle(fontSize: 20))),
+                  TextButton(
+                      onPressed: () {},
+                      child: Text('No', style: TextStyle(fontSize: 20)))
+                ],
+              )
+            ],
+          );
+        });
   }
 
   getAppController() {
