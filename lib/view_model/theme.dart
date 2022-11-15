@@ -25,7 +25,7 @@ class MyTheme {
   static ThemeData darkTheme = ThemeData(
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: Color(0xff202b40),
-        selectedItemColor: Color(0xff80C783),
+        selectedItemColor: Color(0xff017eba),
         unselectedItemColor: Color(0xff697a9b),
       ),
       drawerTheme: DrawerThemeData(

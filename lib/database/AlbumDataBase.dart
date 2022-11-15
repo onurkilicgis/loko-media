@@ -1,4 +1,6 @@
 import 'package:loko_media/models/Album.dart';
+import 'package:loko_media/services/MyLocal.dart';
+import 'package:loko_media/view_model/folder_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AlbumDataBase {
@@ -40,6 +42,9 @@ class AlbumDataBase {
     Database database = await openDatabase(_albumDatabaseName,
         version: _version, onCreate: (Database db, int version) async {});
     int lastid = await database.insert(albumTableName, album.toJson());
+    await MyLocal.setIntData('aktifalbum', lastid);
+    //albüm oluşturulurken albümün id bilgisini aldığında bu albüms klasörünü içerisinde album-(id) olacak şekilde bir klasör oluştur
+    await FolderModel.createFolder('albums/album-${lastid}');
     callback(lastid);
   }
 

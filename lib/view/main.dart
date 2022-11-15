@@ -7,11 +7,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../database/AlbumDataBase.dart';
 import '../services/MyLocal.dart';
 import '../view_model/MyHomePage_view_models.dart';
+import '../view_model/folder_model.dart';
 import '../view_model/main_view_models.dart';
 import '../view_model/multi_language.dart';
 import '../view_model/register_view_models.dart';
@@ -19,6 +21,10 @@ import '../view_model/theme.dart';
 import 'LoginPage.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await FolderModel.createFolder('albums');
+
   await dotenv.load(fileName: "assets/.env.development");
   await AlbumDataBase.createTables();
   String isDark = await MyLocal.getStringData('theme');
@@ -27,9 +33,14 @@ Future<void> main() async {
     isDark = 'dark';
   }
   //await dotenv.load(fileName: Environment.env);
-  WidgetsFlutterBinding.ensureInitialized();
 
   FlutterNativeSplash.remove();
+
+  await Permission.camera.request(); //ok
+  await Permission.microphone.request(); //ok
+  await Permission.storage.request(); //ok buna gerek yok gibi
+  await Permission.location.request(); //ok
+  await Permission.locationAlways.request(); //ok
 
   await Firebase.initializeApp();
   runApp(MyApp(isDark: isDark));
