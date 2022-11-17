@@ -37,6 +37,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
   AlbumDataBase albumDataBase = AlbumDataBase();
 
   List<Album> albumList = [];
+  int aktifalbum = -1;
 
   File? image;
 
@@ -53,14 +54,19 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
       Uint8List bytes = imageTemporary.readAsBytesSync();
       String? newPath = await FolderModel.createFile(
           'albums/album-${aktifAlbumId}', bytes, filename);
-      // bu resmi dosya olarak root da kayıt altına almak için
-      // 1 - aktif album numarasını sheredpref. den al
-      // root + 'albums/album-'+id/filename path'inin içerisine bu resmi ekle
-      // daha sonra yeni eklediğin path bu path ile aynı olacak
-      // sqflite'a bu resmin bilgilerini ekle
-      // albumün image kolonunu yeni eklenmiş resim path'i ile update edeceksin.
-      setState(() {
-        this.image = imageTemporary;
+      Medias dbImage = new Medias(
+        album_id: aktifAlbumId,
+        name: filename,
+        path: newPath,
+        latitude: 0,
+        longitude: 0,
+        altitude: 0,
+        fileType: 'image',
+      );
+      dbImage.insertData();
+      await AlbumDataBase.insertFile(dbImage, (lastId) {
+        dbImage.id = lastId;
+        getAlbumList();
       });
     } on PlatformException catch (e) {
       SBBildirim.hata(e.toString());
@@ -69,8 +75,10 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
 
   getAlbumList() async {
     List<Album> dbAlbums = await albumDataBase.getAlbums();
+    int aktif_album_no = await MyLocal.getIntData('aktifalbum');
     setState(() {
       albumList = dbAlbums;
+      aktifalbum = aktif_album_no;
     });
   }
 
@@ -85,6 +93,12 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     List<GFCard> cards = [];
     for (int i = 0; i < albumList.length; i++) {
       var album = albumList[i];
+      String aktifPasif = 'Pasif';
+      if (album.id == aktifalbum) {
+        aktifPasif = 'Aktif';
+      } else {
+        aktifPasif = 'Pasif';
+      }
       Image image;
       if (album.image == '') {
         if (isDark == 'dark') {
@@ -96,6 +110,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         // image = new Image.file(imageFile);
         image = Image.asset('assets/images/album_dark.png');
       }
+
       GFCard card = GFCard(
         boxFit: BoxFit.contain,
         titlePosition: GFPosition.start,
@@ -107,24 +122,99 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         ),
         showImage: true,
         title: GFListTile(
+          onLongPress: () {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(14.0))),
+                    backgroundColor: Theme.of(context)
+                        .bottomNavigationBarTheme
+                        .backgroundColor,
+                    title: TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        'Albümü Aktif Et',
+                        style:
+                            TextStyle(color: Color(0xff80C783), fontSize: 20),
+                      ),
+                    ),
+                    //content: Text(''),
+                    actions: [
+                      Column(
+                        children: [
+                          ListTile(
+                            leading: Icon(
+                              Icons.delete,
+                            ),
+                            title: Text('Albümü Sil'),
+                            onTap: () {},
+                          ),
+                          ListTile(
+                              leading: Icon(Icons.share),
+                              title: Text('Albümü Paylaş'),
+                              onTap: () {}),
+                          ListTile(
+                              leading: Icon(Icons.supervised_user_circle),
+                              title: Text('Paylaşılan Kişiler Listesi'),
+                              onTap: () {}),
+                          ListTile(
+                              leading: Icon(FontAwesomeIcons.mapLocation),
+                              title: Text('Haritada Göster'),
+                              onTap: () {}),
+                          ListTile(
+                              leading: Icon(Icons.list_alt),
+                              title: Text('Albümün İçindekileri Listele'),
+                              onTap: () {}),
+                        ],
+                      )
+                    ],
+                  );
+                });
+          },
           title: Padding(
-            padding: const EdgeInsets.only(top: 8, bottom: 8),
+            padding: const EdgeInsets.only(bottom: 3),
             child: Container(
               child: Text(
-                album.name!,
-                style: TextStyle(
-                  color: Color(0xffbecbe7),
-                ),
+                album.name ?? '',
+                style: TextStyle(color: Color(0xffbecbe7), fontSize: 17),
               ),
             ),
           ),
 
           subTitle: Container(
-            child: Text(
-              album.date!,
-              style: TextStyle(
-                color: Color(0xffbecbe7),
-              ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 3,
+                    bottom: 3,
+                  ),
+                  child: Text(
+                    album.date ?? '',
+                    style: TextStyle(
+                      color: Color(0xffbecbe7),
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 3,
+                  ),
+                  child: Text(
+                    'Sayı : ' +
+                        album.itemCount!.toString() +
+                        ', Durum : ' +
+                        aktifPasif,
+                    style: TextStyle(
+                      color: Color(0xffbecbe7),
+                      fontSize: 14,
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
 
@@ -225,6 +315,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
           ],
         ),
       );
+
       cards.add(card);
     }
     return cards;
@@ -547,6 +638,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                           if (albumNameController.text != '') {
                             Navigator.pop(context);
                             Album album = Album();
+
                             album.insertData(
                                 albumNameController.text, 'asdasdasd');
                             await AlbumDataBase.insertAlbum(album, (lastId) {

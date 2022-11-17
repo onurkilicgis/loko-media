@@ -67,8 +67,7 @@ class _LoginPageState extends State<LoginPage> {
       });
     } else {
       Loading.waiting('Giriş Kontrol Ediliyor');
-      dynamic data =
-          await apiClass.postRequest('api/v1//user/tokenControl', {});
+      dynamic data = await apiClass.postRequest('api/v1/user/tokenControl', {});
       if (data['status'] == true) {
         dynamic usr = data['data'];
         dynamic usr2 = json.decode(usr);
