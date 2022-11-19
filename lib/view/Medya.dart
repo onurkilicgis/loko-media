@@ -40,7 +40,7 @@ class _MedyaState extends State<Medya> {
           vertical: 10,
         ),
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          mainAxisExtent: context.dynamicWidth(2),
+          mainAxisExtent: context.dynamicWidth(4),
           maxCrossAxisExtent: context.dynamicHeight(8),
           mainAxisSpacing: 4,
           crossAxisSpacing: 4,

@@ -34,6 +34,7 @@ class App extends StatefulWidget {
 class _App extends State<App> with SingleTickerProviderStateMixin {
   late TabController controller;
   TextEditingController albumNameController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
   late Color boxColor;
 
   AlbumDataBase albumDataBase = AlbumDataBase();
@@ -143,6 +144,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                             onTap: () async {
                               await MyLocal.setIntData('aktifalbum', album.id);
                               getAlbumList();
+
                               Navigator.pop(context);
                             },
                           ),
@@ -175,9 +177,12 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                   );
                 });
           },
-          onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => Medya(id: album.id)));
+          onTap: () async {
+            await MyLocal.setIntData('aktifalbum', album.id);
+            controller.index = 1;
+            setState(() {
+              aktifalbum = album.id!;
+            });
           },
           title: Padding(
             padding: const EdgeInsets.only(bottom: 3),
@@ -229,11 +234,11 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         //content: Text("Some quick example text to build on the card"),
         buttonBar: GFButtonBar(
           alignment: WrapAlignment.spaceEvenly,
-          crossAxisAlignment: WrapCrossAlignment.start,
+
+          // crossAxisAlignment: WrapCrossAlignment.start,
           children: <Widget>[
             InkWell(
               borderRadius: BorderRadius.circular(25),
-              hoverColor: Colors.red,
               highlightColor: Colors.red.withOpacity(0.8),
               onTap: () {
                 showDialog(
@@ -276,6 +281,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                     });
               },
               child: GFAvatar(
+                size: context.dynamicWidth(13),
                 backgroundColor: Color(0xff202b40),
                 child: Icon(
                   Icons.delete,
@@ -290,6 +296,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
               //splashColor: Colors.deepPurple.withOpacity(0.5),
               onTap: getShareDialog,
               child: GFAvatar(
+                size: context.dynamicWidth(13),
                 backgroundColor: Color(0xff202b40),
                 child: Icon(
                   Icons.share,
@@ -298,6 +305,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
               ),
             ),
             GFAvatar(
+              size: context.dynamicWidth(13),
               backgroundColor: Color(0xff202b40),
               child: Icon(
                 Icons.supervised_user_circle,
@@ -305,6 +313,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
               ),
             ),
             GFAvatar(
+              size: context.dynamicWidth(13),
               backgroundColor: Color(0xff202b40),
               child: Icon(
                 Icons.map,
@@ -312,6 +321,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
               ),
             ),
             GFAvatar(
+              size: context.dynamicWidth(13),
               backgroundColor: Color(0xff202b40),
               child: Icon(
                 Icons.list_alt,
@@ -438,6 +448,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
           floatHeaderSlivers: true,
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
+              centerTitle: true,
               floating: true,
               snap: true,
               expandedHeight: context.dynamicHeight(6),
@@ -488,10 +499,41 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
               controller: controller,
               physics: BouncingScrollPhysics(),
               children: [
-                ListView(
-                  padding: const EdgeInsets.all(8),
-                  scrollDirection: Axis.vertical,
-                  children: createAlbumCards(),
+                SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: TextField(
+                                controller: searchController,
+                                keyboardType: TextInputType.text,
+                                textAlign: TextAlign.center,
+                                cursorColor: const Color(0xff80C783),
+                                decoration: InputDecoration(
+                                  labelText: 'Albüm Arama',
+                                ),
+                                onChanged: (value) {},
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                              onPressed: () {}, icon: Icon(Icons.search)),
+                          IconButton(onPressed: () {}, icon: Icon(Icons.list)),
+                          IconButton(
+                              onPressed: () {}, icon: Icon(Icons.filter)),
+                        ],
+                      ),
+                      ListView(
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.all(8),
+                        scrollDirection: Axis.vertical,
+                        children: createAlbumCards(),
+                      ),
+                    ],
+                  ),
                 ),
                 Medya(id: aktifalbum),
                 Harita()
