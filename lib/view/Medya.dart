@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
+import 'package:loko_media/view_model/layout.dart';
 
 class Medya extends StatefulWidget {
   int? id;
@@ -39,17 +40,17 @@ class _MedyaState extends State<Medya> {
           vertical: 10,
         ),
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 4,
-            childAspectRatio: 1,
-            mainAxisSpacing: 5,
-            crossAxisSpacing: 5,
-            mainAxisExtent: 2),
+          mainAxisExtent: context.dynamicWidth(2),
+          maxCrossAxisExtent: context.dynamicHeight(8),
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
+        ),
         itemBuilder: (BuildContext context, int index) {
           return Container(
-            width: 100,
-            height: 100,
-            child: Image.file(File(fileList[index].path.toString()),
-                fit: BoxFit.cover, width: 100, height: 100),
+            child: Image.file(
+              File(fileList[index].path.toString()),
+              fit: BoxFit.cover,
+            ),
           );
         },
       ),
