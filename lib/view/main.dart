@@ -23,19 +23,25 @@ import 'LoginPage.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Uygulamanın root'unda albüm adında bir klasör oluşturur.
   await FolderModel.createFolder('albums');
-
+  // assets/.env.development içerisinde ki bilgileri daha sonra kullanmak için okuyor
+  // Note : burada production için ayrı development için ayrı dosyayı yüklemen gerekir. kodları baklan_flutter uygulamasında var
   await dotenv.load(fileName: "assets/.env.development");
   await AlbumDataBase.createTables();
+
+  // Program ilk kullanıldığında 'theme' keyinin bir değeri yoktur.
+  // Kullanıcının tema konusunda yapmış olduğu seçimi aklında tutmuş oluyor.
   String isDark = await MyLocal.getStringData('theme');
   if (isDark == '') {
     await MyLocal.setStringData('theme', 'dark');
     isDark = 'dark';
   }
-  //await dotenv.load(fileName: Environment.env);
 
+  // loko media logosunu siliyor.
   FlutterNativeSplash.remove();
 
+  // izinler kullanıcıdan isteniyor.
   await Permission.camera.request(); //ok
   await Permission.microphone.request(); //ok
   await Permission.storage.request(); //ok buna gerek yok gibi
@@ -76,7 +82,7 @@ class MyApp extends StatelessWidget {
         child: Consumer<SwitchModel>(builder: (context, switchModels, child) {
           return GetMaterialApp(
             theme: isDark == 'dark' ? MyTheme.darkTheme : MyTheme.lightTheme,
-            title: 'Flutter Demo',
+            title: 'LOKO MEDIA',
             debugShowCheckedModeBanner: false,
             translations: Messages(),
             locale: Get.deviceLocale,
@@ -87,7 +93,8 @@ class MyApp extends StatelessWidget {
                 builder: (context, userSnp) {
                   return LoginPage();
                 }),
-            builder: EasyLoading.init(),
+            builder:
+                EasyLoading.init(), // ekranın ortasında loading göstermek için.
           );
         }));
   }

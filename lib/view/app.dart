@@ -13,12 +13,14 @@ import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
 import 'package:loko_media/services/MyLocal.dart';
 import 'package:loko_media/services/utils.dart';
+import 'package:loko_media/view/Medya.dart';
 import 'package:loko_media/view_model/layout.dart';
 import 'package:provider/provider.dart';
 
 import '../services/auth.dart';
 import '../view_model/folder_model.dart';
 import '../view_model/main_view_models.dart';
+import 'Harita.dart';
 
 class App extends StatefulWidget {
   const App({
@@ -132,25 +134,26 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                     backgroundColor: Theme.of(context)
                         .bottomNavigationBarTheme
                         .backgroundColor,
-                    title: TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        'Albümü Aktif Et',
-                        style:
-                            TextStyle(color: Color(0xff80C783), fontSize: 20),
-                      ),
-                    ),
-                    //content: Text(''),
                     actions: [
                       Column(
                         children: [
                           ListTile(
-                            leading: Icon(
-                              Icons.delete,
-                            ),
-                            title: Text('Albümü Sil'),
-                            onTap: () {},
+                            leading: Icon(Icons.check),
+                            title: Text('Albümü Aktif Et'),
+                            onTap: () async {
+                              await MyLocal.setIntData('aktifalbum', album.id);
+                              getAlbumList();
+                              Navigator.pop(context);
+                            },
                           ),
+                          ListTile(
+                              leading: Icon(Icons.list_alt),
+                              title: Text('Albümün İçindekileri Listele'),
+                              onTap: () {}),
+                          ListTile(
+                              leading: Icon(FontAwesomeIcons.mapLocation),
+                              title: Text('Haritada Göster'),
+                              onTap: () {}),
                           ListTile(
                               leading: Icon(Icons.share),
                               title: Text('Albümü Paylaş'),
@@ -160,18 +163,21 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                               title: Text('Paylaşılan Kişiler Listesi'),
                               onTap: () {}),
                           ListTile(
-                              leading: Icon(FontAwesomeIcons.mapLocation),
-                              title: Text('Haritada Göster'),
-                              onTap: () {}),
-                          ListTile(
-                              leading: Icon(Icons.list_alt),
-                              title: Text('Albümün İçindekileri Listele'),
-                              onTap: () {}),
+                            leading: Icon(
+                              Icons.delete,
+                            ),
+                            title: Text('Albümü Sil'),
+                            onTap: () {},
+                          ),
                         ],
                       )
                     ],
                   );
                 });
+          },
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => Medya(id: album.id)));
           },
           title: Padding(
             padding: const EdgeInsets.only(bottom: 3),
@@ -487,8 +493,8 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                   scrollDirection: Axis.vertical,
                   children: createAlbumCards(),
                 ),
-                Container(),
-                Container()
+                Medya(id: aktifalbum),
+                Harita()
               ]),
         ),
         bottomNavigationBar: BottomNavigationBar(

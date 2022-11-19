@@ -111,17 +111,17 @@ class Medias {
       required this.altitude,
       this.status});
 
-  Medias.fromJson(Map<String, dynamic> json) {
+  Medias.fromJson(json) {
     id = json['id'];
     album_id = json['album_id'];
     name = json['name'];
     fileType = json['fileType'];
     path = json['path'];
-    isPublic = json['isPublic'];
+    isPublic = json['isPublic'] == 1 ? true : false;
     url = json['url'];
     api_id = json['api_id'];
     date = json['date'];
-    status = json['status'];
+    status = json['status'] == 1 ? true : false;
     latitude = json['latitude'];
     longitude = json['longitude'];
     altitude = json['altitude'];

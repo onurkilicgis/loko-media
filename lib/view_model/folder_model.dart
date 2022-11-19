@@ -5,15 +5,21 @@ import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 
 class FolderModel {
+  // Girilen parametredeki klasörü uygulamanın root'unda oluşturur
   static Future<String?> createFolder(String folderName) async {
     try {
+      // Uygulamanın root klasörünün path'i
       final Directory root = await getApplicationDocumentsDirectory();
-
+      // Uygulamanın rrotunda yeni bir klasör path'i oluşturuyoruz.
+      // yani root içerisinde istediğimiz bir klasör oluşturması için.
+      // C:/ali/mehmet/flutter_app/ -> root ve ahmet adından bir klasör oluşturmak istiyorsun
+      // Yeni path C:/ali/mehmet/flutter_app/ahmet olur
       final Directory folder = Directory('${root.path}/$folderName/');
 
       if (await folder.exists()) {
         return folder.path;
       } else {
+        // create metodu ile istediğimiz path adresinde klasör oluşturuyor.
         final Directory newFolder = await folder.create(recursive: true);
         return newFolder.path;
       }

@@ -80,7 +80,11 @@ class AlbumDataBase {
     List<Album> liste = [];
     Database db = await openDatabase(_albumDatabaseName,
         version: _version, onCreate: (Database db, int version) async {});
-    List<Map> albumMaps = await db.query(albumTableName, orderBy: 'id desc');
+    List<Map> albumMaps = await db.query(
+      albumTableName,
+      orderBy: 'id desc',
+    );
+
     db.close();
     if (albumMaps.length > 0) {
       liste = albumMaps.map((e) => Album.fromJson(e)).toList();
@@ -88,8 +92,17 @@ class AlbumDataBase {
     return liste;
   }
 
-  static getFiles() {
-    // geri dönüş değerli List<Files> olacak
+  static getFiles(int album_id) async {
+    List<Medias> liste = [];
+    Database db = await openDatabase(_albumDatabaseName,
+        version: _version, onCreate: (Database db, int version) async {});
+    List<Map> fileMaps = await db.query(fileTableName,
+        orderBy: 'id desc', where: 'album_id= ?', whereArgs: [album_id]);
+    db.close();
+    if (fileMaps.length > 0) {
+      liste = fileMaps.map((e) => Medias.fromJson(e)).toList();
+    }
+    return liste;
   }
 
   static Future<Album?> getAAlbum(int id) async {
@@ -101,10 +114,10 @@ class AlbumDataBase {
           "id",
           "uid",
           "name",
+          "fileType",
+          "path",
           "isPublic",
           "url",
-          "image",
-          "status",
           "itemCount",
         ],
         where: 'id = ?',
@@ -116,8 +129,31 @@ class AlbumDataBase {
     return null;
   }
 
-  static getAFile(int id) {
-    // geri dönüş değerli Files olacak
+  static getAFile(int id) async {
+    Database db = await openDatabase(_albumDatabaseName,
+        version: _version, onCreate: (Database db, int version) async {});
+
+    List<Map> maps = await db.query(fileTableName,
+        columns: [
+          "id",
+          "uid",
+          "name",
+          "isPublic",
+          "url",
+          "api_id",
+          "date",
+          "latitude",
+          "longitude",
+          "altitude",
+          "status"
+        ],
+        where: 'id = ?',
+        whereArgs: [id]);
+    db.close();
+    if (maps.length > 0) {
+      return Medias.fromJson(maps.first);
+    }
+    return null;
   }
 
   static getPublicAlbums() {

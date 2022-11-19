@@ -55,13 +55,15 @@ class _LoginPageState extends State<LoginPage> {
     MyLocal.setStringData('token', token);
   }
 
+  //kullanıcı zaten sisteme girmiş mi diye kontrol için ilk başta çalıştırıyoruz.
   void loginControlState() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token =
-        prefs.containsKey('token') == true ? prefs.getString('token') : '';
+    String token = await MyLocal.getStringData('token');
+    // token boş ise sisteme giriş yapan yok.
     if (token == '') {
       setState(() {
+        // Loading ekranda circle olarak ortada dönen siyah dialogtur. bunu ekrandan silmek için kullanılır.
         Loading.close();
+        // tokenControl
         tokenControl = true;
         loginControl = false;
       });
@@ -88,6 +90,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
+    //kullanıcı zaten sisteme girmiş mi diye kontrol için ilk başta çalıştırıyoruz.
     loginControlState();
     super.initState();
   }
