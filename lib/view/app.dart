@@ -185,10 +185,10 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
             });
           },
           title: Padding(
-            padding: const EdgeInsets.only(bottom: 3),
+            padding: const EdgeInsets.only(bottom: 1),
             child: Container(
               child: Text(
-                album.name ?? '',
+                album.name==null?'':album.name!+', Sayı:'+album.itemCount!.toString(),
                 style: TextStyle(color: Color(0xffbecbe7), fontSize: 17),
               ),
             ),
@@ -197,7 +197,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
           subTitle: Container(
             child: Column(
               children: [
-                Padding(
+                /*Padding(
                   padding: const EdgeInsets.only(
                     top: 3,
                     bottom: 3,
@@ -209,8 +209,8 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                       fontSize: 15,
                     ),
                   ),
-                ),
-                Padding(
+                ),*/
+                /*Padding(
                   padding: const EdgeInsets.only(
                     top: 3,
                   ),
@@ -224,7 +224,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                       fontSize: 14,
                     ),
                   ),
-                )
+                )*/
               ],
             ),
           ),
@@ -523,7 +523,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                               onPressed: () {}, icon: Icon(Icons.search)),
                           IconButton(onPressed: () {}, icon: Icon(Icons.list)),
                           IconButton(
-                              onPressed: () {}, icon: Icon(Icons.filter)),
+                              onPressed: () {}, icon: Icon(Icons.filter_alt)),
                         ],
                       ),
                       ListView(
