@@ -451,6 +451,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
               centerTitle: true,
               floating: true,
               snap: true,
+              toolbarHeight: 60,
               expandedHeight: context.dynamicHeight(6),
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
@@ -476,19 +477,20 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                         child: Text(
                           'Albümler',
                         ),
-                        icon: Icon(Icons.list_alt),
+                        //icon: Icon(Icons.list_alt),
                       ),
                       Tab(
                         child: Text(
                           'Medya',
                         ),
-                        icon: Icon(Icons.media_bluetooth_off),
+                        //icon: Icon(Icons.media_bluetooth_off),
                       ),
                       Tab(
                           child: Text(
                             'Harita',
                           ),
-                          icon: Icon(Icons.map)),
+                          //icon: Icon(Icons.map)
+                        ),
                     ],
                   ),
                 ),
@@ -753,14 +755,14 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
 
   getAppController() {
     if (controller.index == 0) {
-      return Text('Size Ait Olan Projeler',
+      return Text('Oluşturulmuş Albümler',
           style: Theme.of(context).textTheme.headlineSmall);
     } else {
       if (controller.index == 1) {
-        return Text('Albüme Ait Medyalar',
+        return Text('Albümün Medyaları',
             style: Theme.of(context).textTheme.headlineSmall);
       } else {
-        return Text('Bağlı Olduğunuz Projeler',
+        return Text('Albümün Haritası',
             style: Theme.of(context).textTheme.headlineSmall);
       }
     }
