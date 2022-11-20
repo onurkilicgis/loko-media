@@ -451,7 +451,6 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
               centerTitle: true,
               floating: true,
               snap: true,
-              toolbarHeight: 60,
               expandedHeight: context.dynamicHeight(6),
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
