@@ -115,16 +115,17 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
       }
 
       GFCard card = GFCard(
-        boxFit: BoxFit.contain,
+        boxFit: BoxFit.cover,
         titlePosition: GFPosition.start,
         image: Image.asset(
           'assets/images/album_dark.png',
-          height: MediaQuery.of(context).size.height * 0.2,
-          width: MediaQuery.of(context).size.width,
+          height: context.dynamicHeight(5),
+          width: context.dynamicWidth(1.35),
           fit: BoxFit.cover,
         ),
         showImage: true,
         title: GFListTile(
+          margin: EdgeInsets.only(bottom: context.dynamicHeight(80)),
           onLongPress: () {
             showDialog(
                 context: context,
@@ -184,14 +185,11 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
               aktifalbum = album.id!;
             });
           },
-          title: Padding(
-            padding: const EdgeInsets.only(bottom: 1),
-            child: Container(
-              child: Text(
-                album.name==null?'':album.name!+', Sayı:'+album.itemCount!.toString(),
-                style: TextStyle(color: Color(0xffbecbe7), fontSize: 17),
-              ),
-            ),
+          title: Text(
+            album.name == null
+                ? ''
+                : album.name! + ', Sayı:' + album.itemCount!.toString(),
+            style: TextStyle(color: Color(0xffbecbe7), fontSize: 17),
           ),
 
           subTitle: Container(
@@ -259,7 +257,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               TextButton(
-                                  onPressed: () {},
+                                  onPressed: deleteAAlbum(album.id!),
                                   child: Text('Evet',
                                       style: TextStyle(
                                         fontSize: 20,
@@ -451,7 +449,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
               centerTitle: true,
               floating: true,
               snap: true,
-              expandedHeight: context.dynamicHeight(6),
+              expandedHeight: context.dynamicHeight(8),
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
                   color: Color(0xff26334d),
@@ -460,14 +458,14 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
               title: getAppController(),
               backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
               bottom: PreferredSize(
-                preferredSize: Size.fromHeight(context.dynamicHeight(11)),
+                preferredSize: Size.fromHeight(context.dynamicHeight(30)),
                 child: Material(
                   color: Color(0xff202b40),
                   child: TabBar(
                     labelStyle: TextStyle(fontSize: context.dynamicHeight(50)),
                     unselectedLabelStyle:
                         TextStyle(fontSize: context.dynamicHeight(55)),
-                    indicatorColor: Colors.deepPurple,
+                    indicatorColor: Color(0xff0e91ce),
                     controller: controller,
                     labelColor: Color(0xff0e91ce),
                     unselectedLabelColor: Color(0xff697a9b),
@@ -485,11 +483,11 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                         //icon: Icon(Icons.media_bluetooth_off),
                       ),
                       Tab(
-                          child: Text(
-                            'Harita',
-                          ),
-                          //icon: Icon(Icons.map)
+                        child: Text(
+                          'Harita',
                         ),
+                        //icon: Icon(Icons.map)
+                      ),
                     ],
                   ),
                 ),
@@ -500,41 +498,79 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
               controller: controller,
               physics: BouncingScrollPhysics(),
               children: [
-                SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 24,
+                              top: 24,
+                              right: 24,
+                            ),
+                            child: SizedBox(
+                              height: context.dynamicHeight(17),
                               child: TextField(
                                 controller: searchController,
-                                keyboardType: TextInputType.text,
+                                textInputAction: TextInputAction.search,
                                 textAlign: TextAlign.center,
-                                cursorColor: const Color(0xff80C783),
+                                cursorColor: const Color(0xff017eba),
                                 decoration: InputDecoration(
-                                  labelText: 'Albüm Arama',
-                                ),
+                                    suffixIcon: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                              tooltip: 'Albüm Listeleme',
+                                              onPressed: () {},
+                                              icon: Icon(
+                                                Icons.list,
+                                                size: context.dynamicWidth(19),
+                                                color: Color(0xff017eba),
+                                              )),
+                                          IconButton(
+                                              tooltip: 'Albüm Filtreleme',
+                                              onPressed: () {},
+                                              icon: Icon(
+                                                Icons.filter_alt,
+                                                size: context.dynamicWidth(19),
+                                                color: Color(0xff017eba),
+                                              )),
+                                        ]),
+                                    prefixIcon: Icon(
+                                      Icons.search,
+                                      color: Color(0xfa99a3ac),
+                                    ),
+                                    labelText: 'Albüm Arama',
+                                    labelStyle: TextStyle(
+                                        color: Color(0xff017eba),
+                                        fontSize: context.dynamicWidth(28)),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                      color: Color(0xff017eba),
+                                    )),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                      color: Color(0xff017eba),
+                                    ))),
                                 onChanged: (value) {},
                               ),
                             ),
                           ),
-                          IconButton(
-                              onPressed: () {}, icon: Icon(Icons.search)),
-                          IconButton(onPressed: () {}, icon: Icon(Icons.list)),
-                          IconButton(
-                              onPressed: () {}, icon: Icon(Icons.filter_alt)),
-                        ],
-                      ),
-                      ListView(
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: ListView(
                         shrinkWrap: true,
                         padding: const EdgeInsets.all(8),
                         scrollDirection: Axis.vertical,
                         children: createAlbumCards(),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 Medya(id: aktifalbum),
                 Harita()
@@ -764,6 +800,19 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         return Text('Albümün Haritası',
             style: Theme.of(context).textTheme.headlineSmall);
       }
+    }
+  }
+
+  deleteAAlbum(int album_id) async {
+    List<dynamic> files = [];
+    files = await AlbumDataBase.getFiles(album_id);
+    if (files != null) {
+      for (int i = 0; i < files.length; i++) {
+        var item = files[i];
+        item.delete();
+      }
+      await AlbumDataBase.fileDelete(album_id);
+      await AlbumDataBase.albumDelete(album_id);
     }
   }
 }

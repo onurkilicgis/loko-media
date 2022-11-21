@@ -166,4 +166,23 @@ class AlbumDataBase {
   static getPublicFiles() {
     // geri dönüş değerli List<Files> olacak
   }
+
+  static deleteDatabase(String path) async {
+    await deleteDatabase(path);
+  }
+
+// id bilgisi üzerinden album  silme
+  static albumDelete(int id) async {
+    Database db = await openDatabase(_albumDatabaseName,
+        version: _version, onCreate: (Database db, int version) async {});
+    return await db.delete(albumTableName, where: 'id = ?', whereArgs: [id]);
+  }
+
+  //album_id üzerinden veritabanına kayıtlı dosyaları silme
+  static fileDelete(int album_id) async {
+    Database db = await openDatabase(_albumDatabaseName,
+        version: _version, onCreate: (Database db, int version) async {});
+    return await db
+        .delete(fileTableName, where: 'album_id = ?', whereArgs: [album_id]);
+  }
 }

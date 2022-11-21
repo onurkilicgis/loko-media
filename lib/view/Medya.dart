@@ -11,10 +11,10 @@ class Medya extends StatefulWidget {
   Medya({this.id});
 
   @override
-  State<Medya> createState() => _MedyaState();
+  State<Medya> createState() => MedyaState();
 }
 
-class _MedyaState extends State<Medya> {
+class MedyaState extends State<Medya> {
   List<Medias> fileList = [];
 
   getFileList(int album_id) async {
