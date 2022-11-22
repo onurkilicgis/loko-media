@@ -11,6 +11,7 @@ import 'package:getwidget/position/gf_position.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
+import 'package:loko_media/services/Loader.dart';
 import 'package:loko_media/services/MyLocal.dart';
 import 'package:loko_media/services/utils.dart';
 import 'package:loko_media/view/Medya.dart';
@@ -257,7 +258,10 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               TextButton(
-                                  onPressed: deleteAAlbum(album.id!),
+                                  onPressed: () {
+                                    deleteAAlbum(album.id!);
+                                    Navigator.pop(context);
+                                  },
                                   child: Text('Evet',
                                       style: TextStyle(
                                         fontSize: 20,
@@ -786,8 +790,6 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     );
   }
 
-  getDeleteDialog() {}
-
   getAppController() {
     if (controller.index == 0) {
       return Text('Oluşturulmuş Albümler',
@@ -803,16 +805,32 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     }
   }
 
+  // aktif olan albümü silme
   deleteAAlbum(int album_id) async {
+    Album? silinecekAlbum = await AlbumDataBase.getAAlbum(album_id);
+    Loading.waiting('${silinecekAlbum?.name} Adlı Albüm Siliniyor...');
     List<dynamic> files = [];
     files = await AlbumDataBase.getFiles(album_id);
     if (files != null) {
       for (int i = 0; i < files.length; i++) {
         var item = files[i];
-        item.delete();
+        File file = File(item.path);
+        file.delete();
       }
-      await AlbumDataBase.fileDelete(album_id);
-      await AlbumDataBase.albumDelete(album_id);
+
+      int silinenMediaSayisi = await AlbumDataBase.mediaDelete(album_id);
+      int silinenAlbumSayisi = await AlbumDataBase.albumDelete(album_id);
+      if (aktifalbum == album_id) {
+        int lastAlbumId = await AlbumDataBase.getLastAlbum();
+        await MyLocal.setIntData('aktifalbum', lastAlbumId);
+        SBBildirim.bilgi(
+            '${silinenMediaSayisi} Adet medya öğesi ve ${silinenAlbumSayisi} adet, ${silinecekAlbum?.name} adlı albüm silindi. Son albüm tekrar aktif edilmiştir.');
+      } else {
+        SBBildirim.bilgi(
+            '${silinenMediaSayisi} Adet medya öğesi ve ${silinenAlbumSayisi} adet, ${silinecekAlbum?.name} adlı albüm silindi.');
+      }
+      Loading.close();
+      getAlbumList();
     }
   }
 }

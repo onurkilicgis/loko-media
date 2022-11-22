@@ -6,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 class AlbumDataBase {
   static const String _albumDatabaseName = 'albumdatabase6.db';
   static const String albumTableName = 'albums';
-  static const String fileTableName = 'medias';
+  static const String mediaTableName = 'medias';
   static const int _version = 1;
 
   static createTables() async {
@@ -23,7 +23,7 @@ class AlbumDataBase {
            itemCount INTEGER DEFAULT 0 NOT NULL,
            status BOOLEAN DEFAULT true NOT NULL) ''');
 
-      await db.execute('''CREATE TABLE IF NOT EXISTS $fileTableName ( 
+      await db.execute('''CREATE TABLE IF NOT EXISTS $mediaTableName ( 
            id INTEGER PRIMARY KEY AUTOINCREMENT,
            album_id INTEGER,
            name TEXT, 
@@ -62,7 +62,7 @@ class AlbumDataBase {
     int deger = await updateAAlbum(album!);
     Database database = await openDatabase(_albumDatabaseName,
         version: _version, onCreate: (Database db, int version) async {});
-    int lastid = await database.insert(fileTableName, media.toJson());
+    int lastid = await database.insert(mediaTableName, media.toJson());
     database.close();
     callback(lastid);
   }
@@ -96,13 +96,30 @@ class AlbumDataBase {
     List<Medias> liste = [];
     Database db = await openDatabase(_albumDatabaseName,
         version: _version, onCreate: (Database db, int version) async {});
-    List<Map> fileMaps = await db.query(fileTableName,
+    List<Map> fileMaps = await db.query(mediaTableName,
         orderBy: 'id desc', where: 'album_id= ?', whereArgs: [album_id]);
     db.close();
     if (fileMaps.length > 0) {
       liste = fileMaps.map((e) => Medias.fromJson(e)).toList();
     }
     return liste;
+  }
+
+// silindikten sonraki son albümü aktif etme
+  static getLastAlbum() async {
+    List<Album> liste = [];
+    Database db = await openDatabase(_albumDatabaseName,
+        version: _version, onCreate: (Database db, int version) async {});
+    List<Map> albumMaps =
+        await db.query(albumTableName, orderBy: 'id desc', limit: 1);
+    if (albumMaps.length > 0) {
+      liste = albumMaps.map((e) => Album.fromJson(e)).toList();
+    }
+    if (liste.length == 1) {
+      return liste[0].id;
+    } else {
+      return -1;
+    }
   }
 
   static Future<Album?> getAAlbum(int id) async {
@@ -134,7 +151,7 @@ class AlbumDataBase {
     Database db = await openDatabase(_albumDatabaseName,
         version: _version, onCreate: (Database db, int version) async {});
 
-    List<Map> maps = await db.query(fileTableName,
+    List<Map> maps = await db.query(mediaTableName,
         columns: [
           "id",
           "album_id",
@@ -167,22 +184,23 @@ class AlbumDataBase {
     // geri dönüş değerli List<Files> olacak
   }
 
-  static deleteDatabase(String path) async {
-    await deleteDatabase(path);
-  }
-
 // id bilgisi üzerinden album  silme
   static albumDelete(int id) async {
     Database db = await openDatabase(_albumDatabaseName,
         version: _version, onCreate: (Database db, int version) async {});
-    return await db.delete(albumTableName, where: 'id = ?', whereArgs: [id]);
+    int result =
+        await db.delete(albumTableName, where: 'id = ?', whereArgs: [id]);
+    db.close();
+    return result;
   }
 
   //album_id üzerinden veritabanına kayıtlı dosyaları silme
-  static fileDelete(int album_id) async {
+  static mediaDelete(int album_id) async {
     Database db = await openDatabase(_albumDatabaseName,
         version: _version, onCreate: (Database db, int version) async {});
-    return await db
-        .delete(fileTableName, where: 'album_id = ?', whereArgs: [album_id]);
+    int result = await db
+        .delete(mediaTableName, where: 'album_id = ?', whereArgs: [album_id]);
+    db.close();
+    return result;
   }
 }
