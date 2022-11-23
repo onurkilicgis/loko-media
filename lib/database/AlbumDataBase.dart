@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:loko_media/models/Album.dart';
 import 'package:loko_media/services/MyLocal.dart';
 import 'package:loko_media/view_model/folder_model.dart';
@@ -41,7 +43,7 @@ class AlbumDataBase {
     });
   }
 
-  static insertAlbum(Album album, Function callback) async {
+  static insertAlbum(Album album) async {
     Database database = await openDatabase(_albumDatabaseName,
         version: _version, onCreate: (Database db, int version) async {});
     int lastid = await database.insert(albumTableName, album.toJson());
@@ -51,7 +53,7 @@ class AlbumDataBase {
     await FolderModel.createFolder('albums/album-${lastid}');
 
     database.close();
-    callback(lastid);
+    return lastid;
   }
 
   static insertFile(Medias media, Function callback) async {
@@ -76,7 +78,7 @@ class AlbumDataBase {
     return deger;
   }
 
-  Future<List<Album>> getAlbums() async {
+  static Future<List<Album>> getAlbums() async {
     List<Album> liste = [];
     Database db = await openDatabase(_albumDatabaseName,
         version: _version, onCreate: (Database db, int version) async {});
@@ -203,4 +205,66 @@ class AlbumDataBase {
     db.close();
     return result;
   }
+
+  // albüm yokken bir medya yüklenmek istenirse otomatik albüm oluşturmak için hazırlanmıştır.
+  static createAlbumIfTableEmpty(String albumName) async {
+    String userString = await MyLocal.getStringData('user');
+    dynamic user = json.decode(userString);
+    List<Album> list = await getAlbums();
+    if (list.length == 0) {
+      Album album = Album();
+      album.insertData(albumName, user['uid']);
+      await insertAlbum(album);
+    }
+  }
 }
+
+/* static benAsenkronDegilim(String parametre1, Function parametre2) {
+    //işlemler yaptım
+    // bir değer döndürmem lazım ancak return ile değil
+    //o zaman geri döndürmem gereken değeri parametre2 fonksiyonunu kullanarak geri gönderebilirim
+    // aşağıda elde ettiğimi farzettiğim bir veriyi geri göndermeyi sağladım
+    parametre2(parametre1);
+  }
+
+  //bu fonksiyonu dışarda bir yerde çalıştırman durumunda
+  //benAsenkronDegilim fonksiyonunu çalıştırır,
+  // benAsenkronDegilim fonksiyonu da işlemini yaptığında parametre2'yi köprü olarak kullanır ve veri gönderir
+  // birIslemYap foksiyonu içinde (geridonendeger){} hrangi bir isim verebilirdik genelde (result){} deriz
+  // yukardaki değeri alır ve içinde kullanır.
+  //anladın mı ? anladım peki return ile yapmak varken neden callback yani hangi durumlarda kullanmak zorunda kalıyorum
+
+  // tamam anlatıyim. await ne demek ? "bekle" demekdeğilmi ?evet
+  // await olunca yazılım bekliyor aynen
+  // kullanıcı beklesin ister misin ? değil tabiki az bekel bi
+  // kullanıcıyı boş yere bekletmemek için bazen await kullanmayız yani asenkron yapmayız
+  // diğer türlü kullanıcı programın çok yavaş çalıştığını düşünecek
+  // await kullanımı kolaydır insan aklının rahat alabileceği bir işlem çünkü herşey adım adım ilerliyor değil mi ?
+  //evet, ama işte bazen kullanıcı beklemesin diye böyle callbackler kullanıyoruz. anlamişko ? yani bir nevi asenkron yapıyor fonksiyonu
+  // asenkdron yapmıyor, diyor ki benim 100 tane çalışanım var hepsine bir iş vericem
+  // eğer biri bitirince diğer gitsin dersen  100 kişiyi o işi yapması için bekleyeceksin
+  // diyelimki bir kişinin bir işi yapması 1 dk sürsün. 100 kişi gönder 100dk sürer bitmesi değil mi ?
+  // evet
+  // ama callback ile yapsan 100'ünü de gönderirsin aynı anda sen işini bitirince bana dönersin diyorsun
+  // 100'ü de işe gidiyor kimisi 1dk da kimisi 2dk da işini bitiriyor
+  // bir bakıyorsun ki 100'ü toplamda 5dk da dönmüş
+  // ne olmuş oluyor 100dk beklemiyorsun da 5dk bekliyorsun. bu bir kazançtır.anladım
+  // asenkronu yönetmek kolaydır. adım adım yaptırıyorsun. bazen gereklidir.
+  // ancak callback te sana hız katar esneklik katar. eski yazılımcılar hep asenkron çalışır
+  // yeni nesil hıza önem verdiğ için böyle callback gibi bir mantıkla çalışır
+  // ancak callback ler okunurluğu azaltıyor. yani birisinin anlamasını zorlaştırıyor.
+  // anladın mı ? anladım
+  // aslında callback diye bir şey yok, parametreye fonksiyon veriyorsun. fonksiyonu çalıştırınca oraya düşüyor.
+  // eskiden parametreye fonksiyon verilmiyordu. artık verilebildiği için güzel bişey.evet güzel
+  // evet çok asenkdon kullandık ancak projemiz zaten küçük. endişlenmene gerek yok.anbladım ben bazen hangi
+  //fonksiyon asenkron olmalı tam bilemiyorum
+  //sanırım şöyle öncelikle o işin yapılması gerekn durumlarda yani sen şunu yap basşka bişeyle uğraşma sonra diğerlerine
+  //gecersin gibi demiT E?Vet 100% doğru
+  // bu arada kelimeleri yanlış kullanıyoruz. :) senkron, asenkron
+  // senkron -> await, async li kısım
+
+  static birIslemYap() {
+    benAsenkronDegilim('Ali', (geridonendeger) {
+      SBBildirim.bilgi(geridonendeger);
+    });
+  }*/

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:io' as ioo;
 import 'dart:typed_data';
 
+import 'package:image/image.dart';
 import 'package:path_provider/path_provider.dart';
 
 class FolderModel {
@@ -28,12 +29,17 @@ class FolderModel {
     }
   }
 
-  static Future<String?> createFile(
-      String path, Uint8List bytes, String fileName) async {
+  static Future<String?> createFile(String path, Uint8List bytes,
+      String fileName, String miniFileName) async {
     final Directory root = await getApplicationDocumentsDirectory();
     final Directory filePath = Directory('${root.path}/$path/${fileName}');
     var file = await ioo.File(filePath.path);
     await file.writeAsBytes(bytes);
+    Image? image = decodeImage(bytes);
+    Image thumbnail = copyResize(image!, width: 36);
+    final Directory miniFilePath =
+        Directory('${root.path}/$path/${miniFileName}');
+    new ioo.File(miniFilePath.path).writeAsBytesSync(encodePng(thumbnail));
     return file.path;
   }
 }

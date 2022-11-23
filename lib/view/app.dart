@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:getwidget/position/gf_position.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
+import 'package:loko_media/services/GPS.dart';
 import 'package:loko_media/services/Loader.dart';
 import 'package:loko_media/services/MyLocal.dart';
 import 'package:loko_media/services/utils.dart';
@@ -49,22 +51,29 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     try {
       final image = await ImagePicker().pickImage(source: source);
       if (image == null) return;
+      dynamic positions = await GPS.getGPSPosition();
+      if (positions['status'] == false) {
+        SBBildirim.uyari(positions['message']);
+        return;
+      }
+      await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
       final imageTemporary = File(image.path);
       int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
       int now = DateTime.now().millisecondsSinceEpoch;
       var parts = image.path.split('.');
       String extension = parts[parts.length - 1];
       String filename = 'image-' + now.toString() + '.' + extension;
+      String miniFilename = 'image-mini-' + now.toString() + '.' + extension;
       Uint8List bytes = imageTemporary.readAsBytesSync();
       String? newPath = await FolderModel.createFile(
-          'albums/album-${aktifAlbumId}', bytes, filename);
+          'albums/album-${aktifAlbumId}', bytes, filename, miniFilename);
       Medias dbImage = new Medias(
         album_id: aktifAlbumId,
         name: filename,
         path: newPath,
-        latitude: 0,
-        longitude: 0,
-        altitude: 0,
+        latitude: positions['latitude'],
+        longitude: positions['longitude'],
+        altitude: positions['altitude'],
         fileType: 'image',
       );
       dbImage.insertData();
@@ -78,7 +87,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
   }
 
   getAlbumList() async {
-    List<Album> dbAlbums = await albumDataBase.getAlbums();
+    List<Album> dbAlbums = await AlbumDataBase.getAlbums();
     int aktif_album_no = await MyLocal.getIntData('aktifalbum');
     setState(() {
       albumList = dbAlbums;
@@ -726,14 +735,15 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                         onPressed: () async {
                           if (albumNameController.text != '') {
                             Navigator.pop(context);
+                            String userString =
+                                await MyLocal.getStringData('user');
+                            dynamic user = json.decode(userString);
                             Album album = Album();
-
                             album.insertData(
-                                albumNameController.text, 'asdasdasd');
-                            await AlbumDataBase.insertAlbum(album, (lastId) {
-                              album.id = lastId;
-                              getAlbumList();
-                            });
+                                albumNameController.text, user['uid']);
+                            int lastId = await AlbumDataBase.insertAlbum(album);
+                            album.id = lastId;
+                            getAlbumList();
                           }
                         },
                         child: Text('Tamam',
