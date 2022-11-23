@@ -85,6 +85,7 @@ class Medias {
   int? id;
   int? album_id;
   String? name;
+  String? miniName;
   String? fileType;
   String? path;
   bool? isPublic;
@@ -100,6 +101,7 @@ class Medias {
       {this.id,
       required this.album_id,
       required this.name,
+      required this.miniName,
       required this.fileType,
       required this.path,
       this.isPublic,
@@ -115,6 +117,7 @@ class Medias {
     id = json['id'];
     album_id = json['album_id'];
     name = json['name'];
+    miniName = json['miniName'];
     fileType = json['fileType'];
     path = json['path'];
     isPublic = json['isPublic'] == 1 ? true : false;
@@ -132,6 +135,7 @@ class Medias {
     data['id'] = this.id;
     data['album_id'] = this.album_id;
     data['name'] = this.name;
+    data['miniName'] = this.miniName;
     data['fileType'] = this.fileType;
     data['path'] = this.path;
     data['isPublic'] = this.isPublic;

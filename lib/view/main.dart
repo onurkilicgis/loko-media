@@ -5,8 +5,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
+import 'package:local_assets_server/local_assets_server.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +25,20 @@ import 'LoginPage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final Directory root = await getApplicationDocumentsDirectory();
+  final Directory albumPath = Directory('${root.path}/albums');
+  InAppLocalhostServer localhostServer = InAppLocalhostServer(
+      port: 1990,
+      documentRoot: './assets/harita/',
+      directoryIndex: 'index.html');
+  final server = LocalAssetsServer(
+    address: InternetAddress.loopbackIPv4,
+    assetsBasePath: albumPath.path,
+    rootDir: albumPath,
+    port: 1991,
+    logger: const DebugLogger(),
+  );
+  final srv = await server.serve();
 
   // Uygulamanın root'unda albüm adında bir klasör oluşturur.
   await FolderModel.createFolder('albums');
@@ -34,7 +51,7 @@ Future<void> main() async {
   // Kullanıcının tema konusunda yapmış olduğu seçimi aklında tutmuş oluyor.
   String isDark = await MyLocal.getStringData('theme');
   String cardType = await MyLocal.getStringData('card-type');
-  if(cardType==''){
+  if (cardType == '') {
     await MyLocal.setStringData('card-type', 'GFCard');
   }
   if (isDark == '') {
@@ -53,18 +70,20 @@ Future<void> main() async {
   await Permission.locationAlways.request(); //ok
 
   await Firebase.initializeApp();
+  await localhostServer.start();
+  //HttpOverrides.global = MyHttpOverrides();
   runApp(MyApp(isDark: isDark));
-  HttpOverrides.global = MyHttpOverrides();
+
 }
 
-class MyHttpOverrides extends HttpOverrides {
+/*class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
   }
-}
+}*/
 
 Future initialization(BuildContext, context) async {
   await Future.delayed(const Duration(milliseconds: 500));

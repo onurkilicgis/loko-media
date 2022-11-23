@@ -6,7 +6,7 @@ import 'package:loko_media/view_model/folder_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AlbumDataBase {
-  static const String _albumDatabaseName = 'albumdatabase6.db';
+  static const String _albumDatabaseName = 'albumdatabase8.db';
   static const String albumTableName = 'albums';
   static const String mediaTableName = 'medias';
   static const int _version = 1;
@@ -29,6 +29,7 @@ class AlbumDataBase {
            id INTEGER PRIMARY KEY AUTOINCREMENT,
            album_id INTEGER,
            name TEXT, 
+           miniName TEXT,
            fileType VARCHAR(10),
            path TEXT,
            isPublic BOOLEAN DEFAULT false NOT NULL,

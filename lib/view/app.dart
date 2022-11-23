@@ -70,6 +70,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
       Medias dbImage = new Medias(
         album_id: aktifAlbumId,
         name: filename,
+        miniName: miniFilename,
         path: newPath,
         latitude: positions['latitude'],
         longitude: positions['longitude'],
@@ -613,7 +614,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                   ],
                 ),
                 Medya(id: aktifalbum),
-                Harita(id: aktifalbum, type:'album');
+                Harita(id: aktifalbum, type: 'album')
               ]),
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -901,26 +902,24 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     Loading.waiting('${silinecekAlbum?.name} Adlı Albüm Siliniyor...');
     List<dynamic> files = [];
     files = await AlbumDataBase.getFiles(album_id);
-    if (files != null) {
-      for (int i = 0; i < files.length; i++) {
-        var item = files[i];
-        File file = File(item.path);
-        file.delete();
-      }
-
-      int silinenMediaSayisi = await AlbumDataBase.mediaDelete(album_id);
-      int silinenAlbumSayisi = await AlbumDataBase.albumDelete(album_id);
-      if (aktifalbum == album_id) {
-        int lastAlbumId = await AlbumDataBase.getLastAlbum();
-        await MyLocal.setIntData('aktifalbum', lastAlbumId);
-        SBBildirim.bilgi(
-            '${silinenMediaSayisi} Adet medya öğesi ve ${silinenAlbumSayisi} adet, ${silinecekAlbum?.name} adlı albüm silindi. Son albüm tekrar aktif edilmiştir.');
-      } else {
-        SBBildirim.bilgi(
-            '${silinenMediaSayisi} Adet medya öğesi ve ${silinenAlbumSayisi} adet, ${silinecekAlbum?.name} adlı albüm silindi.');
-      }
-      Loading.close();
-      getAlbumList();
+    for (int i = 0; i < files.length; i++) {
+      var item = files[i];
+      File file = File(item.path);
+      file.delete();
     }
+
+    int silinenMediaSayisi = await AlbumDataBase.mediaDelete(album_id);
+    int silinenAlbumSayisi = await AlbumDataBase.albumDelete(album_id);
+    if (aktifalbum == album_id) {
+      int lastAlbumId = await AlbumDataBase.getLastAlbum();
+      await MyLocal.setIntData('aktifalbum', lastAlbumId);
+      SBBildirim.bilgi(
+          '${silinenMediaSayisi} Adet medya öğesi ve ${silinenAlbumSayisi} adet, ${silinecekAlbum?.name} adlı albüm silindi. Son albüm tekrar aktif edilmiştir.');
+    } else {
+      SBBildirim.bilgi(
+          '${silinenMediaSayisi} Adet medya öğesi ve ${silinenAlbumSayisi} adet, ${silinecekAlbum?.name} adlı albüm silindi.');
+    }
+    Loading.close();
+    getAlbumList();
   }
 }
