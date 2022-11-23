@@ -613,7 +613,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                   ],
                 ),
                 Medya(id: aktifalbum),
-                Harita()
+                Harita(id: aktifalbum, type:'album');
               ]),
         ),
         bottomNavigationBar: BottomNavigationBar(
