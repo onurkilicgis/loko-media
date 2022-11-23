@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
+import 'dart:io' as ioo;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,6 +27,7 @@ import '../view_model/folder_model.dart';
 import '../view_model/main_view_models.dart';
 import 'Harita.dart';
 
+
 class App extends StatefulWidget {
   const App({
     Key? key,
@@ -44,7 +47,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
 
   List<Album> albumList = [];
   int aktifalbum = -1;
-
+  String cardType = 'GFCard';
   File? image;
 
   Future pickImage(ImageSource source) async {
@@ -89,9 +92,11 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
   getAlbumList() async {
     List<Album> dbAlbums = await AlbumDataBase.getAlbums();
     int aktif_album_no = await MyLocal.getIntData('aktifalbum');
+    String cardType2 = await MyLocal.getStringData('card-type');
     setState(() {
       albumList = dbAlbums;
       aktifalbum = aktif_album_no;
+      cardType = cardType2;
     });
   }
 
@@ -101,9 +106,236 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
 
   AuthService _authService = AuthService();
 
-  List<GFCard> createAlbumCards() {
+  Card createCard(album, image, durum){
+    return Card(
+      child: ListTile(
+        leading: image,
+        title: Text(album.name),
+        subtitle: Text('Öğe Sayısı : ${album.itemCount}, Durum : ${durum}'),
+        trailing: Icon(Icons.more_vert),
+      ),
+    );
+  }
+
+  GFCard createGFCard(album,image, durum){
+    return GFCard(
+      boxFit: BoxFit.cover,
+      titlePosition: GFPosition.start,
+      image: image,
+      showImage: true,
+      title: GFListTile(
+        margin: EdgeInsets.only(bottom: context.dynamicHeight(80)),
+        onLongPress: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(14.0))),
+                  backgroundColor: Theme.of(context)
+                      .bottomNavigationBarTheme
+                      .backgroundColor,
+                  actions: [
+                    Column(
+                      children: [
+                        ListTile(
+                          leading: Icon(Icons.check),
+                          title: Text('Albümü Aktif Et'),
+                          onTap: () async {
+                            await MyLocal.setIntData('aktifalbum', album.id);
+                            getAlbumList();
+
+                            Navigator.pop(context);
+                          },
+                        ),
+                        ListTile(
+                            leading: Icon(Icons.list_alt),
+                            title: Text('Albümün İçindekileri Listele'),
+                            onTap: () {}),
+                        ListTile(
+                            leading: Icon(FontAwesomeIcons.mapLocation),
+                            title: Text('Haritada Göster'),
+                            onTap: () {}),
+                        ListTile(
+                            leading: Icon(Icons.share),
+                            title: Text('Albümü Paylaş'),
+                            onTap: () {}),
+                        ListTile(
+                            leading: Icon(Icons.supervised_user_circle),
+                            title: Text('Paylaşılan Kişiler Listesi'),
+                            onTap: () {}),
+                        ListTile(
+                          leading: Icon(
+                            Icons.delete,
+                          ),
+                          title: Text('Albümü Sil'),
+                          onTap: () {},
+                        ),
+                      ],
+                    )
+                  ],
+                );
+              });
+        },
+        onTap: () async {
+          await MyLocal.setIntData('aktifalbum', album.id);
+          controller.index = 1;
+          setState(() {
+            aktifalbum = album.id!;
+          });
+        },
+        title: Text(
+          album.name == null
+              ? ''
+              : album.name! + ', Sayı:' + album.itemCount!.toString(),
+          style: TextStyle(color: Color(0xffbecbe7), fontSize: 17),
+        ),
+
+        subTitle: Container(
+          child: Column(
+            children: [
+              /*Padding(
+                  padding: const EdgeInsets.only(
+                    top: 3,
+                    bottom: 3,
+                  ),
+                  child: Text(
+                    album.date ?? '',
+                    style: TextStyle(
+                      color: Color(0xffbecbe7),
+                      fontSize: 15,
+                    ),
+                  ),
+                ),*/
+              /*Padding(
+                  padding: const EdgeInsets.only(
+                    top: 3,
+                  ),
+                  child: Text(
+                    'Sayı : ' +
+                        album.itemCount!.toString() +
+                        ', Durum : ' +
+                        aktifPasif,
+                    style: TextStyle(
+                      color: Color(0xffbecbe7),
+                      fontSize: 14,
+                    ),
+                  ),
+                )*/
+            ],
+          ),
+        ),
+
+        // subTitleText: album.date,
+      ),
+      //content: Text("Some quick example text to build on the card"),
+      buttonBar: GFButtonBar(
+        alignment: WrapAlignment.spaceEvenly,
+
+        // crossAxisAlignment: WrapCrossAlignment.start,
+        children: <Widget>[
+          InkWell(
+            borderRadius: BorderRadius.circular(25),
+            highlightColor: Colors.red.withOpacity(0.8),
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      shape: RoundedRectangleBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(14.0))),
+                      backgroundColor: Theme.of(context)
+                          .bottomNavigationBarTheme
+                          .backgroundColor,
+                      title: Text('Albüm Silme'),
+                      content: Text(
+                          '${album.name} Adlı Albümü Silmeye Emin Misiniz?'),
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                                onPressed: () {
+                                  deleteAAlbum(album.id!);
+                                  Navigator.pop(context);
+                                },
+                                child: Text('Evet',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Color(0xffe80b0b),
+                                    ))),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text('Hayır',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Color(0xff80C783),
+                                    )))
+                          ],
+                        )
+                      ],
+                    );
+                  });
+            },
+            child: GFAvatar(
+              size: context.dynamicWidth(13),
+              backgroundColor: Color(0xff202b40),
+              child: Icon(
+                Icons.delete,
+                color: Color(0xff017eba),
+              ),
+            ),
+          ),
+          InkWell(
+            borderRadius: BorderRadius.circular(25),
+            hoverColor: Colors.red,
+            highlightColor: Colors.red.withOpacity(0.8),
+            //splashColor: Colors.deepPurple.withOpacity(0.5),
+            onTap: getShareDialog,
+            child: GFAvatar(
+              size: context.dynamicWidth(13),
+              backgroundColor: Color(0xff202b40),
+              child: Icon(
+                Icons.share,
+                color: Color(0xff017eba),
+              ),
+            ),
+          ),
+          GFAvatar(
+            size: context.dynamicWidth(13),
+            backgroundColor: Color(0xff202b40),
+            child: Icon(
+              Icons.supervised_user_circle,
+              color: Color(0xff017eba),
+            ),
+          ),
+          GFAvatar(
+            size: context.dynamicWidth(13),
+            backgroundColor: Color(0xff202b40),
+            child: Icon(
+              Icons.map,
+              color: Color(0xff017eba),
+            ),
+          ),
+          GFAvatar(
+            size: context.dynamicWidth(13),
+            backgroundColor: Color(0xff202b40),
+            child: Icon(
+              Icons.list_alt,
+              color: Color(0xff017eba),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> createAlbumCards() {
     String isDark = 'dark';
-    List<GFCard> cards = [];
+    List<Widget> cards = [];
     for (int i = 0; i < albumList.length; i++) {
       var album = albumList[i];
       String aktifPasif = 'Pasif';
@@ -121,229 +353,28 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         }
       } else {
         // image = new Image.file(imageFile);
-        image = Image.asset('assets/images/album_dark.png');
+        if(cardType=='GFCard'){
+          image = Image.file(
+            File(album.image.toString()),
+            fit: BoxFit.fitWidth,
+          );
+        }else{
+          image = Image.file(
+            File(album.image.toString()),
+            fit: BoxFit.fitHeight,
+            width: 50,
+          );
+        }
+
       }
 
-      GFCard card = GFCard(
-        boxFit: BoxFit.cover,
-        titlePosition: GFPosition.start,
-        image: Image.asset(
-          'assets/images/album_dark.png',
-          height: context.dynamicHeight(5),
-          width: context.dynamicWidth(1.35),
-          fit: BoxFit.cover,
-        ),
-        showImage: true,
-        title: GFListTile(
-          margin: EdgeInsets.only(bottom: context.dynamicHeight(80)),
-          onLongPress: () {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(14.0))),
-                    backgroundColor: Theme.of(context)
-                        .bottomNavigationBarTheme
-                        .backgroundColor,
-                    actions: [
-                      Column(
-                        children: [
-                          ListTile(
-                            leading: Icon(Icons.check),
-                            title: Text('Albümü Aktif Et'),
-                            onTap: () async {
-                              await MyLocal.setIntData('aktifalbum', album.id);
-                              getAlbumList();
-
-                              Navigator.pop(context);
-                            },
-                          ),
-                          ListTile(
-                              leading: Icon(Icons.list_alt),
-                              title: Text('Albümün İçindekileri Listele'),
-                              onTap: () {}),
-                          ListTile(
-                              leading: Icon(FontAwesomeIcons.mapLocation),
-                              title: Text('Haritada Göster'),
-                              onTap: () {}),
-                          ListTile(
-                              leading: Icon(Icons.share),
-                              title: Text('Albümü Paylaş'),
-                              onTap: () {}),
-                          ListTile(
-                              leading: Icon(Icons.supervised_user_circle),
-                              title: Text('Paylaşılan Kişiler Listesi'),
-                              onTap: () {}),
-                          ListTile(
-                            leading: Icon(
-                              Icons.delete,
-                            ),
-                            title: Text('Albümü Sil'),
-                            onTap: () {},
-                          ),
-                        ],
-                      )
-                    ],
-                  );
-                });
-          },
-          onTap: () async {
-            await MyLocal.setIntData('aktifalbum', album.id);
-            controller.index = 1;
-            setState(() {
-              aktifalbum = album.id!;
-            });
-          },
-          title: Text(
-            album.name == null
-                ? ''
-                : album.name! + ', Sayı:' + album.itemCount!.toString(),
-            style: TextStyle(color: Color(0xffbecbe7), fontSize: 17),
-          ),
-
-          subTitle: Container(
-            child: Column(
-              children: [
-                /*Padding(
-                  padding: const EdgeInsets.only(
-                    top: 3,
-                    bottom: 3,
-                  ),
-                  child: Text(
-                    album.date ?? '',
-                    style: TextStyle(
-                      color: Color(0xffbecbe7),
-                      fontSize: 15,
-                    ),
-                  ),
-                ),*/
-                /*Padding(
-                  padding: const EdgeInsets.only(
-                    top: 3,
-                  ),
-                  child: Text(
-                    'Sayı : ' +
-                        album.itemCount!.toString() +
-                        ', Durum : ' +
-                        aktifPasif,
-                    style: TextStyle(
-                      color: Color(0xffbecbe7),
-                      fontSize: 14,
-                    ),
-                  ),
-                )*/
-              ],
-            ),
-          ),
-
-          // subTitleText: album.date,
-        ),
-        //content: Text("Some quick example text to build on the card"),
-        buttonBar: GFButtonBar(
-          alignment: WrapAlignment.spaceEvenly,
-
-          // crossAxisAlignment: WrapCrossAlignment.start,
-          children: <Widget>[
-            InkWell(
-              borderRadius: BorderRadius.circular(25),
-              highlightColor: Colors.red.withOpacity(0.8),
-              onTap: () {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(14.0))),
-                        backgroundColor: Theme.of(context)
-                            .bottomNavigationBarTheme
-                            .backgroundColor,
-                        title: Text('Albüm Silme'),
-                        content: Text(
-                            '${album.name} Adlı Albümü Silmeye Emin Misiniz?'),
-                        actions: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                  onPressed: () {
-                                    deleteAAlbum(album.id!);
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Evet',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        color: Color(0xffe80b0b),
-                                      ))),
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Hayır',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        color: Color(0xff80C783),
-                                      )))
-                            ],
-                          )
-                        ],
-                      );
-                    });
-              },
-              child: GFAvatar(
-                size: context.dynamicWidth(13),
-                backgroundColor: Color(0xff202b40),
-                child: Icon(
-                  Icons.delete,
-                  color: Color(0xff017eba),
-                ),
-              ),
-            ),
-            InkWell(
-              borderRadius: BorderRadius.circular(25),
-              hoverColor: Colors.red,
-              highlightColor: Colors.red.withOpacity(0.8),
-              //splashColor: Colors.deepPurple.withOpacity(0.5),
-              onTap: getShareDialog,
-              child: GFAvatar(
-                size: context.dynamicWidth(13),
-                backgroundColor: Color(0xff202b40),
-                child: Icon(
-                  Icons.share,
-                  color: Color(0xff017eba),
-                ),
-              ),
-            ),
-            GFAvatar(
-              size: context.dynamicWidth(13),
-              backgroundColor: Color(0xff202b40),
-              child: Icon(
-                Icons.supervised_user_circle,
-                color: Color(0xff017eba),
-              ),
-            ),
-            GFAvatar(
-              size: context.dynamicWidth(13),
-              backgroundColor: Color(0xff202b40),
-              child: Icon(
-                Icons.map,
-                color: Color(0xff017eba),
-              ),
-            ),
-            GFAvatar(
-              size: context.dynamicWidth(13),
-              backgroundColor: Color(0xff202b40),
-              child: Icon(
-                Icons.list_alt,
-                color: Color(0xff017eba),
-              ),
-            ),
-          ],
-        ),
-      );
-
-      cards.add(card);
+      if(cardType=='GFCard'){
+        GFCard card = createGFCard(album, image, aktifPasif);
+        cards.add(card);
+      }else{
+        Card card = createCard(album, image, aktifPasif);
+        cards.add(card);
+      }
     }
     return cards;
   }
@@ -523,38 +554,79 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                               right: 24,
                             ),
                             child: SizedBox(
-                              height: context.dynamicHeight(17),
+                              height: context.dynamicHeight(15),
                               child: TextField(
                                 controller: searchController,
                                 textInputAction: TextInputAction.search,
-                                textAlign: TextAlign.center,
+                                textAlign: TextAlign.left,
                                 cursorColor: const Color(0xff017eba),
+                                style: TextStyle(color: Color(0xff9cddff),fontSize: 11),
                                 decoration: InputDecoration(
                                     suffixIcon: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          IconButton(
-                                              tooltip: 'Albüm Listeleme',
-                                              onPressed: () {},
-                                              icon: Icon(
-                                                Icons.list,
-                                                size: context.dynamicWidth(19),
-                                                color: Color(0xff017eba),
-                                              )),
-                                          IconButton(
-                                              tooltip: 'Albüm Filtreleme',
-                                              onPressed: () {},
-                                              icon: Icon(
-                                                Icons.filter_alt,
-                                                size: context.dynamicWidth(19),
-                                                color: Color(0xff017eba),
-                                              )),
+                                          SizedBox(
+                                            height: 36,
+                                            width: 30,
+                                            child: IconButton(
+                                                tooltip: 'Albüm Görünüm Değiştirme',
+                                                onPressed: () async{
+                                                  if(cardType=='GFCard'){
+                                                    await MyLocal.setStringData('card-type', 'ListTile');
+                                                    setState(() {
+                                                      cardType='ListTile';
+                                                    });
+                                                  }else{
+                                                    await MyLocal.setStringData('card-type', 'GFCard');
+                                                    setState(() {
+                                                      cardType='GFCard';
+                                                    });
+                                                  }
+                                                  getAlbumList();
+                                                },
+                                                icon: Icon(
+                                                  Icons.apps,
+                                                  size: context.dynamicWidth(24),
+                                                  color: Color(0xff017eba),
+
+                                                )),
+                                          ),
+                                          SizedBox(
+                                            height: 36,
+                                            width: 30,
+                                            child: IconButton(
+                                                tooltip: 'Albüm Sıralama',
+                                                onPressed: () {},
+                                                icon: Icon(
+                                                  Icons.sort,
+                                                  size: context.dynamicWidth(24),
+                                                  color: Color(0xff017eba),
+
+                                                )),
+                                          ),
+                                          Padding(
+                                              padding: EdgeInsets.only(right: 10),
+                                              child: SizedBox(
+                                            height: 36,
+                                            width: 30,
+                                            child: IconButton(
+                                                tooltip: 'Albüm Filtreleme',
+                                                onPressed: () {},
+                                                icon: Icon(
+                                                  Icons.filter_alt,
+                                                  size: context.dynamicWidth(24),
+                                                  color: Color(0xff017eba),
+
+                                                )),
+                                          ),)
+
                                         ]),
                                     prefixIcon: Icon(
                                       Icons.search,
-                                      color: Color(0xfa99a3ac),
+                                      color: Color(0xff017eba),
+                                      size: 18,
                                     ),
                                     labelText: 'Albüm Arama',
                                     labelStyle: TextStyle(

@@ -33,6 +33,10 @@ Future<void> main() async {
   // Program ilk kullanıldığında 'theme' keyinin bir değeri yoktur.
   // Kullanıcının tema konusunda yapmış olduğu seçimi aklında tutmuş oluyor.
   String isDark = await MyLocal.getStringData('theme');
+  String cardType = await MyLocal.getStringData('card-type');
+  if(cardType==''){
+    await MyLocal.setStringData('card-type', 'GFCard');
+  }
   if (isDark == '') {
     await MyLocal.setStringData('theme', 'dark');
     isDark = 'dark';
