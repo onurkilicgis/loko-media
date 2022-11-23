@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
-import 'dart:io' as ioo;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,7 +24,6 @@ import '../services/auth.dart';
 import '../view_model/folder_model.dart';
 import '../view_model/main_view_models.dart';
 import 'Harita.dart';
-
 
 class App extends StatefulWidget {
   const App({
@@ -106,18 +103,22 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
 
   AuthService _authService = AuthService();
 
-  Card createCard(album, image, durum){
+  Card createCard(album, image, durum) {
     return Card(
       child: ListTile(
         leading: image,
         title: Text(album.name),
         subtitle: Text('Öğe Sayısı : ${album.itemCount}, Durum : ${durum}'),
-        trailing: Icon(Icons.more_vert),
+        trailing: IconButton(
+            onPressed: getListDialog,
+            icon: Icon(
+              Icons.more_vert,
+            )),
       ),
     );
   }
 
-  GFCard createGFCard(album,image, durum){
+  GFCard createGFCard(album, image, durum) {
     return GFCard(
       boxFit: BoxFit.cover,
       titlePosition: GFPosition.start,
@@ -125,58 +126,8 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
       showImage: true,
       title: GFListTile(
         margin: EdgeInsets.only(bottom: context.dynamicHeight(80)),
-        onLongPress: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(14.0))),
-                  backgroundColor: Theme.of(context)
-                      .bottomNavigationBarTheme
-                      .backgroundColor,
-                  actions: [
-                    Column(
-                      children: [
-                        ListTile(
-                          leading: Icon(Icons.check),
-                          title: Text('Albümü Aktif Et'),
-                          onTap: () async {
-                            await MyLocal.setIntData('aktifalbum', album.id);
-                            getAlbumList();
+        onLongPress: getListDialog,
 
-                            Navigator.pop(context);
-                          },
-                        ),
-                        ListTile(
-                            leading: Icon(Icons.list_alt),
-                            title: Text('Albümün İçindekileri Listele'),
-                            onTap: () {}),
-                        ListTile(
-                            leading: Icon(FontAwesomeIcons.mapLocation),
-                            title: Text('Haritada Göster'),
-                            onTap: () {}),
-                        ListTile(
-                            leading: Icon(Icons.share),
-                            title: Text('Albümü Paylaş'),
-                            onTap: () {}),
-                        ListTile(
-                            leading: Icon(Icons.supervised_user_circle),
-                            title: Text('Paylaşılan Kişiler Listesi'),
-                            onTap: () {}),
-                        ListTile(
-                          leading: Icon(
-                            Icons.delete,
-                          ),
-                          title: Text('Albümü Sil'),
-                          onTap: () {},
-                        ),
-                      ],
-                    )
-                  ],
-                );
-              });
-        },
         onTap: () async {
           await MyLocal.setIntData('aktifalbum', album.id);
           controller.index = 1;
@@ -244,7 +195,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                     return AlertDialog(
                       shape: RoundedRectangleBorder(
                           borderRadius:
-                          BorderRadius.all(Radius.circular(14.0))),
+                              BorderRadius.all(Radius.circular(14.0))),
                       backgroundColor: Theme.of(context)
                           .bottomNavigationBarTheme
                           .backgroundColor,
@@ -353,25 +304,24 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         }
       } else {
         // image = new Image.file(imageFile);
-        if(cardType=='GFCard'){
+        if (cardType == 'GFCard') {
           image = Image.file(
             File(album.image.toString()),
             fit: BoxFit.fitWidth,
           );
-        }else{
+        } else {
           image = Image.file(
             File(album.image.toString()),
             fit: BoxFit.fitHeight,
             width: 50,
           );
         }
-
       }
 
-      if(cardType=='GFCard'){
+      if (cardType == 'GFCard') {
         GFCard card = createGFCard(album, image, aktifPasif);
         cards.add(card);
-      }else{
+      } else {
         Card card = createCard(album, image, aktifPasif);
         cards.add(card);
       }
@@ -560,7 +510,8 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                                 textInputAction: TextInputAction.search,
                                 textAlign: TextAlign.left,
                                 cursorColor: const Color(0xff017eba),
-                                style: TextStyle(color: Color(0xff9cddff),fontSize: 11),
+                                style: TextStyle(
+                                    color: Color(0xff9cddff), fontSize: 11),
                                 decoration: InputDecoration(
                                     suffixIcon: Row(
                                         mainAxisAlignment:
@@ -571,26 +522,30 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                                             height: 36,
                                             width: 30,
                                             child: IconButton(
-                                                tooltip: 'Albüm Görünüm Değiştirme',
-                                                onPressed: () async{
-                                                  if(cardType=='GFCard'){
-                                                    await MyLocal.setStringData('card-type', 'ListTile');
+                                                tooltip:
+                                                    'Albüm Görünüm Değiştirme',
+                                                onPressed: () async {
+                                                  if (cardType == 'GFCard') {
+                                                    await MyLocal.setStringData(
+                                                        'card-type',
+                                                        'ListTile');
                                                     setState(() {
-                                                      cardType='ListTile';
+                                                      cardType = 'ListTile';
                                                     });
-                                                  }else{
-                                                    await MyLocal.setStringData('card-type', 'GFCard');
+                                                  } else {
+                                                    await MyLocal.setStringData(
+                                                        'card-type', 'GFCard');
                                                     setState(() {
-                                                      cardType='GFCard';
+                                                      cardType = 'GFCard';
                                                     });
                                                   }
                                                   getAlbumList();
                                                 },
                                                 icon: Icon(
                                                   Icons.apps,
-                                                  size: context.dynamicWidth(24),
+                                                  size:
+                                                      context.dynamicWidth(24),
                                                   color: Color(0xff017eba),
-
                                                 )),
                                           ),
                                           SizedBox(
@@ -601,27 +556,27 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                                                 onPressed: () {},
                                                 icon: Icon(
                                                   Icons.sort,
-                                                  size: context.dynamicWidth(24),
+                                                  size:
+                                                      context.dynamicWidth(24),
                                                   color: Color(0xff017eba),
-
                                                 )),
                                           ),
                                           Padding(
-                                              padding: EdgeInsets.only(right: 10),
-                                              child: SizedBox(
-                                            height: 36,
-                                            width: 30,
-                                            child: IconButton(
-                                                tooltip: 'Albüm Filtreleme',
-                                                onPressed: () {},
-                                                icon: Icon(
-                                                  Icons.filter_alt,
-                                                  size: context.dynamicWidth(24),
-                                                  color: Color(0xff017eba),
-
-                                                )),
-                                          ),)
-
+                                            padding: EdgeInsets.only(right: 10),
+                                            child: SizedBox(
+                                              height: 36,
+                                              width: 30,
+                                              child: IconButton(
+                                                  tooltip: 'Albüm Filtreleme',
+                                                  onPressed: () {},
+                                                  icon: Icon(
+                                                    Icons.filter_alt,
+                                                    size: context
+                                                        .dynamicWidth(24),
+                                                    color: Color(0xff017eba),
+                                                  )),
+                                            ),
+                                          )
                                         ]),
                                     prefixIcon: Icon(
                                       Icons.search,
@@ -829,6 +784,59 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         );
       },
     );
+  }
+
+  getListDialog() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(14.0))),
+            backgroundColor:
+                Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+            actions: [
+              Column(
+                children: [
+                  ListTile(
+                    leading: Icon(Icons.check),
+                    title: Text('Albümü Aktif Et'),
+                    onTap: () async {
+                      Album album = Album();
+                      await MyLocal.setIntData('aktifalbum', album.id);
+                      getAlbumList();
+
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                      leading: Icon(Icons.list_alt),
+                      title: Text('Albümün İçindekileri Listele'),
+                      onTap: () {}),
+                  ListTile(
+                      leading: Icon(FontAwesomeIcons.mapLocation),
+                      title: Text('Haritada Göster'),
+                      onTap: () {}),
+                  ListTile(
+                      leading: Icon(Icons.share),
+                      title: Text('Albümü Paylaş'),
+                      onTap: () {}),
+                  ListTile(
+                      leading: Icon(Icons.supervised_user_circle),
+                      title: Text('Paylaşılan Kişiler Listesi'),
+                      onTap: () {}),
+                  ListTile(
+                    leading: Icon(
+                      Icons.delete,
+                    ),
+                    title: Text('Albümü Sil'),
+                    onTap: () {},
+                  ),
+                ],
+              )
+            ],
+          );
+        });
   }
 
   getShareDialog() {
