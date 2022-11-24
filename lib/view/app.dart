@@ -111,6 +111,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
   AuthService _authService = AuthService();
 
   Card createCard(album, image, durum) {
+    //xxx
     getListDialog() {
       return showDialog(
           context: context,
@@ -136,11 +137,25 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                     ListTile(
                         leading: Icon(Icons.list_alt),
                         title: Text('Albümün İçindekileri Listele'),
-                        onTap: () {}),
+                        onTap: () async {
+                          await MyLocal.setIntData('tiklananAlbum', album.id);
+                          controller.index = 1;
+                          setState(() {
+                            tiklananAlbum = album.id!;
+                          });
+                          Navigator.pop(context);
+                        }),
                     ListTile(
                         leading: Icon(FontAwesomeIcons.mapLocation),
                         title: Text('Haritada Göster'),
-                        onTap: () {}),
+                        onTap: () async {
+                          await MyLocal.setIntData('tiklananAlbum', album.id);
+                          controller.index = 2;
+                          setState(() {
+                            tiklananAlbum = album.id!;
+                          });
+                          Navigator.pop(context);
+                        }),
                     ListTile(
                         leading: Icon(Icons.share),
                         title: Text('Albümü Paylaş'),
@@ -154,7 +169,49 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                         Icons.delete,
                       ),
                       title: Text('Albümü Sil'),
-                      onTap: () {},
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(14.0))),
+                                backgroundColor: Theme.of(context)
+                                    .bottomNavigationBarTheme
+                                    .backgroundColor,
+                                title: Text('Albüm Silme'),
+                                content: Text(
+                                    '${album.name} Adlı Albümü Silmeye Emin Misiniz?'),
+                                actions: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      TextButton(
+                                          onPressed: () {
+                                            deleteAAlbum(album.id!);
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text('Evet',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                color: Color(0xffe80b0b),
+                                              ))),
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text('Hayır',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                color: Color(0xff80C783),
+                                              )))
+                                    ],
+                                  )
+                                ],
+                              );
+                            });
+                      },
                     ),
                   ],
                 )
@@ -210,11 +267,25 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                     ListTile(
                         leading: Icon(Icons.list_alt),
                         title: Text('Albümün İçindekileri Listele'),
-                        onTap: () {}),
+                        onTap: () async {
+                          await MyLocal.setIntData('tiklananAlbum', album.id);
+                          controller.index = 1;
+                          setState(() {
+                            tiklananAlbum = album.id!;
+                          });
+                          Navigator.pop(context);
+                        }),
                     ListTile(
                         leading: Icon(FontAwesomeIcons.mapLocation),
                         title: Text('Haritada Göster'),
-                        onTap: () {}),
+                        onTap: () async {
+                          await MyLocal.setIntData('tiklananAlbum', album.id);
+                          controller.index = 2;
+                          setState(() {
+                            tiklananAlbum = album.id!;
+                          });
+                          Navigator.pop(context);
+                        }),
                     ListTile(
                         leading: Icon(Icons.share),
                         title: Text('Albümü Paylaş'),
