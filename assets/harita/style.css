@@ -6,3 +6,105 @@ body { margin: 0; padding: 0; }
   height: 100%;
   width: 100%;
 }
+
+
+.mapboxgl-ctrl-top-right .mapboxgl-ctrl {
+  float: right;
+  /*margin: 10px 10px 0 0*/
+  margin: 10px !important;
+}
+
+.mapboxgl-ctrl-geocoder{
+  width: calc(100% - 20px) !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  margin: 10px !important;
+}
+
+.medialist{
+  position: fixed;
+  bottom: 0;
+  background-color: #efefef;
+  padding: 5px;
+  width: 100%;
+  overflow-y: hidden;
+  overflow-x: scroll;
+  border-top: 1px solid #ccc;
+  left: 0;
+}
+
+.h120{
+  height: 120px;
+}
+
+.h160{
+  height: 155px;
+}
+
+.p5{
+  padding: 5px;
+}
+.p0{
+  padding: 0 !important;
+}
+
+.flexBox{
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  overflow-x: auto;
+}
+
+.imageCard{
+  padding: 5px;
+  background-color: #FFF;
+  margin-right: 5px;
+  border-radius: 5px;
+}
+.imageCardSelected{
+  padding: 5px;
+  background-color: rgb(19, 180, 255);
+  margin-right: 5px;
+  border-radius: 5px;
+}
+
+.slideImage{
+  height: 100px;
+  display: flex;
+  border-radius: 5px;
+}
+
+.bradius5{
+  border-radius: 5px;
+}
+.mapboxgl-popup-content{
+  padding: 5px !important;
+  padding-bottom: 0px !important;
+}
+.flex-col{
+  display: flex;
+  flex-direction: column;
+}
+.mb5{
+  margin-bottom: 5px;
+}
+
+.actions1{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.img1 {
+  height: 200px;
+  cursor: pointer;
+  margin: 5px;
+  display: inline-block;
+}
+
+.viewer-container{
+  position: fixed !important;
+  height: 100% !important;
+  width: 100% !important;
+}

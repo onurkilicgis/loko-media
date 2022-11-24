@@ -102,6 +102,8 @@ flutter:
     - assets/images/album_dark.png
     - assets/images/album_light.png
     - assets/harita/
+    - assets/harita/css/
+    - assets/harita/js/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

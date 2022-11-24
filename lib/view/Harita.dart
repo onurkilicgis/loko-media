@@ -50,6 +50,8 @@ class _HaritaState extends State<Harita> {
           'miniName': item.miniName,
           'fileType': item.fileType,
           'isPublic': item.isPublic,
+          'image_url':'http://127.0.0.1:1991/album-'+item.album_id.toString()+'/'+item.name.toString(),
+          'mini_image_url':'http://127.0.0.1:1991/album-'+item.album_id.toString()+'/'+item.miniName.toString(),
           'url': item.url,
           'api_id': item.api_id,
           'date': item.date,
