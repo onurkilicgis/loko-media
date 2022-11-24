@@ -9,8 +9,9 @@ Vue.component('medialist', {
     setDefault: function () {
       return {
         onoff: true,
+        hidden:true,
         items:[
-          /*{
+          {
             id:1,
             image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
             fileType:'image',
@@ -36,10 +37,12 @@ Vue.component('medialist', {
             id:5,
             image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
             fileType:'image',
-          },*/
+          },
         ],
         selected:-1,
-        item:false
+        item:false,
+        viewverid:0,
+        viewer:false,
       }
     },
     open: function (items) {
@@ -82,8 +85,11 @@ Vue.component('medialist', {
     },
     resimGoster:function(item){
       debugger;
+      var that = this;
       var ind = 0;
-      var gallery = document.getElementById('gallery');
+      var id = 'galeri-'+Date.now();
+      document.getElementById('galeri').innerHTML='<div id="'+id+'"></div>';
+      var gallery = document.getElementById(id);
       gallery.innerHTML='';
       for(var i=0;i<this.items.length;i++){
         var it = this.items[i];
@@ -97,17 +103,23 @@ Vue.component('medialist', {
       }
       setTimeout(()=>{
         debugger;
-        const viewer = new Viewer(gallery,{
+        that.hidden=false;
+        gallery.addEventListener('hidden',function(){
+          debugger;
+          that.viewer.destroy();
+          that.hidden=true;
+        });
+        that.viewer = new Viewer(gallery,{
           inline: false,
           button:true,
           fullscreen:false
         });
-        viewer.view(ind);
+        that.viewer.view(ind);
       },100);
       
     }
   },
-  template: `<div v-if="onoff">
+  template: `<div v-if="onoff && hidden">
     <div :class="selected!==-1?'medialist flex-col h160':'medialist flex-col h120'" v-if="items.length>0">
       <div class="mb5 actions1" v-if="selected!==-1">
         <div>
