@@ -36,7 +36,7 @@ class FolderModel {
     var file = await ioo.File(filePath.path);
     await file.writeAsBytes(bytes);
     Image? image = decodeImage(bytes);
-    Image thumbnail = copyResize(image!, width: 36);
+    Image thumbnail = copyResize(image!, width: 48);
     final Directory miniFilePath =
         Directory('${root.path}/$path/${miniFileName}');
     new ioo.File(miniFilePath.path).writeAsBytesSync(encodePng(thumbnail));

@@ -44,6 +44,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
 
   List<Album> albumList = [];
   int aktifalbum = -1;
+  int aktifTabIndex=0;
   String cardType = 'GFCard';
   File? image;
 
@@ -335,10 +336,12 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
       getDialog();
     });*/
     getAlbumList();
-    controller = TabController(length: 3, vsync: this);
+    controller = TabController(length: 3, vsync: this, initialIndex: 0);
 
     controller.addListener(() {
-      setState(() {});
+      setState(() {
+        aktifTabIndex=controller.index;
+      });
     });
     super.initState();
   }
@@ -491,7 +494,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
           ],
           body: TabBarView(
               controller: controller,
-              physics: BouncingScrollPhysics(),
+              physics: aktifTabIndex!=2?BouncingScrollPhysics():NeverScrollableScrollPhysics(),
               children: [
                 Column(
                   children: [
