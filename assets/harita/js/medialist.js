@@ -74,16 +74,17 @@ Vue.component('medialist', {
       this.selected=-1;
     },
     populateImages(){
-      var ress = '';
+      /*var ress = '';
       this.items.map((a,i)=>{
         ress+='<img src="'+a.image_url+'" alt="'+a.name+'" />';
       });
-      document.getElementById('gallery').innerHTML=ress;
+      document.getElementById('gallery').innerHTML=ress;*/
     },
     resimGoster:function(item){
       debugger;
       var ind = 0;
       var gallery = document.getElementById('gallery');
+      gallery.innerHTML='';
       for(var i=0;i<this.items.length;i++){
         var it = this.items[i];
         if(it.id==item.id){
