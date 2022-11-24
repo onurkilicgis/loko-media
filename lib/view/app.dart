@@ -44,7 +44,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
 
   List<Album> albumList = [];
   int aktifalbum = -1;
-  int aktifTabIndex=0;
+  int aktifTabIndex = 0;
   String cardType = 'GFCard';
   File? image;
 
@@ -340,7 +340,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
 
     controller.addListener(() {
       setState(() {
-        aktifTabIndex=controller.index;
+        aktifTabIndex = controller.index;
       });
     });
     super.initState();
@@ -440,186 +440,172 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
             ),
           ),
         ),
-        body: NestedScrollView(
-          floatHeaderSlivers: true,
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            SliverAppBar(
-              centerTitle: true,
-              floating: true,
-              snap: true,
-              expandedHeight: context.dynamicHeight(8),
-              flexibleSpace: FlexibleSpaceBar(
-                background: Container(
-                  color: Color(0xff26334d),
-                ),
-              ),
-              title: getAppController(),
-              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-              bottom: PreferredSize(
-                preferredSize: Size.fromHeight(context.dynamicHeight(30)),
-                child: Material(
-                  color: Color(0xff202b40),
-                  child: TabBar(
-                    labelStyle: TextStyle(fontSize: context.dynamicHeight(50)),
-                    unselectedLabelStyle:
-                        TextStyle(fontSize: context.dynamicHeight(55)),
-                    indicatorColor: Color(0xff0e91ce),
-                    controller: controller,
-                    labelColor: Color(0xff0e91ce),
-                    unselectedLabelColor: Color(0xff697a9b),
-                    tabs: [
-                      Tab(
-                        child: Text(
-                          'Albümler',
-                        ),
-                        //icon: Icon(Icons.list_alt),
-                      ),
-                      Tab(
-                        child: Text(
-                          'Medya',
-                        ),
-                        //icon: Icon(Icons.media_bluetooth_off),
-                      ),
-                      Tab(
-                        child: Text(
-                          'Harita',
-                        ),
-                        //icon: Icon(Icons.map)
-                      ),
-                    ],
+        appBar: AppBar(
+          centerTitle: true,
+          title: getAppController(),
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(context.dynamicHeight(30)),
+            child: Material(
+              color: Color(0xff202b40),
+              child: TabBar(
+                labelStyle: TextStyle(fontSize: context.dynamicHeight(50)),
+                unselectedLabelStyle:
+                    TextStyle(fontSize: context.dynamicHeight(55)),
+                indicatorColor: Color(0xff0e91ce),
+                controller: controller,
+                labelColor: Color(0xff0e91ce),
+                unselectedLabelColor: Color(0xff697a9b),
+                tabs: [
+                  Tab(
+                    child: Text(
+                      'Albümler',
+                    ),
+                    //icon: Icon(Icons.list_alt),
                   ),
-                ),
+                  Tab(
+                    child: Text(
+                      'Medya',
+                    ),
+                    //icon: Icon(Icons.media_bluetooth_off),
+                  ),
+                  Tab(
+                    child: Text(
+                      'Harita',
+                    ),
+                    //icon: Icon(Icons.map)
+                  ),
+                ],
               ),
-            )
-          ],
-          body: TabBarView(
-              controller: controller,
-              physics: aktifTabIndex!=2?BouncingScrollPhysics():NeverScrollableScrollPhysics(),
-              children: [
-                Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              left: 24,
-                              top: 24,
-                              right: 24,
-                            ),
-                            child: SizedBox(
-                              height: context.dynamicHeight(15),
-                              child: TextField(
-                                controller: searchController,
-                                textInputAction: TextInputAction.search,
-                                textAlign: TextAlign.left,
-                                cursorColor: const Color(0xff017eba),
-                                style: TextStyle(
-                                    color: Color(0xff9cddff), fontSize: 11),
-                                decoration: InputDecoration(
-                                    suffixIcon: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          SizedBox(
+            ),
+          ),
+        ),
+        body: TabBarView(
+            controller: controller,
+            physics: aktifTabIndex != 2
+                ? BouncingScrollPhysics()
+                : NeverScrollableScrollPhysics(),
+            children: [
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            left: 24,
+                            top: 24,
+                            right: 24,
+                          ),
+                          child: SizedBox(
+                            height: context.dynamicHeight(15),
+                            child: TextField(
+                              controller: searchController,
+                              textInputAction: TextInputAction.search,
+                              textAlign: TextAlign.left,
+                              cursorColor: const Color(0xff017eba),
+                              style: TextStyle(
+                                  color: Color(0xff9cddff), fontSize: 11),
+                              decoration: InputDecoration(
+                                  suffixIcon: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SizedBox(
+                                          height: 36,
+                                          width: 30,
+                                          child: IconButton(
+                                              tooltip:
+                                                  'Albüm Görünüm Değiştirme',
+                                              onPressed: () async {
+                                                if (cardType == 'GFCard') {
+                                                  await MyLocal.setStringData(
+                                                      'card-type', 'ListTile');
+                                                  setState(() {
+                                                    cardType = 'ListTile';
+                                                  });
+                                                } else {
+                                                  await MyLocal.setStringData(
+                                                      'card-type', 'GFCard');
+                                                  setState(() {
+                                                    cardType = 'GFCard';
+                                                  });
+                                                }
+                                                getAlbumList();
+                                              },
+                                              icon: Icon(
+                                                Icons.apps,
+                                                size: context.dynamicWidth(24),
+                                                color: Color(0xff017eba),
+                                              )),
+                                        ),
+                                        SizedBox(
+                                          height: 36,
+                                          width: 30,
+                                          child: IconButton(
+                                              tooltip: 'Albüm Sıralama',
+                                              onPressed: () {},
+                                              icon: Icon(
+                                                Icons.sort,
+                                                size: context.dynamicWidth(24),
+                                                color: Color(0xff017eba),
+                                              )),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(right: 10),
+                                          child: SizedBox(
                                             height: 36,
                                             width: 30,
                                             child: IconButton(
-                                                tooltip:
-                                                    'Albüm Görünüm Değiştirme',
-                                                onPressed: () async {
-                                                  if (cardType == 'GFCard') {
-                                                    await MyLocal.setStringData(
-                                                        'card-type',
-                                                        'ListTile');
-                                                    setState(() {
-                                                      cardType = 'ListTile';
-                                                    });
-                                                  } else {
-                                                    await MyLocal.setStringData(
-                                                        'card-type', 'GFCard');
-                                                    setState(() {
-                                                      cardType = 'GFCard';
-                                                    });
-                                                  }
-                                                  getAlbumList();
-                                                },
-                                                icon: Icon(
-                                                  Icons.apps,
-                                                  size:
-                                                      context.dynamicWidth(24),
-                                                  color: Color(0xff017eba),
-                                                )),
-                                          ),
-                                          SizedBox(
-                                            height: 36,
-                                            width: 30,
-                                            child: IconButton(
-                                                tooltip: 'Albüm Sıralama',
+                                                tooltip: 'Albüm Filtreleme',
                                                 onPressed: () {},
                                                 icon: Icon(
-                                                  Icons.sort,
+                                                  Icons.filter_alt,
                                                   size:
                                                       context.dynamicWidth(24),
                                                   color: Color(0xff017eba),
                                                 )),
                                           ),
-                                          Padding(
-                                            padding: EdgeInsets.only(right: 10),
-                                            child: SizedBox(
-                                              height: 36,
-                                              width: 30,
-                                              child: IconButton(
-                                                  tooltip: 'Albüm Filtreleme',
-                                                  onPressed: () {},
-                                                  icon: Icon(
-                                                    Icons.filter_alt,
-                                                    size: context
-                                                        .dynamicWidth(24),
-                                                    color: Color(0xff017eba),
-                                                  )),
-                                            ),
-                                          )
-                                        ]),
-                                    prefixIcon: Icon(
-                                      Icons.search,
+                                        )
+                                      ]),
+                                  prefixIcon: Icon(
+                                    Icons.search,
+                                    color: Color(0xff017eba),
+                                    size: 18,
+                                  ),
+                                  labelText: 'Albüm Arama',
+                                  labelStyle: TextStyle(
                                       color: Color(0xff017eba),
-                                      size: 18,
-                                    ),
-                                    labelText: 'Albüm Arama',
-                                    labelStyle: TextStyle(
-                                        color: Color(0xff017eba),
-                                        fontSize: context.dynamicWidth(28)),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                      color: Color(0xff017eba),
-                                    )),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                      color: Color(0xff017eba),
-                                    ))),
-                                onChanged: (value) {},
-                              ),
+                                      fontSize: context.dynamicWidth(28)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                    color: Color(0xff017eba),
+                                  )),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                    color: Color(0xff017eba),
+                                  ))),
+                              onChanged: (value) {},
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    Expanded(
-                      child: ListView(
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.all(8),
-                        scrollDirection: Axis.vertical,
-                        children: createAlbumCards(),
                       ),
+                    ],
+                  ),
+                  Expanded(
+                    child: ListView(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(8),
+                      scrollDirection: Axis.vertical,
+                      children: createAlbumCards(),
                     ),
-                  ],
-                ),
-                Medya(id: aktifalbum),
-                Harita(id: aktifalbum, type: 'album')
-              ]),
-        ),
+                  ),
+                ],
+              ),
+              Medya(id: aktifalbum),
+              Harita(id: aktifalbum, type: 'album')
+            ]),
         bottomNavigationBar: BottomNavigationBar(
           key: scaffoldState,
           currentIndex: currentIndex,
