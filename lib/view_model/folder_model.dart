@@ -29,17 +29,66 @@ class FolderModel {
     }
   }
 
+  // çekilen,seçilen resim, video, ses ve yazıları sisteme kayıt eder.
   static Future<String?> createFile(String path, Uint8List bytes,
-      String fileName, String miniFileName) async {
+      String fileName, String miniFileName, String fileType) async {
+    // uygulamanını kök klasörünün yolunu aldı (yol:path, kökklasör:root)
     final Directory root = await getApplicationDocumentsDirectory();
+    // oluşturmak istediğimiz dosyayı ilgili albümün neresine koyacağımızın yolunu tanıtıyoruz yani dosyanın path bilgisi
     final Directory filePath = Directory('${root.path}/$path/${fileName}');
+    // dosya oluşturmak için orada bir dosya yolu tanımlıyor.
     var file = await ioo.File(filePath.path);
+    // burda oluşturmak istediğimiz dosyanın içerisine veriyi ekliyor.
     await file.writeAsBytes(bytes);
-    Image? image = decodeImage(bytes);
-    Image thumbnail = copyResize(image!, width: 48);
-    final Directory miniFilePath =
-        Directory('${root.path}/$path/${miniFileName}');
-    new ioo.File(miniFilePath.path).writeAsBytesSync(encodePng(thumbnail));
+    // resimler için haritada gösterebilmek adına küçük bir emitosyanunu oluşturuyoruz. yeniden boyutlandırıyoruz.
+    // bunu yapmazsak harita kasılır.
+    if (fileType == 'image') {
+      Image? image = decodeImage(bytes);
+      Image thumbnail = copyResize(image!, width: 48);
+      final Directory miniFilePath =
+          Directory('${root.path}/$path/${miniFileName}');
+      List<String> parcalar = miniFileName.split('.');
+      String uzanti = parcalar[parcalar.length - 1];
+      uzanti = uzanti.toLowerCase();
+      switch (uzanti) {
+        case 'jpg':
+          {
+            new ioo.File(miniFilePath.path)
+                .writeAsBytesSync(encodeJpg(thumbnail));
+            break;
+          }
+        case 'png':
+          {
+            new ioo.File(miniFilePath.path)
+                .writeAsBytesSync(encodePng(thumbnail));
+            break;
+          }
+        case 'gif':
+          {
+            new ioo.File(miniFilePath.path)
+                .writeAsBytesSync(encodeGif(thumbnail));
+            break;
+          }
+        case 'jpeg':
+          {
+            new ioo.File(miniFilePath.path)
+                .writeAsBytesSync(encodeJpg(thumbnail));
+            break;
+          }
+        case 'bmp':
+          {
+            new ioo.File(miniFilePath.path)
+                .writeAsBytesSync(encodeBmp(thumbnail));
+            break;
+          }
+        default:
+          {
+            new ioo.File(miniFilePath.path)
+                .writeAsBytesSync(encodeJpg(thumbnail));
+            break;
+          }
+      }
+    }
     return file.path;
   }
 }

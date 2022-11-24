@@ -25,12 +25,16 @@ import 'LoginPage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final Directory root = await getApplicationDocumentsDirectory();
-  final Directory albumPath = Directory('${root.path}/albums');
+
+  // localhost:1990/index.html harita dosyalarımızı yayınlanladımız yer.
   InAppLocalhostServer localhostServer = InAppLocalhostServer(
       port: 1990,
       documentRoot: './assets/harita/',
       directoryIndex: 'index.html');
+
+  // indirdiğimiz resimleri ve klasörleri webview tarafında localhost:1991/albüm_adı/resim şelinde ulaşabileceğimiz kanalı açıyor.
+  final Directory root = await getApplicationDocumentsDirectory();
+  final Directory albumPath = Directory('${root.path}/albums');
   final server = LocalAssetsServer(
     address: InternetAddress.loopbackIPv4,
     assetsBasePath: albumPath.path,
@@ -73,7 +77,6 @@ Future<void> main() async {
   await localhostServer.start();
   //HttpOverrides.global = MyHttpOverrides();
   runApp(MyApp(isDark: isDark));
-
 }
 
 /*class MyHttpOverrides extends HttpOverrides {

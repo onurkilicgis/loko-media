@@ -67,7 +67,11 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
       String miniFilename = 'image-mini-' + now.toString() + '.' + extension;
       Uint8List bytes = imageTemporary.readAsBytesSync();
       String? newPath = await FolderModel.createFile(
-          'albums/album-${aktifAlbumId}', bytes, filename, miniFilename);
+          'albums/album-${aktifAlbumId}',
+          bytes,
+          filename,
+          miniFilename,
+          'image');
       Medias dbImage = new Medias(
         album_id: aktifAlbumId,
         name: filename,
@@ -310,6 +314,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
           image = Image.file(
             File(album.image.toString()),
             fit: BoxFit.fitWidth,
+            height: 150,
           );
         } else {
           image = Image.file(
