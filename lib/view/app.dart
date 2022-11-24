@@ -43,6 +43,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
   AlbumDataBase albumDataBase = AlbumDataBase();
 
   List<Album> albumList = [];
+  late int tiklananAlbum;
   int aktifalbum = -1;
   int aktifTabIndex = 0;
   String cardType = 'GFCard';
@@ -110,8 +111,67 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
   AuthService _authService = AuthService();
 
   Card createCard(album, image, durum) {
+    getListDialog() {
+      return showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(14.0))),
+              backgroundColor:
+                  Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+              actions: [
+                Column(
+                  children: [
+                    ListTile(
+                      leading: Icon(Icons.check),
+                      title: Text('Albümü Aktif Et'),
+                      onTap: () async {
+                        await MyLocal.setIntData('aktifalbum', album.id);
+                        getAlbumList();
+
+                        Navigator.pop(context);
+                      },
+                    ),
+                    ListTile(
+                        leading: Icon(Icons.list_alt),
+                        title: Text('Albümün İçindekileri Listele'),
+                        onTap: () {}),
+                    ListTile(
+                        leading: Icon(FontAwesomeIcons.mapLocation),
+                        title: Text('Haritada Göster'),
+                        onTap: () {}),
+                    ListTile(
+                        leading: Icon(Icons.share),
+                        title: Text('Albümü Paylaş'),
+                        onTap: () {}),
+                    ListTile(
+                        leading: Icon(Icons.supervised_user_circle),
+                        title: Text('Paylaşılan Kişiler Listesi'),
+                        onTap: () {}),
+                    ListTile(
+                      leading: Icon(
+                        Icons.delete,
+                      ),
+                      title: Text('Albümü Sil'),
+                      onTap: () {},
+                    ),
+                  ],
+                )
+              ],
+            );
+          });
+    }
+
     return Card(
       child: ListTile(
+        onTap: () async {
+          await MyLocal.setIntData('tiklananAlbum', album.id);
+          controller.index = 1;
+          setState(() {
+            tiklananAlbum = album.id!;
+          });
+        },
         leading: image,
         title: Text(album.name),
         subtitle: Text('Öğe Sayısı : ${album.itemCount}, Durum : ${durum}'),
@@ -124,168 +184,298 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     );
   }
 
-  GFCard createGFCard(album, image, durum) {
-    return GFCard(
-      boxFit: BoxFit.cover,
-      titlePosition: GFPosition.start,
-      image: image,
-      showImage: true,
-      title: GFListTile(
-        margin: EdgeInsets.only(bottom: context.dynamicHeight(80)),
-        onLongPress: getListDialog,
+  Widget createGFCard(album, image, durum) {
+    getListDialog() {
+      return showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(14.0))),
+              backgroundColor:
+                  Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+              actions: [
+                Column(
+                  children: [
+                    ListTile(
+                      leading: Icon(Icons.check),
+                      title: Text('Albümü Aktif Et'),
+                      onTap: () async {
+                        await MyLocal.setIntData('aktifalbum', album.id);
+                        getAlbumList();
 
-        onTap: () async {
-          await MyLocal.setIntData('aktifalbum', album.id);
-          controller.index = 1;
-          setState(() {
-            aktifalbum = album.id!;
+                        Navigator.pop(context);
+                      },
+                    ),
+                    ListTile(
+                        leading: Icon(Icons.list_alt),
+                        title: Text('Albümün İçindekileri Listele'),
+                        onTap: () {}),
+                    ListTile(
+                        leading: Icon(FontAwesomeIcons.mapLocation),
+                        title: Text('Haritada Göster'),
+                        onTap: () {}),
+                    ListTile(
+                        leading: Icon(Icons.share),
+                        title: Text('Albümü Paylaş'),
+                        onTap: () {}),
+                    ListTile(
+                        leading: Icon(Icons.supervised_user_circle),
+                        title: Text('Paylaşılan Kişiler Listesi'),
+                        onTap: () {}),
+                    ListTile(
+                      leading: Icon(
+                        Icons.delete,
+                      ),
+                      title: Text('Albümü Sil'),
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(14.0))),
+                                backgroundColor: Theme.of(context)
+                                    .bottomNavigationBarTheme
+                                    .backgroundColor,
+                                title: Text('Albüm Silme'),
+                                content: Text(
+                                    '${album.name} Adlı Albümü Silmeye Emin Misiniz?'),
+                                actions: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      TextButton(
+                                          onPressed: () {
+                                            deleteAAlbum(album.id!);
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text('Evet',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                color: Color(0xffe80b0b),
+                                              ))),
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text('Hayır',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                color: Color(0xff80C783),
+                                              )))
+                                    ],
+                                  )
+                                ],
+                              );
+                            });
+                      },
+                    ),
+                  ],
+                )
+              ],
+            );
           });
-        },
-        title: Text(
-          album.name == null
-              ? ''
-              : album.name! + ', Sayı:' + album.itemCount!.toString(),
-          style: TextStyle(color: Color(0xffbecbe7), fontSize: 17),
-        ),
+    }
 
-        subTitle: Container(
-          child: Column(
-            children: [
-              /*Padding(
-                  padding: const EdgeInsets.only(
-                    top: 3,
-                    bottom: 3,
-                  ),
-                  child: Text(
-                    album.date ?? '',
-                    style: TextStyle(
-                      color: Color(0xffbecbe7),
-                      fontSize: 15,
-                    ),
-                  ),
-                ),*/
-              /*Padding(
-                  padding: const EdgeInsets.only(
-                    top: 3,
-                  ),
-                  child: Text(
-                    'Sayı : ' +
-                        album.itemCount!.toString() +
-                        ', Durum : ' +
-                        aktifPasif,
-                    style: TextStyle(
-                      color: Color(0xffbecbe7),
-                      fontSize: 14,
-                    ),
-                  ),
-                )*/
-            ],
+    return InkWell(
+      //splashColor: Colors.red,
+      onLongPress: getListDialog,
+      child: GFCard(
+        boxFit: BoxFit.cover,
+        titlePosition: GFPosition.start,
+        image: image,
+        showImage: true,
+        title: GFListTile(
+          margin: EdgeInsets.only(bottom: context.dynamicHeight(80)),
+
+          onTap: () async {
+            await MyLocal.setIntData('aktifalbum', album.id);
+            controller.index = 1;
+            setState(() {
+              aktifalbum = album.id!;
+            });
+          },
+          title: Text(
+            album.name == null
+                ? ''
+                : album.name! + ', Sayı:' + album.itemCount!.toString(),
+            style: TextStyle(color: Color(0xffbecbe7), fontSize: 17),
           ),
+
+          subTitle: Container(
+            child: Column(
+              children: [
+                /*Padding(
+                    padding: const EdgeInsets.only(
+                      top: 3,
+                      bottom: 3,
+                    ),
+                    child: Text(
+                      album.date ?? '',
+                      style: TextStyle(
+                        color: Color(0xffbecbe7),
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),*/
+                /*Padding(
+                    padding: const EdgeInsets.only(
+                      top: 3,
+                    ),
+                    child: Text(
+                      'Sayı : ' +
+                          album.itemCount!.toString() +
+                          ', Durum : ' +
+                          aktifPasif,
+                      style: TextStyle(
+                        color: Color(0xffbecbe7),
+                        fontSize: 14,
+                      ),
+                    ),
+                  )*/
+              ],
+            ),
+          ),
+
+          // subTitleText: album.date,
         ),
+        //content: Text("Some quick example text to build on the card"),
+        buttonBar: GFButtonBar(
+          alignment: WrapAlignment.spaceEvenly,
 
-        // subTitleText: album.date,
-      ),
-      //content: Text("Some quick example text to build on the card"),
-      buttonBar: GFButtonBar(
-        alignment: WrapAlignment.spaceEvenly,
-
-        // crossAxisAlignment: WrapCrossAlignment.start,
-        children: <Widget>[
-          InkWell(
-            borderRadius: BorderRadius.circular(25),
-            highlightColor: Colors.red.withOpacity(0.8),
-            onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(14.0))),
-                      backgroundColor: Theme.of(context)
-                          .bottomNavigationBarTheme
-                          .backgroundColor,
-                      title: Text('Albüm Silme'),
-                      content: Text(
-                          '${album.name} Adlı Albümü Silmeye Emin Misiniz?'),
-                      actions: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                                onPressed: () {
-                                  deleteAAlbum(album.id!);
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Evet',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Color(0xffe80b0b),
-                                    ))),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Hayır',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Color(0xff80C783),
-                                    )))
-                          ],
-                        )
-                      ],
-                    );
-                  });
-            },
-            child: GFAvatar(
-              size: context.dynamicWidth(13),
-              backgroundColor: Color(0xff202b40),
-              child: Icon(
-                Icons.delete,
-                color: Color(0xff017eba),
+          // crossAxisAlignment: WrapCrossAlignment.start,
+          children: <Widget>[
+            InkWell(
+              borderRadius: BorderRadius.circular(25),
+              highlightColor: Colors.red.withOpacity(0.8),
+              onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(14.0))),
+                        backgroundColor: Theme.of(context)
+                            .bottomNavigationBarTheme
+                            .backgroundColor,
+                        title: Text('Albüm Silme'),
+                        content: Text(
+                            '${album.name} Adlı Albümü Silmeye Emin Misiniz?'),
+                        actions: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                  onPressed: () {
+                                    deleteAAlbum(album.id!);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Evet',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Color(0xffe80b0b),
+                                      ))),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Hayır',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Color(0xff80C783),
+                                      )))
+                            ],
+                          )
+                        ],
+                      );
+                    });
+              },
+              child: GFAvatar(
+                size: context.dynamicWidth(13),
+                backgroundColor: Color(0xff202b40),
+                child: Icon(
+                  Icons.delete,
+                  color: Color(0xff017eba),
+                ),
               ),
             ),
-          ),
-          InkWell(
-            borderRadius: BorderRadius.circular(25),
-            hoverColor: Colors.red,
-            highlightColor: Colors.red.withOpacity(0.8),
-            //splashColor: Colors.deepPurple.withOpacity(0.5),
-            onTap: getShareDialog,
-            child: GFAvatar(
-              size: context.dynamicWidth(13),
-              backgroundColor: Color(0xff202b40),
-              child: Icon(
-                Icons.share,
-                color: Color(0xff017eba),
+            InkWell(
+              borderRadius: BorderRadius.circular(25),
+              hoverColor: Colors.red,
+              highlightColor: Colors.red.withOpacity(0.8),
+              //splashColor: Colors.deepPurple.withOpacity(0.5),
+              onTap: getShareDialog,
+              child: GFAvatar(
+                size: context.dynamicWidth(13),
+                backgroundColor: Color(0xff202b40),
+                child: Icon(
+                  Icons.share,
+                  color: Color(0xff017eba),
+                ),
               ),
             ),
-          ),
-          GFAvatar(
-            size: context.dynamicWidth(13),
-            backgroundColor: Color(0xff202b40),
-            child: Icon(
-              Icons.supervised_user_circle,
-              color: Color(0xff017eba),
+            InkWell(
+              borderRadius: BorderRadius.circular(25),
+              hoverColor: Colors.red,
+              highlightColor: Colors.red.withOpacity(0.8),
+              //splashColor: Colors.deepPurple.withOpacity(0.5),
+              onTap: () {},
+              child: GFAvatar(
+                size: context.dynamicWidth(13),
+                backgroundColor: Color(0xff202b40),
+                child: Icon(
+                  Icons.supervised_user_circle,
+                  color: Color(0xff017eba),
+                ),
+              ),
             ),
-          ),
-          GFAvatar(
-            size: context.dynamicWidth(13),
-            backgroundColor: Color(0xff202b40),
-            child: Icon(
-              Icons.map,
-              color: Color(0xff017eba),
+            InkWell(
+              borderRadius: BorderRadius.circular(25),
+              hoverColor: Colors.red,
+              highlightColor: Colors.red.withOpacity(0.8),
+              //splashColor: Colors.deepPurple.withOpacity(0.5),
+              onTap: () async {
+                await MyLocal.setIntData('tiklananAlbum', album.id);
+                controller.index = 2;
+                setState(() {
+                  tiklananAlbum = album.id!;
+                });
+              },
+              child: GFAvatar(
+                size: context.dynamicWidth(13),
+                backgroundColor: Color(0xff202b40),
+                child: Icon(
+                  Icons.map,
+                  color: Color(0xff017eba),
+                ),
+              ),
             ),
-          ),
-          GFAvatar(
-            size: context.dynamicWidth(13),
-            backgroundColor: Color(0xff202b40),
-            child: Icon(
-              Icons.list_alt,
-              color: Color(0xff017eba),
+            InkWell(
+              borderRadius: BorderRadius.circular(25),
+              hoverColor: Colors.red,
+              highlightColor: Colors.red.withOpacity(0.8),
+              //splashColor: Colors.deepPurple.withOpacity(0.5),
+              onTap: () async {
+                await MyLocal.setIntData('tiklananAlbum', album.id);
+                controller.index = 1;
+                setState(() {
+                  tiklananAlbum = album.id!;
+                });
+              },
+              child: GFAvatar(
+                size: context.dynamicWidth(13),
+                backgroundColor: Color(0xff202b40),
+                child: Icon(
+                  Icons.list_alt,
+                  color: Color(0xff017eba),
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -313,20 +503,18 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         if (cardType == 'GFCard') {
           image = Image.file(
             File(album.image.toString()),
-            fit: BoxFit.fitWidth,
-            height: 150,
+            fit: BoxFit.fill,
+            height: context.dynamicHeight(5),
+            width: context.dynamicWidth(1.35),
           );
         } else {
-          image = Image.file(
-            File(album.image.toString()),
-            fit: BoxFit.fitHeight,
-            width: 50,
-          );
+          image = Image.file(File(album.image.toString()),
+              fit: BoxFit.fill, width: context.dynamicWidth(4.1));
         }
       }
 
       if (cardType == 'GFCard') {
-        GFCard card = createGFCard(album, image, aktifPasif);
+        Widget card = createGFCard(album, image, aktifPasif);
         cards.add(card);
       } else {
         Card card = createCard(album, image, aktifPasif);
@@ -609,7 +797,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                 ],
               ),
               Medya(id: aktifalbum),
-              Harita(id: aktifalbum, type: 'album')
+              Harita(id: aktifalbum, type: 'album') //xxx
             ]),
         bottomNavigationBar: BottomNavigationBar(
           key: scaffoldState,
@@ -779,59 +967,6 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         );
       },
     );
-  }
-
-  getListDialog() {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(14.0))),
-            backgroundColor:
-                Theme.of(context).bottomNavigationBarTheme.backgroundColor,
-            actions: [
-              Column(
-                children: [
-                  ListTile(
-                    leading: Icon(Icons.check),
-                    title: Text('Albümü Aktif Et'),
-                    onTap: () async {
-                      Album album = Album();
-                      await MyLocal.setIntData('aktifalbum', album.id);
-                      getAlbumList();
-
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                      leading: Icon(Icons.list_alt),
-                      title: Text('Albümün İçindekileri Listele'),
-                      onTap: () {}),
-                  ListTile(
-                      leading: Icon(FontAwesomeIcons.mapLocation),
-                      title: Text('Haritada Göster'),
-                      onTap: () {}),
-                  ListTile(
-                      leading: Icon(Icons.share),
-                      title: Text('Albümü Paylaş'),
-                      onTap: () {}),
-                  ListTile(
-                      leading: Icon(Icons.supervised_user_circle),
-                      title: Text('Paylaşılan Kişiler Listesi'),
-                      onTap: () {}),
-                  ListTile(
-                    leading: Icon(
-                      Icons.delete,
-                    ),
-                    title: Text('Albümü Sil'),
-                    onTap: () {},
-                  ),
-                ],
-              )
-            ],
-          );
-        });
   }
 
   getShareDialog() {
