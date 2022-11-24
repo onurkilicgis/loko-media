@@ -44,6 +44,7 @@ GL.loadAlbumToMap = function(items){
     const img = document.createElement('img');
     img.style.width='36px';
     img.src = `http://127.0.0.1:1991/album-${item.id}/${item.miniName}`;
+    alert(img.src);
     div.appendChild(img);
     var geojsonPart = { "type": "Feature", "properties": item, "geometry": { "coordinates": [ Number(item.longitude), Number(item.latitude) ], "type": "Point" } };
     features.push(geojsonPart);
