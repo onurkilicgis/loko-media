@@ -11,7 +11,7 @@ Vue.component('medialist', {
         onoff: true,
         hidden:true,
         items:[
-          {
+          /*{
             id:1,
             image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
             fileType:'image',
@@ -37,7 +37,7 @@ Vue.component('medialist', {
             id:5,
             image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
             fileType:'image',
-          },
+          },*/
         ],
         selected:-1,
         item:false,
