@@ -12,9 +12,9 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/UserRegistration.dart';
+import '../services/API2.dart';
 import '../services/Loader.dart';
 import '../services/MyLocal.dart';
-import '../services/API2.dart';
 import '../services/auth.dart';
 import '../services/utils.dart';
 import '../view_model/MyHomePage_view_models.dart';
@@ -68,10 +68,10 @@ class _LoginPageState extends State<LoginPage> {
       });
     } else {
       bool internetStatus = await InternetConnectionChecker().hasConnection;
-      if(internetStatus==true){
+      if (internetStatus == true) {
         Loading.waiting('Giriş Kontrol Ediliyor');
         dynamic data = await API.postRequest('api/v1/user/tokenControl', {});
-        if (data['status'] == true) {
+        if (data?['status'] == true) {
           dynamic usr = data['data'];
           await saveUserInfo(
               usr['id'], usr['uid'], usr['mail'], usr['name'], usr['token']);
@@ -82,34 +82,39 @@ class _LoginPageState extends State<LoginPage> {
           });
         } else {
           //Loading.close();
-          SBBildirim.hata(data['message']);
-          Loading.close();
-          String userString = await MyLocal.getStringData('user');
-          dynamic user = json.decode(userString);
-          switch(data['errCode']){
-            case 'err9':{
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => VerifyScreen(email: user['mail'])));
-              break;
-            }
-            case 'err12':{
-              await MyLocal.removeKey('token');
-              await MyLocal.removeKey('user');
-              setState(() {
-                Loading.close();
-                tokenControl = true;
-                loginControl = false;
-              });
-              break;
+          if (data?['message'] != null) {
+            SBBildirim.hata(data?['message']);
+            Loading.close();
+            String userString = await MyLocal.getStringData('user');
+            dynamic user = json.decode(userString);
+            switch (data['errCode']) {
+              case 'err9':
+                {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              VerifyScreen(email: user['mail'])));
+                  break;
+                }
+              case 'err12':
+                {
+                  await MyLocal.removeKey('token');
+                  await MyLocal.removeKey('user');
+                  setState(() {
+                    Loading.close();
+                    tokenControl = true;
+                    loginControl = false;
+                  });
+                  break;
+                }
             }
           }
         }
-      }else{
+      } else {
         String userString = await MyLocal.getStringData('user');
         dynamic user = json.decode(userString);
-        if(user['uid']!=''){
+        if (user['uid'] != '') {
           setState(() {
             Loading.close();
             tokenControl = true;
@@ -117,7 +122,6 @@ class _LoginPageState extends State<LoginPage> {
           });
         }
       }
-
     }
   }
 
@@ -317,7 +321,6 @@ class _LoginPageState extends State<LoginPage> {
           dynamic result = await API
               .postRequest('api/v1/user/login', {'email': email, 'uid': uid});
           if (result['status'] == false) {
-
             setState(() {
               isEntry = false;
             });
@@ -330,7 +333,7 @@ class _LoginPageState extends State<LoginPage> {
                         builder: (context) => VerifyScreen(email: email)));
               }
             }
-            if(result['errCode'] == 'err12'){
+            if (result['errCode'] == 'err12') {
               SBBildirim.hata(result['message']);
               await MyLocal.removeKey('token');
               await MyLocal.removeKey('user');

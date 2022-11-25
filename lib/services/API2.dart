@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:loko_media/services/Loader.dart';
+
 import 'package:dio/adapter.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:loko_media/services/Loader.dart';
 import 'package:loko_media/services/MyLocal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dio/dio.dart';
 
 class API {
-
   static Dio dio = Dio();
 
   static dynamic fileUpload(String path, dynamic form) async {
@@ -26,7 +26,7 @@ class API {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token =
-    prefs.containsKey('token') == true ? prefs.getString('token') : '';
+        prefs.containsKey('token') == true ? prefs.getString('token') : '';
     if (token != '') {
       body['token'] = token.toString();
     }
@@ -97,16 +97,12 @@ class API {
       }
     } on DioError catch (err) {
       Loading.close();
-      switch(err.response!.statusCode){
+      switch (err.response?.statusCode) {
         case 500:
           {
-            String errCode = err.response!.data['message']['errCode'];
-            String message = err.response!.data['message']['message'];
-            return {
-              'status': false,
-              'errCode': errCode,
-              'message': message
-            };
+            String errCode = err.response?.data['message']['errCode'];
+            String message = err.response?.data['message']['message'];
+            return {'status': false, 'errCode': errCode, 'message': message};
             break;
           }
       }
