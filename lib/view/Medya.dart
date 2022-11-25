@@ -9,11 +9,14 @@ import 'package:photo_view/photo_view_gallery.dart';
 
 class Medya extends StatefulWidget {
   int? id;
-  final PageController pageController;
-  final int index;
+  // final PageController pageController;
+  // final int index;
 
-  Medya({this.id, this.index = 0})
-      : pageController = PageController(initialPage: index);
+  Medya({
+    this.id,
+    /*this.index = 0*/
+  });
+  // : pageController = PageController(initialPage: index);
 
   @override
   State<Medya> createState() => MedyaState();
@@ -21,7 +24,7 @@ class Medya extends StatefulWidget {
 
 class MedyaState extends State<Medya> {
   List<Medias> fileList = [];
-  late int index = widget.index;
+  // late int index = widget.index;
 
   getFileList(int album_id) async {
     List<Medias> file = await AlbumDataBase.getFiles(album_id);
@@ -62,7 +65,7 @@ class MedyaState extends State<Medya> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.file(
-                ioo.File(fileList[0].path.toString()),
+                ioo.File(fileList[index].path.toString()),
                 fit: BoxFit.cover,
               ),
             ),
@@ -74,19 +77,19 @@ class MedyaState extends State<Medya> {
 
   openGallery() {
     return PhotoViewGallery.builder(
-        pageController: widget.pageController,
-        scrollDirection: Axis.vertical,
-        itemCount: fileList.length,
-        scrollPhysics: BouncingScrollPhysics(),
-        builder: (BuildContext context, int index) {
-          return PhotoViewGalleryPageOptions(
-              imageProvider:
-                  FileImage(ioo.File(fileList[index].path.toString())),
-              minScale: PhotoViewComputedScale.contained,
-              maxScale: PhotoViewComputedScale.contained * 4);
-        },
-        onPageChanged: (index) => setState(() {
+      // pageController: widget.pageController,
+      scrollDirection: Axis.vertical,
+      itemCount: fileList.length,
+      scrollPhysics: BouncingScrollPhysics(),
+      builder: (BuildContext context, int index) {
+        return PhotoViewGalleryPageOptions(
+            imageProvider: FileImage(ioo.File(fileList[index].path.toString())),
+            minScale: PhotoViewComputedScale.contained * 0.8,
+            maxScale: PhotoViewComputedScale.covered * 2);
+      },
+      /* onPageChanged: (index) => setState(() {
               this.index = index;
-            }));
+            })*/
+    );
   }
 }
