@@ -226,9 +226,10 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                   )
               ),
               Container(
-                  padding: EdgeInsets.only(bottom:5,left:5),
+                  padding: EdgeInsets.only(bottom:5,left:5,right: 5),
                   alignment: Alignment.centerLeft,
                   child:Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       //
                       cardBottomButton(Icons.share,(){
