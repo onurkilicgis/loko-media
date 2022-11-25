@@ -137,6 +137,122 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     );
   }
 
+  Widget cardBottomButton(icon,onTap){
+    return Padding(
+      padding: const EdgeInsets.all(2),
+      child: Material(
+        color: Colors.transparent,
+        child:
+        InkWell(
+          child:Ink(
+            height: 32,
+            width: 32,
+            decoration: ShapeDecoration(
+              color: Color(0xff202b40),
+              shape: CircleBorder(),
+            ),
+            child: IconButton(
+              iconSize: 16,
+              icon: Icon(icon,color: Color(0xff017eba)),
+              color: Colors.white,
+              onPressed: () {},
+            ),
+          ),
+          onTap: onTap,
+        ),
+
+      ),
+    );
+  }
+
+  Widget createGFCard2(album, durum, isDark) {
+    ImageProvider image;
+    if(album.image==''){
+      if (isDark == 'dark') {
+        image = new AssetImage('assets/images/album_dark.png');
+      }else{
+        image = new AssetImage('assets/images/album_light.png');
+      }
+    }else{
+      image = FileImage(File(album.image.toString()));
+    }
+    return InkWell(
+      onLongPress: () {
+        APP_VM.showAlbumDialog(context, this, album);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: new BorderRadius.all(Radius.circular(8)),
+          image: DecorationImage(
+            image: image,
+            fit: BoxFit.cover
+          ),
+        ),
+        margin: EdgeInsets.all(4),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.only(top:5,left:5),
+                  child:Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(padding:EdgeInsets.only(bottom: 2),child:Text(album.name,
+                        textAlign:TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 14,
+                          shadows: <Shadow>[
+                            Shadow(
+                              offset: Offset(1.0, 1.0),
+                              blurRadius: 4.0,
+                              color: Color.fromARGB(255, 0, 0, 0),
+                            ),
+                          ], ),),),
+
+                      Text("Öğe Sayısı : ${album.itemCount.toString()}, Durum : ${durum}",
+                        textAlign:TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 10,
+                          shadows: <Shadow>[
+                            Shadow(
+                              offset: Offset(1.0, 1.0),
+                              blurRadius: 4.0,
+                              color: Color.fromARGB(255, 0, 0, 0),
+                            ),
+                          ], ),)
+                    ],
+                  )
+              ),
+              Container(
+                  padding: EdgeInsets.only(bottom:5,left:5),
+                  alignment: Alignment.centerLeft,
+                  child:Row(
+                    children: [
+                      //
+                      cardBottomButton(Icons.share,(){
+
+                      }),
+                      cardBottomButton(Icons.supervised_user_circle,(){
+
+                      }),
+                      cardBottomButton(Icons.map,(){
+
+                      }),
+                      cardBottomButton(Icons.list_alt,(){
+
+                      }),
+                    ],
+                  )
+              ),
+
+            ]
+        ),
+      ),
+    );
+  }
+
   Widget createGFCard(album, image, durum) {
     return InkWell(
       //splashColor: Colors.red,
@@ -144,13 +260,15 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         APP_VM.showAlbumDialog(context, this, album);
       },
       child: GFCard(
-        boxFit: BoxFit.cover,
+        boxFit: BoxFit.contain,
+        padding: EdgeInsets.all(8),
+        margin: EdgeInsets.all(2),
         titlePosition: GFPosition.start,
         image: image,
         showImage: true,
         title: GFListTile(
-          margin: EdgeInsets.only(bottom: context.dynamicHeight(80)),
-
+          margin: EdgeInsets.only(bottom:0,left: 0,right: 0, top:0 ),
+          padding: EdgeInsets.only(bottom:0,left: 0,right: 0, top:0 ),
           onTap: () async {
             await MyLocal.setIntData('aktifalbum', album.id);
             controller.index = 1;
@@ -161,8 +279,8 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
           title: Text(
             album.name == null
                 ? ''
-                : album.name! + ', Sayı:' + album.itemCount!.toString(),
-            style: TextStyle(color: Color(0xffbecbe7), fontSize: 17),
+                : album.name! + ', Öğe Sayısı :' + album.itemCount!.toString()+', Durum : '+durum,
+            style: TextStyle(color: Color(0xffbecbe7), fontSize: 14),
           ),
 
           subTitle: Container(
@@ -366,9 +484,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         if (cardType == 'GFCard') {
           image = Image.file(
             File(album.image.toString()),
-            fit: BoxFit.fill,
-            height: context.dynamicHeight(5),
-            width: context.dynamicWidth(1.35),
+            fit:BoxFit.fitWidth,
           );
         } else {
           image = Image.file(File(album.image.toString()),
@@ -377,7 +493,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
       }
 
       if (cardType == 'GFCard') {
-        Widget card = createGFCard(album, image, aktifPasif);
+        Widget card = createGFCard2(album, aktifPasif, isDark);
         cards.add(card);
       } else {
         Card card = createCard(album, image, aktifPasif);
@@ -544,113 +660,21 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
             children: [
               Column(
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            left: 24,
-                            top: 24,
-                            right: 24,
-                          ),
-                          child: SizedBox(
-                            height: context.dynamicHeight(15),
-                            child: TextField(
-                              controller: searchController,
-                              textInputAction: TextInputAction.search,
-                              textAlign: TextAlign.left,
-                              cursorColor: const Color(0xff017eba),
-                              style: TextStyle(
-                                  color: Color(0xff9cddff), fontSize: 11),
-                              decoration: InputDecoration(
-                                  suffixIcon: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        SizedBox(
-                                          height: 36,
-                                          width: 30,
-                                          child: IconButton(
-                                              tooltip:
-                                                  'Albüm Görünüm Değiştirme',
-                                              onPressed: () async {
-                                                if (cardType == 'GFCard') {
-                                                  await MyLocal.setStringData(
-                                                      'card-type', 'ListTile');
-                                                  setState(() {
-                                                    cardType = 'ListTile';
-                                                  });
-                                                } else {
-                                                  await MyLocal.setStringData(
-                                                      'card-type', 'GFCard');
-                                                  setState(() {
-                                                    cardType = 'GFCard';
-                                                  });
-                                                }
-                                                getAlbumList();
-                                              },
-                                              icon: Icon(
-                                                Icons.apps,
-                                                size: context.dynamicWidth(24),
-                                                color: Color(0xff017eba),
-                                              )),
-                                        ),
-                                        SizedBox(
-                                          height: 36,
-                                          width: 30,
-                                          child: IconButton(
-                                              tooltip: 'Albüm Sıralama',
-                                              onPressed: () {},
-                                              icon: Icon(
-                                                Icons.sort,
-                                                size: context.dynamicWidth(24),
-                                                color: Color(0xff017eba),
-                                              )),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(right: 10),
-                                          child: SizedBox(
-                                            height: 36,
-                                            width: 30,
-                                            child: IconButton(
-                                                tooltip: 'Albüm Filtreleme',
-                                                onPressed: () {},
-                                                icon: Icon(
-                                                  Icons.filter_alt,
-                                                  size:
-                                                      context.dynamicWidth(24),
-                                                  color: Color(0xff017eba),
-                                                )),
-                                          ),
-                                        )
-                                      ]),
-                                  prefixIcon: Icon(
-                                    Icons.search,
-                                    color: Color(0xff017eba),
-                                    size: 18,
-                                  ),
-                                  labelText: 'Albüm Arama',
-                                  labelStyle: TextStyle(
-                                      color: Color(0xff017eba),
-                                      fontSize: context.dynamicWidth(28)),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                    color: Color(0xff017eba),
-                                  )),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                    color: Color(0xff017eba),
-                                  ))),
-                              onChanged: (value) {},
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  APP_VM.getAramaKutusu(context, this),
                   Expanded(
-                    child: ListView(
+                    child:
+                    cardType=='GFCard'?
+                    GridView(
+                      padding: EdgeInsets.all(12),
+                      shrinkWrap: false,
+                      scrollDirection: Axis.vertical,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                      ),
+                      children: createAlbumCards(),
+
+                    ):
+                    ListView(
                       shrinkWrap: true,
                       padding: const EdgeInsets.all(8),
                       scrollDirection: Axis.vertical,

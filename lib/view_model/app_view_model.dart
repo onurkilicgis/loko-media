@@ -1,9 +1,119 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:loko_media/view_model/layout.dart';
 
 import '../services/MyLocal.dart';
 
 class APP_VM {
+
+  static getAramaKutusu(BuildContext context, app){
+    return Row(
+      children: [
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 12,
+              top: 12,
+              right: 12,
+            ),
+            child: SizedBox(
+              height: context.dynamicHeight(15),
+              child: TextField(
+                controller: app.searchController,
+                textInputAction: TextInputAction.search,
+                textAlign: TextAlign.left,
+                cursorColor: const Color(0xff017eba),
+                style: TextStyle(
+                    color: Color(0xff9cddff), fontSize: 11),
+                decoration: InputDecoration(
+                    suffixIcon: Row(
+                        mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            height: 36,
+                            width: 30,
+                            child: IconButton(
+                                tooltip:
+                                'Albüm Görünüm Değiştirme',
+                                onPressed: () async {
+                                  if (app.cardType == 'GFCard') {
+                                    await MyLocal.setStringData(
+                                        'card-type', 'ListTile');
+                                    app.setState(() {
+                                      app.cardType = 'ListTile';
+                                    });
+                                  } else {
+                                    await MyLocal.setStringData(
+                                        'card-type', 'GFCard');
+                                    app.setState(() {
+                                      app.cardType = 'GFCard';
+                                    });
+                                  }
+                                  app.getAlbumList();
+                                },
+                                icon: Icon(
+                                  Icons.apps,
+                                  size: context.dynamicWidth(24),
+                                  color: Color(0xff017eba),
+                                )),
+                          ),
+                          SizedBox(
+                            height: 36,
+                            width: 30,
+                            child: IconButton(
+                                tooltip: 'Albüm Sıralama',
+                                onPressed: () {},
+                                icon: Icon(
+                                  Icons.sort,
+                                  size: context.dynamicWidth(24),
+                                  color: Color(0xff017eba),
+                                )),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(right: 10),
+                            child: SizedBox(
+                              height: 36,
+                              width: 30,
+                              child: IconButton(
+                                  tooltip: 'Albüm Filtreleme',
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.filter_alt,
+                                    size:
+                                    context.dynamicWidth(24),
+                                    color: Color(0xff017eba),
+                                  )),
+                            ),
+                          )
+                        ]),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Color(0xff017eba),
+                      size: 18,
+                    ),
+                    labelText: 'Albüm Arama',
+                    labelStyle: TextStyle(
+                        color: Color(0xff017eba),
+                        fontSize: context.dynamicWidth(28)),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xff017eba),
+                        )),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xff017eba),
+                        ))),
+                onChanged: (value) {},
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   static showAlbumDialog(BuildContext context, app, album) async {
     return showDialog(
         context: context,
