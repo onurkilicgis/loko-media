@@ -3,13 +3,14 @@ import 'dart:convert';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:loko_media/services/MyLocal.dart';
 import 'package:loko_media/view/app.dart';
 import 'package:loko_media/view/register.dart';
 import 'package:loko_media/view_model/layout.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/UserRegistration.dart';
-import '../services/api.dart';
+import '../services/API2.dart';
 import '../services/utils.dart';
 
 class VerifyScreen extends StatefulWidget {
@@ -23,8 +24,6 @@ class VerifyScreen extends StatefulWidget {
 
 class _VerifyScreenState extends State<VerifyScreen> {
   final TextEditingController _checkController = TextEditingController();
-
-  var apiClass = API();
 
   @override
   void initState() {
@@ -139,22 +138,16 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           fontWeight: FontWeight.bold),
                     ),
                     onPressed: () async {
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      var apiClass = API();
-                      dynamic result = await apiClass.postRequest(
+                      dynamic result = await API.postRequest(
                           'api/v1/user/confrimation', {
                         'email': widget.email,
                         'code': _checkController.text
                       });
-
-                      UserRegistration loginModel = UserRegistration.fromJson(
-                          jsonDecode(result['data'].toString()));
-                      prefs.setString("user", result['data'].toString());
-                      prefs.setString("token", loginModel.token.toString());
+                      MyLocal.setStringData('token', result['data']['token'].toString());
+                      MyLocal.setStringData('user', json.encode(result['data']));
 
                       SBBildirim.onay(
-                          'Mailiniz onaylanmıştır. Hoşgeldiniz sayın ${loginModel.name}.');
+                          'Mailiniz onaylanmıştır. Hoşgeldiniz sayın ${result['data']['name']}.');
 
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => App()));
@@ -185,7 +178,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           fontWeight: FontWeight.bold),
                     ),
                     onPressed: () async {
-                      dynamic resultEmail = await apiClass.postRequest(
+                      dynamic resultEmail = await API.postRequest(
                           'api/v1/user/sendConfrimation',
                           {'email': widget.email});
                       print(resultEmail);

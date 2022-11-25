@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:loko_media/view/app.dart';
 import 'package:loko_media/view/register.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/UserRegistration.dart';
 import '../services/Loader.dart';
 import '../services/MyLocal.dart';
-import '../services/api.dart';
+import '../services/API2.dart';
 import '../services/auth.dart';
 import '../services/utils.dart';
 import '../view_model/MyHomePage_view_models.dart';
@@ -30,8 +31,6 @@ class _LoginPageState extends State<LoginPage> {
   bool loginControl = false;
 
   bool verify = false;
-  var apiClass = API();
-
   bool isEntry = false;
 
   final auth = FirebaseAuth.instance;
@@ -68,23 +67,57 @@ class _LoginPageState extends State<LoginPage> {
         loginControl = false;
       });
     } else {
-      Loading.waiting('Giriş Kontrol Ediliyor');
-      dynamic data = await apiClass.postRequest('api/v1/user/tokenControl', {});
-      if (data['status'] == true) {
-        dynamic usr = data['data'];
-        dynamic usr2 = json.decode(usr);
-        await saveUserInfo(
-            usr2['id'], usr2['uid'], usr2['mail'], usr2['name'], usr2['token']);
-        setState(() {
+      bool internetStatus = await InternetConnectionChecker().hasConnection;
+      if(internetStatus==true){
+        Loading.waiting('Giriş Kontrol Ediliyor');
+        dynamic data = await API.postRequest('api/v1/user/tokenControl', {});
+        if (data['status'] == true) {
+          dynamic usr = data['data'];
+          await saveUserInfo(
+              usr['id'], usr['uid'], usr['mail'], usr['name'], usr['token']);
+          setState(() {
+            Loading.close();
+            tokenControl = true;
+            loginControl = true;
+          });
+        } else {
+          //Loading.close();
+          SBBildirim.hata(data['message']);
           Loading.close();
-          tokenControl = true;
-          loginControl = true;
-        });
-      } else {
-        //Loading.close();
-        SBBildirim.hata('Servise Ulaşılamıyor. API çalışmıyor.');
-        Loading.close();
+          String userString = await MyLocal.getStringData('user');
+          dynamic user = json.decode(userString);
+          switch(data['errCode']){
+            case 'err9':{
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => VerifyScreen(email: user['mail'])));
+              break;
+            }
+            case 'err12':{
+              await MyLocal.removeKey('token');
+              await MyLocal.removeKey('user');
+              setState(() {
+                Loading.close();
+                tokenControl = true;
+                loginControl = false;
+              });
+              break;
+            }
+          }
+        }
+      }else{
+        String userString = await MyLocal.getStringData('user');
+        dynamic user = json.decode(userString);
+        if(user['uid']!=''){
+          setState(() {
+            Loading.close();
+            tokenControl = true;
+            loginControl = true;
+          });
+        }
       }
+
     }
   }
 
@@ -281,13 +314,15 @@ class _LoginPageState extends State<LoginPage> {
             .then((value) async {
           String? uid = value?.uid;
           String? email = value?.email;
-          dynamic result = await apiClass
+          dynamic result = await API
               .postRequest('api/v1/user/login', {'email': email, 'uid': uid});
           if (result['status'] == false) {
+
             setState(() {
               isEntry = false;
             });
             if (result['errCode'] == 'err9') {
+              SBBildirim.bilgi(result['message']);
               if (email != null) {
                 Navigator.push(
                     context,
@@ -295,15 +330,21 @@ class _LoginPageState extends State<LoginPage> {
                         builder: (context) => VerifyScreen(email: email)));
               }
             }
+            if(result['errCode'] == 'err12'){
+              SBBildirim.hata(result['message']);
+              await MyLocal.removeKey('token');
+              await MyLocal.removeKey('user');
+              setState(() {
+                Loading.close();
+                tokenControl = true;
+                loginControl = false;
+              });
+            }
           } else {
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            UserRegistration loginModel = UserRegistration.fromJson(
-                jsonDecode(result['data'].toString()));
-            prefs.setString("user", result['data'].toString());
-            prefs.setString("token", loginModel.token.toString());
-
-            SBBildirim.onay('Hoşgeldiniz sayın ${loginModel.name}.');
-
+            dynamic usr = result['data'];
+            await saveUserInfo(
+                usr['id'], usr['uid'], usr['mail'], usr['name'], usr['token']);
+            SBBildirim.onay('Hoşgeldiniz sayın ${usr['name']}.');
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => App()));
           }
@@ -405,7 +446,7 @@ class _LoginPageState extends State<LoginPage> {
     _authService.signInWithGoogle().then((value) async {
       String? uid = value.user!.uid;
       String? email = value.user!.email;
-      dynamic result = await apiClass
+      dynamic result = await API
           .postRequest('api/v1/user/login', {'email': email, 'uid': uid});
       if (result['status'] == false) {
         setState(() {
