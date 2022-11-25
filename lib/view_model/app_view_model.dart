@@ -114,6 +114,51 @@ class APP_VM {
     );
   }
 
+  static albumSilmeDialog(context,album,app,silmeSonrasi){
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius:
+                BorderRadius.all(Radius.circular(12))),
+            backgroundColor: Theme.of(context)
+                .bottomNavigationBarTheme
+                .backgroundColor,
+            title: Text('Albüm Silme İşlemi'),
+            content: Text(
+                '"${album.name}" Adlı albümü silmeyek istediğinize emin misiniz?',style: TextStyle(fontSize: 14)),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        app.deleteAAlbum(album.id!);
+                        silmeSonrasi();
+                      },
+                      child: Text('Evet',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xfffd7e7e),
+                          ))),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('Hayır',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xff80C783),
+                          )))
+                ],
+              )
+            ],
+          );
+        });
+  }
+
   static showAlbumDialog(BuildContext context, app, album) async {
     return showDialog(
         context: context,
@@ -130,9 +175,7 @@ class APP_VM {
                     leading: Icon(Icons.check),
                     title: Text('Albümü Aktif Et'),
                     onTap: () async {
-                      await MyLocal.setIntData('aktifalbum', album.id);
-                      app.getAlbumList();
-
+                      app.albumAktifEt(album);
                       Navigator.pop(context);
                     },
                   ),
@@ -140,28 +183,23 @@ class APP_VM {
                       leading: Icon(Icons.list_alt),
                       title: Text('Albümün İçindekileri Listele'),
                       onTap: () async {
-                        await MyLocal.setIntData('tiklananAlbum', album.id);
-                        app.controller.index = 1;
-                        app.setState(() {
-                          app.tiklananAlbum = album.id!;
-                        });
+                        app.albumMedyalariniAc(album);
                         Navigator.pop(context);
                       }),
                   ListTile(
                       leading: Icon(FontAwesomeIcons.mapLocation),
                       title: Text('Haritada Göster'),
                       onTap: () async {
-                        await MyLocal.setIntData('tiklananAlbum', album.id);
-                        app.controller.index = 2;
-                        app.setState(() {
-                          app.tiklananAlbum = album.id!;
-                        });
+                        app.albumuHaritadaGoster(album);
                         Navigator.pop(context);
                       }),
                   ListTile(
                       leading: Icon(Icons.share),
                       title: Text('Albümü Paylaş'),
-                      onTap: () {}),
+                      onTap: () {
+                        Navigator.pop(context);
+                        getShareDialog(context);
+                      }),
                   ListTile(
                       leading: Icon(Icons.supervised_user_circle),
                       title: Text('Paylaşılan Kişiler Listesi'),
@@ -172,47 +210,9 @@ class APP_VM {
                     ),
                     title: Text('Albümü Sil'),
                     onTap: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(14.0))),
-                              backgroundColor: Theme.of(context)
-                                  .bottomNavigationBarTheme
-                                  .backgroundColor,
-                              title: Text('Albüm Silme'),
-                              content: Text(
-                                  '${album.name} Adlı Albümü Silmeye Emin Misiniz?'),
-                              actions: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    TextButton(
-                                        onPressed: () {
-                                          app.deleteAAlbum(album.id!);
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text('Evet',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Color(0xfffd7e7e),
-                                            ))),
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text('Hayır',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Color(0xff80C783),
-                                            )))
-                                  ],
-                                )
-                              ],
-                            );
-                          });
+                      albumSilmeDialog(context, album, app,(){
+                        Navigator.pop(context);
+                      });
                     },
                   ),
                 ],

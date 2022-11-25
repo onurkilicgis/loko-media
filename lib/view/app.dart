@@ -44,8 +44,9 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
   AlbumDataBase albumDataBase = AlbumDataBase();
 
   List<Album> albumList = [];
-  late int tiklananAlbum;
+  int tiklananAlbum = -1;
   int aktifalbum = -1;
+  late Album aktifAlbumItem;
   int aktifTabIndex = 0;
   String cardType = 'GFCard';
   File? image;
@@ -98,10 +99,12 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     List<Album> dbAlbums = await AlbumDataBase.getAlbums();
     int aktif_album_no = await MyLocal.getIntData('aktifalbum');
     String cardType2 = await MyLocal.getStringData('card-type');
+    Album album = dbAlbums.firstWhere((element) => aktif_album_no==element.id);
     setState(() {
       albumList = dbAlbums;
       aktifalbum = aktif_album_no;
       cardType = cardType2;
+      aktifAlbumItem=album;
     });
   }
 
@@ -118,9 +121,9 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
       child: ListTile(
         onTap: () async {
           await MyLocal.setIntData('tiklananAlbum', album.id);
-          controller.index = 1;
           setState(() {
             tiklananAlbum = album.id!;
+            controller.index = 1;
           });
         },
         leading: image,
@@ -139,11 +142,9 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
 
   Widget cardBottomButton(icon,onTap){
     return Padding(
-      padding: const EdgeInsets.all(2),
-      child: Material(
-        color: Colors.transparent,
-        child:
-        InkWell(
+        padding: const EdgeInsets.all(2),
+        child: Material(
+          color: Colors.transparent,
           child:Ink(
             height: 32,
             width: 32,
@@ -155,17 +156,50 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
               iconSize: 16,
               icon: Icon(icon,color: Color(0xff017eba)),
               color: Colors.white,
-              onPressed: () {},
+              onPressed: () {
+                onTap();
+              },
             ),
           ),
-          onTap: onTap,
         ),
-
-      ),
-    );
+      );
   }
 
-  Widget createGFCard2(album, durum, isDark) {
+  tabChange(index){
+    new Future.delayed(const Duration(milliseconds: 100), (){
+      controller.index=index;
+    });
+  }
+
+  albumAktifEt(album){
+    setState(() {
+      aktifAlbumItem=album;
+      aktifalbum = album.id;
+    });
+    MyLocal.setIntData('aktifalbum', album.id);
+    SBBildirim.bilgi("${album.name} adlı albüm aktif edildi");
+    getAlbumList();
+  }
+
+  albumMedyalariniAc(album_id){
+    setState(() {
+      tiklananAlbum=album_id;
+    });
+    tabChange(1);
+  }
+
+  albumuHaritadaGoster(album){
+    if(album.itemCount>0){
+      setState(() {
+        tiklananAlbum=album.id;
+      });
+      tabChange(2);
+    }else{
+      SBBildirim.uyari('Haritada gösterilecek bir media öğesi bulunamadı');
+    }
+  }
+
+  Widget createCustomCards(album, durum, isDark) {
     ImageProvider image;
     if(album.image==''){
       if (isDark == 'dark') {
@@ -179,6 +213,9 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     return InkWell(
       onLongPress: () {
         APP_VM.showAlbumDialog(context, this, album);
+      },
+      onTap: (){
+        albumMedyalariniAc(album.id);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -232,231 +269,23 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       //
-                      cardBottomButton(Icons.share,(){
-
+                      cardBottomButton(Icons.delete,(){
+                        APP_VM.albumSilmeDialog(context, album, this,(){});
                       }),
-                      cardBottomButton(Icons.supervised_user_circle,(){
-
+                      cardBottomButton(Icons.share,(){
+                        APP_VM.getShareDialog(context);
                       }),
                       cardBottomButton(Icons.map,(){
-
+                        albumuHaritadaGoster(album);
                       }),
-                      cardBottomButton(Icons.list_alt,(){
-
+                      cardBottomButton(durum=='Aktif'?Icons.radio_button_checked:Icons.radio_button_off,()async{
+                        albumAktifEt(album);
                       }),
                     ],
                   )
               ),
 
             ]
-        ),
-      ),
-    );
-  }
-
-  Widget createGFCard(album, image, durum) {
-    return InkWell(
-      //splashColor: Colors.red,
-      onLongPress: () {
-        APP_VM.showAlbumDialog(context, this, album);
-      },
-      child: GFCard(
-        boxFit: BoxFit.contain,
-        padding: EdgeInsets.all(8),
-        margin: EdgeInsets.all(2),
-        titlePosition: GFPosition.start,
-        image: image,
-        showImage: true,
-        title: GFListTile(
-          margin: EdgeInsets.only(bottom:0,left: 0,right: 0, top:0 ),
-          padding: EdgeInsets.only(bottom:0,left: 0,right: 0, top:0 ),
-          onTap: () async {
-            await MyLocal.setIntData('aktifalbum', album.id);
-            controller.index = 1;
-            setState(() {
-              aktifalbum = album.id!;
-            });
-          },
-          title: Text(
-            album.name == null
-                ? ''
-                : album.name! + ', Öğe Sayısı :' + album.itemCount!.toString()+', Durum : '+durum,
-            style: TextStyle(color: Color(0xffbecbe7), fontSize: 14),
-          ),
-
-          subTitle: Container(
-            child: Column(
-              children: [
-                /*Padding(
-                    padding: const EdgeInsets.only(
-                      top: 3,
-                      bottom: 3,
-                    ),
-                    child: Text(
-                      album.date ?? '',
-                      style: TextStyle(
-                        color: Color(0xffbecbe7),
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),*/
-                /*Padding(
-                    padding: const EdgeInsets.only(
-                      top: 3,
-                    ),
-                    child: Text(
-                      'Sayı : ' +
-                          album.itemCount!.toString() +
-                          ', Durum : ' +
-                          aktifPasif,
-                      style: TextStyle(
-                        color: Color(0xffbecbe7),
-                        fontSize: 14,
-                      ),
-                    ),
-                  )*/
-              ],
-            ),
-          ),
-
-          // subTitleText: album.date,
-        ),
-        //content: Text("Some quick example text to build on the card"),
-        buttonBar: GFButtonBar(
-          alignment: WrapAlignment.spaceEvenly,
-
-          // crossAxisAlignment: WrapCrossAlignment.start,
-          children: <Widget>[
-            InkWell(
-              borderRadius: BorderRadius.circular(25),
-              highlightColor: Colors.red.withOpacity(0.8),
-              onTap: () {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(14.0))),
-                        backgroundColor: Theme.of(context)
-                            .bottomNavigationBarTheme
-                            .backgroundColor,
-                        title: Text('Albüm Silme'),
-                        content: Text(
-                            '${album.name} Adlı Albümü Silmeye Emin Misiniz?'),
-                        actions: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                  onPressed: () {
-                                    deleteAAlbum(album.id!);
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Evet',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        color: Color(0xffe80b0b),
-                                      ))),
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Hayır',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        color: Color(0xff80C783),
-                                      )))
-                            ],
-                          )
-                        ],
-                      );
-                    });
-              },
-              child: GFAvatar(
-                size: context.dynamicWidth(13),
-                backgroundColor: Color(0xff202b40),
-                child: Icon(
-                  Icons.delete,
-                  color: Color(0xff017eba),
-                ),
-              ),
-            ),
-            InkWell(
-              borderRadius: BorderRadius.circular(25),
-              hoverColor: Colors.red,
-              highlightColor: Colors.red.withOpacity(0.8),
-              //splashColor: Colors.deepPurple.withOpacity(0.5),
-              onTap: () {
-                APP_VM.getShareDialog(context);
-              },
-              child: GFAvatar(
-                size: context.dynamicWidth(13),
-                backgroundColor: Color(0xff202b40),
-                child: Icon(
-                  Icons.share,
-                  color: Color(0xff017eba),
-                ),
-              ),
-            ),
-            InkWell(
-              borderRadius: BorderRadius.circular(25),
-              hoverColor: Colors.red,
-              highlightColor: Colors.red.withOpacity(0.8),
-              //splashColor: Colors.deepPurple.withOpacity(0.5),
-              onTap: () {},
-              child: GFAvatar(
-                size: context.dynamicWidth(13),
-                backgroundColor: Color(0xff202b40),
-                child: Icon(
-                  Icons.supervised_user_circle,
-                  color: Color(0xff017eba),
-                ),
-              ),
-            ),
-            InkWell(
-              borderRadius: BorderRadius.circular(25),
-              hoverColor: Colors.red,
-              highlightColor: Colors.red.withOpacity(0.8),
-              //splashColor: Colors.deepPurple.withOpacity(0.5),
-              onTap: () async {
-                await MyLocal.setIntData('tiklananAlbum', album.id);
-                controller.index = 2;
-                setState(() {
-                  tiklananAlbum = album.id!;
-                });
-              },
-              child: GFAvatar(
-                size: context.dynamicWidth(13),
-                backgroundColor: Color(0xff202b40),
-                child: Icon(
-                  Icons.map,
-                  color: Color(0xff017eba),
-                ),
-              ),
-            ),
-            InkWell(
-              borderRadius: BorderRadius.circular(25),
-              hoverColor: Colors.red,
-              highlightColor: Colors.red.withOpacity(0.8),
-              //splashColor: Colors.deepPurple.withOpacity(0.5),
-              onTap: () async {
-                await MyLocal.setIntData('tiklananAlbum', album.id);
-                controller.index = 1;
-                setState(() {
-                  tiklananAlbum = album.id!;
-                });
-              },
-              child: GFAvatar(
-                size: context.dynamicWidth(13),
-                backgroundColor: Color(0xff202b40),
-                child: Icon(
-                  Icons.list_alt,
-                  color: Color(0xff017eba),
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -494,7 +323,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
       }
 
       if (cardType == 'GFCard') {
-        Widget card = createGFCard2(album, aktifPasif, isDark);
+        Widget card = createCustomCards(album, aktifPasif, isDark);
         cards.add(card);
       } else {
         Card card = createCard(album, image, aktifPasif);
@@ -614,17 +443,27 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
           ),
         ),
         appBar: AppBar(
-          centerTitle: true,
+          centerTitle: false,
           title: getAppController(),
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           bottom: PreferredSize(
-            preferredSize: Size.fromHeight(context.dynamicHeight(30)),
+            preferredSize: Size.fromHeight(40),
             child: Material(
               color: Color(0xff202b40),
               child: TabBar(
-                labelStyle: TextStyle(fontSize: context.dynamicHeight(50)),
+                onTap: (tabindex)async{
+                  if(tabindex==1){
+                    controller.index = controller.previousIndex;
+                    albumMedyalariniAc(aktifalbum);
+                  }
+                  if(tabindex==2){
+                    controller.index = controller.previousIndex;
+                    albumuHaritadaGoster(aktifAlbumItem);
+                  }
+                },
+                labelStyle: TextStyle(fontSize: 14),
                 unselectedLabelStyle:
-                    TextStyle(fontSize: context.dynamicHeight(55)),
+                    TextStyle(fontSize: 12),
                 indicatorColor: Color(0xff0e91ce),
                 controller: controller,
                 labelColor: Color(0xff0e91ce),
@@ -684,8 +523,8 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                   ),
                 ],
               ),
-              Medya(id: aktifalbum),
-              Harita(id: aktifalbum, type: 'album') //xxx
+              Medya(id: tiklananAlbum),
+              Harita(id: tiklananAlbum, type: 'album') //xxx
             ]),
         bottomNavigationBar: BottomNavigationBar(
           key: scaffoldState,
@@ -860,14 +699,14 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
   getAppController() {
     if (controller.index == 0) {
       return Text('Oluşturulmuş Albümler',
-          style: Theme.of(context).textTheme.headlineSmall);
+          style: TextStyle());
     } else {
       if (controller.index == 1) {
         return Text('Albümün Medyaları',
-            style: Theme.of(context).textTheme.headlineSmall);
+            style: TextStyle());
       } else {
         return Text('Albümün Haritası',
-            style: Theme.of(context).textTheme.headlineSmall);
+            style: TextStyle());
       }
     }
   }

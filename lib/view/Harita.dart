@@ -5,6 +5,9 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 //import 'package:loko_media/services/MyLocal.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
+import 'package:loko_media/services/Loader.dart';
+import 'package:loko_media/services/utils.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 
 class Harita extends StatefulWidget {
   //albüm ya da fotoğrafın id bilgisi
@@ -21,6 +24,10 @@ class _HaritaState extends State<Harita> {
   bool loadData = false;
   late InAppWebViewController _controller;
   bool pageLoad = false;
+
+  navigasyonKur(dynamic data) async{
+    MapsLauncher.launchCoordinates(data['latitude'], data['longitude']);
+  }
 
   // darttaki bir veriyi web tarafına göndermek için hazırlanmıştır.
   sendToWeb(dynamic sendData) {
@@ -92,6 +99,7 @@ class _HaritaState extends State<Harita> {
   @override
   void initState() {
     getMedias();
+    Loading.waiting('Harita Yükleniyor');
     // TODO: implement initState
     super.initState();
   }
@@ -99,7 +107,10 @@ class _HaritaState extends State<Harita> {
   @override
   Widget build(BuildContext context) {
     if (items.length == 0) {
-      return Container();
+      //Loading.close();
+      return Container(
+        child: Text('Bomboş'),
+      );
     } else {
       return Container(
         child: InAppWebView(
@@ -119,12 +130,18 @@ class _HaritaState extends State<Harita> {
                   switch (type) {
                     case 'pageload':
                       {
+                        Loading.close();
                         setState(() {
                           pageLoad = true;
                           sendAllMedias();
                         });
                         break;
                       }
+                    case 'navigasyon':{
+                      dynamic dat = request[0]['data'];
+                      navigasyonKur(dat);
+                      break;
+                    }
                   }
                 });
           },

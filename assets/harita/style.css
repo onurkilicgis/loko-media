@@ -108,3 +108,13 @@ body { margin: 0; padding: 0; }
   height: 100% !important;
   width: 100% !important;
 }
+
+.mapboxgl-ctrl-geolocate{
+  position: fixed !important;
+  top: 58px !important;
+  right: 0px !important;
+  z-index: 41 !important;
+  background-color: #fff !important;
+  width: 32px;
+  height: 32px;
+}

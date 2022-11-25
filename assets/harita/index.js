@@ -8,6 +8,7 @@ GL.config = {
   geocoder:false,
   popups:[],
   popups_id:[],
+  geolocation:false,
 };
 
 GL.sendToAndroid = function(json){
@@ -27,6 +28,8 @@ GL.setMap = function(){
 
   GL.map.on('load',()=>{
     GL.addGeoceoder();
+    GL.addLocationVector();
+    GL.addLocationButon();
   });
 }
 GL.setMap();
@@ -98,13 +101,8 @@ GL.popupRemove=(id) => {
 GL.openImagePopup = (item)=>{
   var ind =GL.config.popups_id.indexOf(item.id);
   const div = document.createElement('div');
-  const img = document.createElement('img');
-  img.style.width='36px';
-  img.className='bradius5 p0';
-  //div.style.padding='3px';
   div.style.paddingBottom='0';
-  img.src = item.mini_image_url;
-  div.appendChild(img);
+  div.innerHTML = `<img src="${item.mini_image_url}" style="width:36px;" class="bradius5 p0" onclick="GL.showImage(${item.id})">`;
   if(ind!==-1){
     GL.popupRemove(item.id);
     ind=-1;
@@ -122,4 +120,46 @@ GL.openImagePopup = (item)=>{
     });
   }
   return popup;
+}
+
+GL.showImage = (id)=>{
+  medialist.$children[0].showAimage(id);
+};
+
+
+GL.addLocationVector = () => {
+  var geojson = {type:'FeatureCollection',features:[]};
+  GL.map.addSource('userlocation', {
+    type: 'geojson',
+    data: geojson
+  });
+  GL.map.addLayer({
+      'id': 'userlocation',
+      'type': 'circle',
+      'source': 'userlocation',
+      'paint': {
+      'circle-radius': 4,
+      'circle-stroke-width': 2,
+      'circle-color': 'blue',
+      'circle-stroke-color': 'white'
+      }
+  });
+}
+
+GL.setGeoJSONToSource = (source_id,geojson) => {
+  var source = GL.map.getSource(source_id);
+  if(source){
+    source.setData(geojson);
+  }
+}
+
+GL.addLocationButon = () => {
+  GL.config.geolocation = new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true
+      },
+      trackUserLocation: true,
+      showUserHeading: true
+    });
+  GL.map.addControl(GL.config.geolocation);
 }

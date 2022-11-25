@@ -83,7 +83,7 @@ Vue.component('medialist', {
       });
       document.getElementById('gallery').innerHTML=ress;*/
     },
-    resimGoster:function(item){
+    resimGoster:function(item,yontem){
       debugger;
       var that = this;
       var ind = 0;
@@ -91,23 +91,40 @@ Vue.component('medialist', {
       document.getElementById('galeri').innerHTML='<div id="'+id+'"></div>';
       var gallery = document.getElementById(id);
       gallery.innerHTML='';
-      for(var i=0;i<this.items.length;i++){
-        var it = this.items[i];
-        if(it.id==item.id){
-          ind=i;
+      if(yontem!=='single'){
+        for(var i=0;i<this.items.length;i++){
+          var it = this.items[i];
+          if(it.id==item.id){
+            ind=i;
+          }
+          var img = document.createElement('img');
+          img.alt = it.name;
+          img.src = it.image_url;
+          img.dataset.id=it.id;
+          img.dataset.lat=it.latitude;
+          img.dataset.lng=it.longitude;
+          gallery.appendChild(img);
         }
+      }else{
         var img = document.createElement('img');
-        img.alt = it.name;
-        img.src = it.image_url;
+        img.alt = item.name;
+        img.src = item.image_url;
+        img.dataset.id=item.id;
+        img.dataset.lat=item.latitude;
+        img.dataset.lng=item.longitude;
         gallery.appendChild(img);
       }
+      
       setTimeout(()=>{
         debugger;
         that.hidden=false;
         gallery.addEventListener('hidden',function(){
-          debugger;
           that.viewer.destroy();
           that.hidden=true;
+        });
+        gallery.addEventListener('viewed',function(e){
+          var data = e.detail.originalImage.dataset;
+          that.showPoint(data.lat,data.lng);
         });
         that.viewer = new Viewer(gallery,{
           inline: false,
@@ -117,17 +134,36 @@ Vue.component('medialist', {
         that.viewer.view(ind);
       },100);
       
+    },
+    showAimage(id){
+      var it = this.items.find((a)=>a.id==id);
+      if(it){
+        this.selected=it.id;
+        this.item = it;
+        this.resimGoster(it,'single');
+      }
+    },
+    showPoint(lat,lng){
+      lat=Number(lat);
+      lng=Number(lng);
+      GL.flyTo({
+        lng:lng,
+        lat:lat,
+      });
+    },
+    navigasyon(){
+      GL.sendToAndroid({type:'navigasyon',data:this.item});
     }
   },
   template: `<div v-if="onoff && hidden">
     <div :class="selected!==-1?'medialist flex-col h160':'medialist flex-col h120'" v-if="items.length>0">
       <div class="mb5 actions1" v-if="selected!==-1">
         <div>
-          <button @click="resimGoster(item)" v-if="item.fileType=='image'" class="button is-small is-dark is-responsive">Göster</button>
+          <button @click="resimGoster(item,'multi')" v-if="item.fileType=='image'" class="button is-small is-dark is-responsive">Göster</button>
           <button v-if="item.fileType=='video'" class="button is-small is-dark is-responsive">İzle</button>
           <button v-if="item.fileType=='audio'" class="button is-small is-dark is-responsive">Dinle</button>
           <button v-if="item.fileType=='txt'"   class="button is-small is-dark is-responsive">Oku</button>
-          <button class="button is-small is-dark is-responsive">Navigasyon</button>
+          <button @click="navigasyon(item);" class="button is-small is-dark is-responsive">Navigasyon</button>
           <button class="button is-small is-dark is-responsive">Bilgi</button>
         </div>
         <div>

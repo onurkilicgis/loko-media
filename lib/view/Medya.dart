@@ -7,6 +7,8 @@ import 'package:loko_media/view_model/layout.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
+import 'PhotoViewer.dart';
+
 class Medya extends StatefulWidget {
   int? id;
   // final PageController pageController;
@@ -61,7 +63,9 @@ class MedyaState extends State<Medya> {
         ),
         itemBuilder: (BuildContext context, int index) {
           return InkWell(
-            onTap: openGallery,
+            onTap: (){
+              openGallery(fileList[index].path.toString(),fileList[index].name);
+            },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.file(
@@ -75,21 +79,7 @@ class MedyaState extends State<Medya> {
     );
   }
 
-  openGallery() {
-    return PhotoViewGallery.builder(
-      // pageController: widget.pageController,
-      scrollDirection: Axis.vertical,
-      itemCount: fileList.length,
-      scrollPhysics: BouncingScrollPhysics(),
-      builder: (BuildContext context, int index) {
-        return PhotoViewGalleryPageOptions(
-            imageProvider: FileImage(ioo.File(fileList[index].path.toString())),
-            minScale: PhotoViewComputedScale.contained * 0.8,
-            maxScale: PhotoViewComputedScale.covered * 2);
-      },
-      /* onPageChanged: (index) => setState(() {
-              this.index = index;
-            })*/
-    );
+  openGallery(path,name) {
+    Navigator.push(context, MaterialPageRoute(builder:(context) => PhotoViewer(imagePath:path,name:name)) );
   }
 }
