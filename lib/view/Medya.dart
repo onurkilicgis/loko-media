@@ -1,11 +1,10 @@
 import 'dart:io' as ioo;
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
 import 'package:loko_media/view_model/layout.dart';
-import 'package:photo_view/photo_view.dart';
-import 'package:photo_view/photo_view_gallery.dart';
 
 import 'PhotoViewer.dart';
 
@@ -26,6 +25,8 @@ class Medya extends StatefulWidget {
 
 class MedyaState extends State<Medya> {
   List<Medias> fileList = [];
+  final ImagePicker _picker = ImagePicker();
+  List<Medias> _mediaFileList = [];
   // late int index = widget.index;
 
   getFileList(int album_id) async {
@@ -63,8 +64,12 @@ class MedyaState extends State<Medya> {
         ),
         itemBuilder: (BuildContext context, int index) {
           return InkWell(
-            onTap: (){
-              openGallery(fileList[index].path.toString(),fileList[index].name);
+            onTap: () {
+              openGallery(
+                  fileList[index].path.toString(), fileList[index].name);
+            },
+            onLongPress: () {
+              secilenMedya();
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
@@ -79,7 +84,17 @@ class MedyaState extends State<Medya> {
     );
   }
 
-  openGallery(path,name) {
-    Navigator.push(context, MaterialPageRoute(builder:(context) => PhotoViewer(imagePath:path,name:name)) );
+  openGallery(path, name) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => PhotoViewer(imagePath: path, name: name)));
+  }
+
+  void secilenMedya() async {
+    List<XFile>? selectedMedya = await _picker.pickMultiImage();
+    if (selectedMedya.isNotEmpty) {
+      _mediaFileList.addAll(selectedMedya as Iterable<Medias>);
+    }
   }
 }

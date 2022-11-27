@@ -4,11 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:getwidget/components/avatar/gf_avatar.dart';
-import 'package:getwidget/components/button/gf_button_bar.dart';
-import 'package:getwidget/components/card/gf_card.dart';
-import 'package:getwidget/components/list_tile/gf_list_tile.dart';
-import 'package:getwidget/position/gf_position.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
@@ -42,8 +37,10 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
   late Color boxColor;
 
   AlbumDataBase albumDataBase = AlbumDataBase();
-
+  //dolu havuzumuz
   List<Album> albumList = [];
+  //istediğimiz zaman doldurup boşaltabileceğimiz havuzumuz
+  List<Album> filteredAlbumList = [];
   int tiklananAlbum = -1;
   int aktifalbum = -1;
   late Album aktifAlbumItem;
@@ -99,12 +96,14 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     List<Album> dbAlbums = await AlbumDataBase.getAlbums();
     int aktif_album_no = await MyLocal.getIntData('aktifalbum');
     String cardType2 = await MyLocal.getStringData('card-type');
-    Album album = dbAlbums.firstWhere((element) => aktif_album_no==element.id);
+    Album album =
+        dbAlbums.firstWhere((element) => aktif_album_no == element.id);
     setState(() {
       albumList = dbAlbums;
+      filteredAlbumList = dbAlbums;
       aktifalbum = aktif_album_no;
       cardType = cardType2;
-      aktifAlbumItem=album;
+      aktifAlbumItem = album;
     });
   }
 
@@ -140,40 +139,40 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget cardBottomButton(icon,onTap){
+  Widget cardBottomButton(icon, onTap) {
     return Padding(
-        padding: const EdgeInsets.all(2),
-        child: Material(
-          color: Colors.transparent,
-          child:Ink(
-            height: 32,
-            width: 32,
-            decoration: ShapeDecoration(
-              color: Color(0xff202b40),
-              shape: CircleBorder(),
-            ),
-            child: IconButton(
-              iconSize: 16,
-              icon: Icon(icon,color: Color(0xff017eba)),
-              color: Colors.white,
-              onPressed: () {
-                onTap();
-              },
-            ),
+      padding: const EdgeInsets.all(2),
+      child: Material(
+        color: Colors.transparent,
+        child: Ink(
+          height: 32,
+          width: 32,
+          decoration: ShapeDecoration(
+            color: Color(0xff202b40),
+            shape: CircleBorder(),
+          ),
+          child: IconButton(
+            iconSize: 16,
+            icon: Icon(icon, color: Color(0xff017eba)),
+            color: Colors.white,
+            onPressed: () {
+              onTap();
+            },
           ),
         ),
-      );
+      ),
+    );
   }
 
-  tabChange(index){
-    new Future.delayed(const Duration(milliseconds: 100), (){
-      controller.index=index;
+  tabChange(index) {
+    new Future.delayed(const Duration(milliseconds: 100), () {
+      controller.index = index;
     });
   }
 
-  albumAktifEt(album){
+  albumAktifEt(album) {
     setState(() {
-      aktifAlbumItem=album;
+      aktifAlbumItem = album;
       aktifalbum = album.id;
     });
     MyLocal.setIntData('aktifalbum', album.id);
@@ -181,75 +180,78 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     getAlbumList();
   }
 
-  albumMedyalariniAc(album_id){
+  albumMedyalariniAc(album_id) {
     setState(() {
-      tiklananAlbum=album_id;
+      tiklananAlbum = album_id;
     });
     tabChange(1);
   }
 
-  albumuHaritadaGoster(album){
-    if(album.itemCount>0){
+  albumuHaritadaGoster(album) {
+    if (album.itemCount > 0) {
       setState(() {
-        tiklananAlbum=album.id;
+        tiklananAlbum = album.id;
       });
       tabChange(2);
-    }else{
+    } else {
       SBBildirim.uyari('Haritada gösterilecek bir media öğesi bulunamadı');
     }
   }
 
   Widget createCustomCards(album, durum, isDark) {
     ImageProvider image;
-    if(album.image==''){
+    if (album.image == '') {
       if (isDark == 'dark') {
         image = new AssetImage('assets/images/album_dark.png');
-      }else{
+      } else {
         image = new AssetImage('assets/images/album_light.png');
       }
-    }else{
+    } else {
       image = FileImage(File(album.image.toString()));
     }
     return InkWell(
       onLongPress: () {
         APP_VM.showAlbumDialog(context, this, album);
       },
-      onTap: (){
+      onTap: () {
         albumMedyalariniAc(album.id);
       },
       child: Container(
         decoration: BoxDecoration(
           color: Colors.black,
           borderRadius: new BorderRadius.all(Radius.circular(8)),
-          image: DecorationImage(
-            image: image,
-            fit: BoxFit.cover
-          ),
+          image: DecorationImage(image: image, fit: BoxFit.cover),
         ),
         margin: EdgeInsets.all(4),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Container(
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(top:5,left:5),
-                  child:Column(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(top: 5, left: 5),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(padding:EdgeInsets.only(bottom: 2),child:Text(album.name,
-                        textAlign:TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 14,
-                          shadows: <Shadow>[
-                            Shadow(
-                              offset: Offset(1.0, 1.0),
-                              blurRadius: 4.0,
-                              color: Color.fromARGB(255, 0, 0, 0),
-                            ),
-                          ], ),),),
-
-                      Text("Öğe Sayısı : ${album.itemCount.toString()}, Durum : ${durum}",
-                        textAlign:TextAlign.left,
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 2),
+                        child: Text(
+                          album.name,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 14,
+                            shadows: <Shadow>[
+                              Shadow(
+                                offset: Offset(1.0, 1.0),
+                                blurRadius: 4.0,
+                                color: Color.fromARGB(255, 0, 0, 0),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Text(
+                        "Öğe Sayısı : ${album.itemCount.toString()}, Durum : ${durum}",
+                        textAlign: TextAlign.left,
                         style: TextStyle(
                           fontSize: 10,
                           shadows: <Shadow>[
@@ -258,35 +260,36 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                               blurRadius: 4.0,
                               color: Color.fromARGB(255, 0, 0, 0),
                             ),
-                          ], ),)
+                          ],
+                        ),
+                      )
                     ],
-                  )
-              ),
+                  )),
               Container(
-                  padding: EdgeInsets.only(bottom:5,left:5,right: 5),
+                  padding: EdgeInsets.only(bottom: 5, left: 5, right: 5),
                   alignment: Alignment.centerLeft,
-                  child:Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       //
-                      cardBottomButton(Icons.delete,(){
-                        APP_VM.albumSilmeDialog(context, album, this,(){});
+                      cardBottomButton(Icons.delete, () {
+                        APP_VM.albumSilmeDialog(context, album, this, () {});
                       }),
-                      cardBottomButton(Icons.share,(){
+                      cardBottomButton(Icons.share, () {
                         APP_VM.getShareDialog(context);
                       }),
-                      cardBottomButton(Icons.map,(){
+                      cardBottomButton(Icons.map, () {
                         albumuHaritadaGoster(album);
                       }),
-                      cardBottomButton(durum=='Aktif'?Icons.radio_button_checked:Icons.radio_button_off,()async{
+                      cardBottomButton(
+                          durum == 'Aktif'
+                              ? Icons.radio_button_checked
+                              : Icons.radio_button_off, () async {
                         albumAktifEt(album);
                       }),
                     ],
-                  )
-              ),
-
-            ]
-        ),
+                  )),
+            ]),
       ),
     );
   }
@@ -294,8 +297,8 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
   List<Widget> createAlbumCards() {
     String isDark = 'dark';
     List<Widget> cards = [];
-    for (int i = 0; i < albumList.length; i++) {
-      var album = albumList[i];
+    for (int i = 0; i < filteredAlbumList.length; i++) {
+      var album = filteredAlbumList[i];
       String aktifPasif = 'Pasif';
       if (album.id == aktifalbum) {
         aktifPasif = 'Aktif';
@@ -314,7 +317,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         if (cardType == 'GFCard') {
           image = Image.file(
             File(album.image.toString()),
-            fit:BoxFit.fitWidth,
+            fit: BoxFit.fitWidth,
           );
         } else {
           image = Image.file(File(album.image.toString()),
@@ -337,7 +340,9 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     /* WidgetsBinding.instance.addPostFrameCallback((_) {
       getDialog();
     });*/
+
     getAlbumList();
+
     controller = TabController(length: 3, vsync: this, initialIndex: 0);
 
     controller.addListener(() {
@@ -356,6 +361,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    Album album = Album();
     return DefaultTabController(
       length: 3,
       initialIndex: 0,
@@ -451,19 +457,18 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
             child: Material(
               color: Color(0xff202b40),
               child: TabBar(
-                onTap: (tabindex)async{
-                  if(tabindex==1){
+                onTap: (tabindex) async {
+                  if (tabindex == 1) {
                     controller.index = controller.previousIndex;
                     albumMedyalariniAc(aktifalbum);
                   }
-                  if(tabindex==2){
+                  if (tabindex == 2) {
                     controller.index = controller.previousIndex;
                     albumuHaritadaGoster(aktifAlbumItem);
                   }
                 },
                 labelStyle: TextStyle(fontSize: 14),
-                unselectedLabelStyle:
-                    TextStyle(fontSize: 12),
+                unselectedLabelStyle: TextStyle(fontSize: 12),
                 indicatorColor: Color(0xff0e91ce),
                 controller: controller,
                 labelColor: Color(0xff0e91ce),
@@ -500,26 +505,25 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
             children: [
               Column(
                 children: [
-                  APP_VM.getAramaKutusu(context, this),
+                  APP_VM.getAramaKutusu(context, this, album),
                   Expanded(
-                    child:
-                    cardType=='GFCard'?
-                    GridView(
-                      padding: EdgeInsets.all(12),
-                      shrinkWrap: false,
-                      scrollDirection: Axis.vertical,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                      ),
-                      children: createAlbumCards(),
-
-                    ):
-                    ListView(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.all(8),
-                      scrollDirection: Axis.vertical,
-                      children: createAlbumCards(),
-                    ),
+                    child: cardType == 'GFCard'
+                        ? GridView(
+                            padding: EdgeInsets.all(12),
+                            shrinkWrap: false,
+                            scrollDirection: Axis.vertical,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                            ),
+                            children: createAlbumCards(),
+                          )
+                        : ListView(
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.all(8),
+                            scrollDirection: Axis.vertical,
+                            children: createAlbumCards(),
+                          ),
                   ),
                 ],
               ),
@@ -698,15 +702,12 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
 
   getAppController() {
     if (controller.index == 0) {
-      return Text('Oluşturulmuş Albümler',
-          style: TextStyle());
+      return Text('Oluşturulmuş Albümler', style: TextStyle());
     } else {
       if (controller.index == 1) {
-        return Text('Albümün Medyaları',
-            style: TextStyle());
+        return Text('Albümün Medyaları', style: TextStyle());
       } else {
-        return Text('Albümün Haritası',
-            style: TextStyle());
+        return Text('Albümün Haritası', style: TextStyle());
       }
     }
   }
@@ -736,5 +737,22 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     }
     Loading.close();
     getAlbumList();
+  }
+
+  albumArama(String name) async {
+    List<Album> filter = [];
+
+    filter = albumList;
+    if (name.isEmpty) {
+      filteredAlbumList = filter;
+    } else {
+      filteredAlbumList = filter
+          .where(
+              (album) => album.name!.toLowerCase().contains(name.toLowerCase()))
+          .toList();
+    }
+    setState(() {
+      filteredAlbumList;
+    });
   }
 }

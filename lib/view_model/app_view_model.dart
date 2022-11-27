@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loko_media/view_model/layout.dart';
 
+import '../models/Album.dart';
 import '../services/MyLocal.dart';
 
 class APP_VM {
-
-  static getAramaKutusu(BuildContext context, app){
+  static getAramaKutusu(BuildContext context, app, album) {
     return Row(
       children: [
         Expanded(
@@ -23,20 +23,17 @@ class APP_VM {
                 textInputAction: TextInputAction.search,
                 textAlign: TextAlign.left,
                 cursorColor: const Color(0xff017eba),
-                style: TextStyle(
-                    color: Color(0xff9cddff), fontSize: 11),
+                style: TextStyle(color: Color(0xff9cddff), fontSize: 11),
                 decoration: InputDecoration(
                     suffixIcon: Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           SizedBox(
                             height: 36,
                             width: 30,
                             child: IconButton(
-                                tooltip:
-                                'Albüm Görünüm Değiştirme',
+                                tooltip: 'Albüm Görünüm Değiştirme',
                                 onPressed: () async {
                                   if (app.cardType == 'GFCard') {
                                     await MyLocal.setStringData(
@@ -64,7 +61,9 @@ class APP_VM {
                             width: 30,
                             child: IconButton(
                                 tooltip: 'Albüm Sıralama',
-                                onPressed: () {},
+                                onPressed: () {
+                                  getSiralamaDialog(context, app, album);
+                                },
                                 icon: Icon(
                                   Icons.sort,
                                   size: context.dynamicWidth(24),
@@ -78,11 +77,12 @@ class APP_VM {
                               width: 30,
                               child: IconButton(
                                   tooltip: 'Albüm Filtreleme',
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    getFiltrelemeDialog(context, app);
+                                  },
                                   icon: Icon(
                                     Icons.filter_alt,
-                                    size:
-                                    context.dynamicWidth(24),
+                                    size: context.dynamicWidth(24),
                                     color: Color(0xff017eba),
                                   )),
                             ),
@@ -99,13 +99,15 @@ class APP_VM {
                         fontSize: context.dynamicWidth(28)),
                     focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Color(0xff017eba),
-                        )),
+                      color: Color(0xff017eba),
+                    )),
                     enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Color(0xff017eba),
-                        ))),
-                onChanged: (value) {},
+                      color: Color(0xff017eba),
+                    ))),
+                onChanged: (value) {
+                  app.albumArama(value);
+                },
               ),
             ),
           ),
@@ -114,20 +116,19 @@ class APP_VM {
     );
   }
 
-  static albumSilmeDialog(context,album,app,silmeSonrasi){
+  static albumSilmeDialog(context, album, app, silmeSonrasi) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-                borderRadius:
-                BorderRadius.all(Radius.circular(12))),
-            backgroundColor: Theme.of(context)
-                .bottomNavigationBarTheme
-                .backgroundColor,
+                borderRadius: BorderRadius.all(Radius.circular(12))),
+            backgroundColor:
+                Theme.of(context).bottomNavigationBarTheme.backgroundColor,
             title: Text('Albüm Silme İşlemi'),
             content: Text(
-                '"${album.name}" Adlı albümü silmeyek istediğinize emin misiniz?',style: TextStyle(fontSize: 14)),
+                '"${album.name}" Adlı albümü silmeyek istediğinize emin misiniz?',
+                style: TextStyle(fontSize: 14)),
             actions: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -210,7 +211,7 @@ class APP_VM {
                     ),
                     title: Text('Albümü Sil'),
                     onTap: () {
-                      albumSilmeDialog(context, album, app,(){
+                      albumSilmeDialog(context, album, app, () {
                         Navigator.pop(context);
                       });
                     },
@@ -251,9 +252,69 @@ class APP_VM {
                     leading: Icon(Icons.mail),
                     title: Text('Mail Olarak Gönder'),
                     onTap: () {}),
+              ],
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  static getSiralamaDialog(context, app, album) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(14.0))),
+          backgroundColor:
+              Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+          actions: [
+            Column(
+              children: [
                 ListTile(
-                    leading: Icon(FontAwesomeIcons.message),
-                    title: Text('Sosyal Medyada Paylaş'),
+                  title: Text('En Çok Medya Olanı Listele'),
+                  onTap: () {
+                    Comparator<Album> siralama =
+                        (y, x) => x.itemCount!.compareTo(y.itemCount!);
+                    app.filteredAlbumList.sort(siralama);
+                    app.setState(() {
+                      siralama;
+                    });
+                  },
+                ),
+                ListTile(
+                    title: Text('En Az Medya Olanı Listele'),
+                    onTap: () {
+                      Comparator<Album> siralama =
+                          (x, y) => x.itemCount!.compareTo(y.itemCount!);
+                      app.filteredAlbumList.sort(siralama);
+                      app.setState(() {
+                        siralama;
+                      });
+                    }),
+                ListTile(
+                    title: Text('Son Oluşturma Tarihine Göre Listele'),
+                    onTap: () {
+                      Comparator<Album> siralama =
+                          (y, x) => x.id!.compareTo(y.id!);
+                      app.filteredAlbumList.sort(siralama);
+                      app.setState(() {
+                        siralama;
+                      });
+                    }),
+                ListTile(
+                    title: Text('İlk Oluşturma Tarihine Göre Listele'),
+                    onTap: () {
+                      Comparator<Album> siralama =
+                          (x, y) => x.id!.compareTo(y.id!);
+                      app.filteredAlbumList.sort(siralama);
+                      app.setState(() {
+                        siralama;
+                      });
+                    }),
+                ListTile(
+                    title: Text('Bana En Yakın Mediaya Göre Listele'),
                     onTap: () {}),
               ],
             )
@@ -263,29 +324,59 @@ class APP_VM {
     );
   }
 
-  /*deleteAAlbum(int album_id) async {
-    Album? silinecekAlbum = await AlbumDataBase.getAAlbum(album_id);
-    Loading.waiting('${silinecekAlbum?.name} Adlı Albüm Siliniyor...');
-    List<dynamic> files = [];
-    files = await AlbumDataBase.getFiles(album_id);
-    for (int i = 0; i < files.length; i++) {
-      var item = files[i];
-      File file = File(item.path);
-      file.delete();
-    }
-
-    int silinenMediaSayisi = await AlbumDataBase.mediaDelete(album_id);
-    int silinenAlbumSayisi = await AlbumDataBase.albumDelete(album_id);
-    if (app.aktifalbum == album_id) {
-      int lastAlbumId = await AlbumDataBase.getLastAlbum();
-      await MyLocal.setIntData('aktifalbum', lastAlbumId);
-      SBBildirim.bilgi(
-          '${silinenMediaSayisi} Adet medya öğesi ve ${silinenAlbumSayisi} adet, ${silinecekAlbum?.name} adlı albüm silindi. Son albüm tekrar aktif edilmiştir.');
-    } else {
-      SBBildirim.bilgi(
-          '${silinenMediaSayisi} Adet medya öğesi ve ${silinenAlbumSayisi} adet, ${silinecekAlbum?.name} adlı albüm silindi.');
-    }
-    Loading.close();
-    app.getAlbumList();
-  }*/
+  static getFiltrelemeDialog(
+    context,
+    app,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(14.0))),
+          backgroundColor:
+              Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+          actions: [
+            Column(
+              children: [
+                ListTile(
+                  title: Text('Paylaşılmış Albümleri Filterele'),
+                  onTap: () {},
+                ),
+                ListTile(
+                    title: Text('Yayınlanmış Albümleri Filtrele'),
+                    onTap: () {}),
+                ListTile(
+                    title: Text('İçerisinde Resim Olan Albümleri Filtrele'),
+                    onTap: () {}),
+                ListTile(
+                  title: Text('İçerisinde Video Olan Albümleri Filtrele'),
+                  onTap: () {},
+                ),
+                ListTile(
+                  title: Text('İçerisinde Ses Olan Albümleri Filtrele'),
+                  onTap: () {},
+                ),
+                ListTile(
+                  title: Text('İçerisinde Yaz Olan Albümleri Filtrele'),
+                  onTap: () {},
+                ),
+                ListTile(
+                  title: Text('Boş Albümleri Filtrele'),
+                  onTap: () {
+                    List<Album> filterListitem = app.filteredAlbumList
+                        .where((e) => e.itemCount == 0)
+                        .toList();
+                    app.setState(() {
+                      app.filteredAlbumList = filterListitem;
+                    });
+                  },
+                ),
+              ],
+            )
+          ],
+        );
+      },
+    );
+  }
 }
