@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class CurrentDate {
   static zeroCheck(int num) {
     if (num < 10) {
@@ -155,5 +157,49 @@ class Medias {
     this.api_id = 0;
     this.date = CurrentDate.getNow();
     this.status = true;
+  }
+}
+
+class Util {
+  static evetHayir(context, baslik, soru, Function callback) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12))),
+            backgroundColor:
+                Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+            title: Text(baslik),
+            content: Text(soru, style: TextStyle(fontSize: 14)),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        callback(true);
+                      },
+                      child: Text('Evet',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xfffd7e7e),
+                          ))),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        callback(false);
+                      },
+                      child: Text('Hayır',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xff80C783),
+                          )))
+                ],
+              )
+            ],
+          );
+        });
   }
 }

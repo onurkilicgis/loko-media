@@ -1,10 +1,10 @@
 import 'dart:io' as ioo;
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
 import 'package:loko_media/view_model/layout.dart';
+import 'package:loko_media/view_model/media_view_model.dart';
 
 import 'PhotoViewer.dart';
 
@@ -25,9 +25,9 @@ class Medya extends StatefulWidget {
 
 class MedyaState extends State<Medya> {
   List<Medias> fileList = [];
-  final ImagePicker _picker = ImagePicker();
-  List<Medias> _mediaFileList = [];
-  // late int index = widget.index;
+
+  List<int> selectedMedias = [];
+  bool selectionMode = false;
 
   getFileList(int album_id) async {
     List<Medias> file = await AlbumDataBase.getFiles(album_id);
@@ -47,6 +47,114 @@ class MedyaState extends State<Medya> {
     super.dispose();
   }
 
+  // Media Seçme İşlemi Burada Yapılıyor
+  selectMedia(Medias media) {
+    // seçilmek istenen bu medya daha önce seçilmiş mi kontrol ediyor
+    // indexOf -> dizi içerisinde aranan bir değerin index sırasını verir
+    // en baştaki 0 dır , eğer listede yoksa -1 döner
+    int index = selectedMedias.indexOf(media.id!);
+    if (index == -1) {
+      // daha önce seçilmediği için seçilenler içerisine ekleniyor
+      selectedMedias.add(media.id!);
+    } else {
+      // zaten seçilmiş olan bir mediyayı tekrar pasif eder. seçimi kaldırır
+      selectedMedias.removeAt(index);
+    }
+    // eğer hiç seçili öğe yoksa selectionModu false yapar
+    // en az bir öğe seçilmiş ise selection mod'u true yapar.
+    if (selectedMedias.length > 0) {
+      selectionMode = true;
+    } else {
+      selectionMode = false;
+    }
+    setState(() {
+      selectedMedias;
+      selectionMode;
+    });
+  }
+
+  imageCard(Medias) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: Image.file(
+        ioo.File(Medias.path.toString()),
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
+  mediaCardBuilder(Medias) {
+    Widget? media;
+    bool secilimi = selectedMedias.indexOf(Medias.id) == -1 ? false : true;
+    var secimIcon = secilimi == true
+        ? Icons.check_box_outlined
+        : Icons.check_box_outline_blank;
+    double margin = secilimi == true ? 8 : 4;
+    switch (Medias.fileType) {
+      case 'image':
+        {
+          media = imageCard(Medias);
+          break;
+        }
+      case 'video':
+        {
+          break;
+        }
+      case 'audio':
+        {
+          break;
+        }
+      case 'txt':
+        {
+          break;
+        }
+    }
+    return InkWell(
+      onTap: () {
+        if (selectionMode == true) {
+          selectMedia(Medias);
+        } else {
+          switch (Medias.fileType) {
+            case 'image':
+              {
+                openGallery(Medias.path.toString(), Medias.name);
+                break;
+              }
+          }
+        }
+      },
+      onLongPress: () {
+        Media_VM.openMediaLongPDialog(context, this, Medias);
+      },
+      child: Container(
+        margin: EdgeInsets.all(margin),
+        child: Stack(
+          children: [
+            media!,
+            Padding(
+              padding: const EdgeInsets.all(2),
+              child: Material(
+                color: Colors.transparent,
+                child: Ink(
+                  height: 32,
+                  width: 32,
+                  child: IconButton(
+                    iconSize: 16,
+                    icon: Icon(secimIcon, color: Color(0xff017eba)),
+                    color: Colors.white,
+                    onPressed: () {
+                      selectMedia(Medias);
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,22 +171,7 @@ class MedyaState extends State<Medya> {
           crossAxisSpacing: 4,
         ),
         itemBuilder: (BuildContext context, int index) {
-          return InkWell(
-            onTap: () {
-              openGallery(
-                  fileList[index].path.toString(), fileList[index].name);
-            },
-            onLongPress: () {
-              secilenMedya();
-            },
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.file(
-                ioo.File(fileList[index].path.toString()),
-                fit: BoxFit.cover,
-              ),
-            ),
-          );
+          return mediaCardBuilder(fileList[index]);
         },
       ),
     );
@@ -89,12 +182,5 @@ class MedyaState extends State<Medya> {
         context,
         MaterialPageRoute(
             builder: (context) => PhotoViewer(imagePath: path, name: name)));
-  }
-
-  void secilenMedya() async {
-    List<XFile>? selectedMedya = await _picker.pickMultiImage();
-    if (selectedMedya.isNotEmpty) {
-      _mediaFileList.addAll(selectedMedya as Iterable<Medias>);
-    }
   }
 }
