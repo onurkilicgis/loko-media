@@ -106,6 +106,7 @@ class Media_VM {
                       }
                       await Share.shareXFiles(secilenler,
                           text: 'LokoMedia Tarafından Paylaşılan Dosyalar');
+                      Navigator.pop(context);
                     }),
               ],
             )
