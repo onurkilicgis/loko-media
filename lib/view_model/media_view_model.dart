@@ -94,7 +94,7 @@ class Media_VM {
                     onTap: () {}),
                 ListTile(
                     leading: Icon(Icons.mail),
-                    title: Text('Mail Olarak Gönder'),
+                    title: Text('Kullanıcıya Gönder'),
                     onTap: () {}),
                 ListTile(
                     leading: Icon(Icons.mail),

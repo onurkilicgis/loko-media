@@ -249,6 +249,9 @@ class MedyaState extends State<Medya> {
                     }
                     // artık Seçili medyaları Medias objesi olarak listeleyip almış olduk
                     Media_VM.getMedyaShareDialog(context, secilenMedyalar);
+                    setState(() {
+                      selectionMode = false;
+                    });
                   },
                   child: Icon(Icons.share),
                   label: 'Seçilenleri Paylaş',
