@@ -250,6 +250,7 @@ class MedyaState extends State<Medya> {
                     // artık Seçili medyaları Medias objesi olarak listeleyip almış olduk
                     Media_VM.getMedyaShareDialog(context, secilenMedyalar);
                     setState(() {
+                      selectedMedias.clear();
                       selectionMode = false;
                     });
                   },
@@ -365,24 +366,3 @@ class MedyaState extends State<Medya> {
     });
   }
 }
-/* // int index = selectedMedias.indexOf(media.id!);
-                  //
-                  // önce dosyadan sil ioo.File(fileList[index].path!).delete(); bunun gibi
-                  // sonra en son silerken
-                  // delete from medias where id in (1,2,3,4...) gibi verdiğinde db'den de siler
-                  // sonra return olarak silinen medya sayısını ver
-                  // ardından burada uyarı verdir. şu kadar media öğesi silindi diye
-
-
-
-                  // seçilen media öğelerini siler.
-                  int deletedFilesNum = await AlbumDataBase.mediaMultiDelete(selecteds);
-                  SBBildirim.onay('${deletedFilesNum} Adet media öğesi silinmiştir.');
-                  // sonra bu listeyi güncellemen gerekicek çünkü bir kısmı silindi
-                  //bunun için de şunu yapmalısın
-                  // bu dosyada deleteMediasFromList(); diye bir fonksiyonun olsun
-                  // List<int> parametresi alsın
-                  // selecteds verisini bu fonksiyona gönder
-                  // tüm listeyi dön, liste içerisinde bu dizi içinde aynı id'ye sahip bir öğe varsa onu ekarte et
-                  // sonra geriye kalan diziyi mevcut listeye eşitle
-                  // sonra da selectedMedias dizisinin için boşaltıp setstate et*/
