@@ -171,7 +171,11 @@ class Util {
             backgroundColor:
                 Theme.of(context).bottomNavigationBarTheme.backgroundColor,
             title: Text(baslik),
-            content: Text(soru, style: TextStyle(fontSize: 14)),
+            content: Text(soru,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                )),
             actions: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

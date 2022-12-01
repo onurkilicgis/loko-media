@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io' as ioo;
 
 import 'package:loko_media/models/Album.dart';
 import 'package:loko_media/services/MyLocal.dart';
@@ -105,6 +106,7 @@ class AlbumDataBase {
     if (fileMaps.length > 0) {
       liste = fileMaps.map((e) => Medias.fromJson(e)).toList();
     }
+
     return liste;
   }
 
@@ -207,6 +209,16 @@ class AlbumDataBase {
     return result;
   }
 
+  // medya'yı veritabanından siler ve , silinen kayıt sayısını verir
+  static mediaADelete(int id) async {
+    Database db = await openDatabase(_albumDatabaseName,
+        version: _version, onCreate: (Database db, int version) async {});
+    int result =
+        await db.delete(mediaTableName, where: 'id=?', whereArgs: [id]);
+    db.close();
+    return result;
+  }
+
   // albüm yokken bir medya yüklenmek istenirse otomatik albüm oluşturmak için hazırlanmıştır.
   static createAlbumIfTableEmpty(String albumName) async {
     String userString = await MyLocal.getStringData('user');
@@ -217,6 +229,25 @@ class AlbumDataBase {
       album.insertData(albumName, user['uid']);
       await insertAlbum(album);
     }
+  }
+
+  // media listesi olarak verilmiş olan kayıtları hem fiziksel hem de veritabanından siler.
+  static mediaMultiDelete(List<int> selecteds) async {
+    List<Medias> liste = [];
+    Database db = await openDatabase(_albumDatabaseName,
+        version: _version, onCreate: (Database db, int version) async {});
+    List<Map> list = await db.query(mediaTableName,
+        where: 'id IN (${List.filled(selecteds.length, '?').join(',')})',
+        whereArgs: selecteds);
+    liste = list.map((e) => Medias.fromJson(e)).toList();
+    for (int i = 0; i < liste.length; i++) {
+      ioo.File(liste[i].path!).delete();
+    }
+    int silinenDosyaSayisi = await db.delete(mediaTableName,
+        where: 'id IN (${List.filled(selecteds.length, '?').join(',')})',
+        whereArgs: selecteds);
+    db.close();
+    return silinenDosyaSayisi;
   }
 }
 

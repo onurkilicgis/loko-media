@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/services/utils.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../models/Album.dart';
 
@@ -30,21 +32,80 @@ class Media_VM {
                   title: Text('Seç'),
                   onTap: () {
                     model.selectMedia(media);
+
+                    Navigator.pop(context);
                   },
                 ),
                 ListTile(title: Text(acmaAdi), onTap: () {}),
-                ListTile(title: Text('Paylaş'), onTap: () {}),
+                ListTile(title: Text('Herkesle Paylaş'), onTap: () {}),
                 ListTile(title: Text('Sosyal Medyada Paylaş'), onTap: () {}),
                 ListTile(
                     title: Text('Sil'),
-                    onTap: () {
+                    onTap: () async {
                       Util.evetHayir(context, 'Medya Silme İşlemi',
                           'Bu medya öğesini silmek istediğinize emin misiniz?',
-                          (cevap) {
+                          (cevap) async {
                         if (cevap == true) {
-                          SBBildirim.onay('Medya Silinmiştir');
+                          List<int> tekSilinen = [];
+                          tekSilinen.add(media.id!);
+                          int silinenDosyaSayisi =
+                              await AlbumDataBase.mediaMultiDelete(tekSilinen);
+
+                          SBBildirim.bilgi(
+                              '${silinenDosyaSayisi} Adet medya silinmiştir.');
+                          model.setState(() {
+                            model.deleteMediasFromList(tekSilinen);
+                          });
                         }
                       });
+                      Navigator.pop(context);
+                    }),
+              ],
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  static getMedyaShareDialog(context, List<Medias> seciliMedias) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(14.0))),
+          backgroundColor:
+              Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+          // content: Text('albüm adını giriniz'),
+          actions: [
+            Column(
+              children: [
+                ListTile(
+                  leading: Icon(
+                    Icons.people,
+                  ),
+                  title: Text('Herkesle Paylaş'),
+                  onTap: () {},
+                ),
+                ListTile(
+                    leading: Icon(Icons.link),
+                    title: Text('Bağlantıyı Paylaş'),
+                    onTap: () {}),
+                ListTile(
+                    leading: Icon(Icons.mail),
+                    title: Text('Mail Olarak Gönder'),
+                    onTap: () {}),
+                ListTile(
+                    leading: Icon(Icons.mail),
+                    title: Text('Sosyal Medyada Paylaş'),
+                    onTap: () async {
+                      List<XFile> secilenler = [];
+                      for (int i = 0; i < seciliMedias.length; i++) {
+                        secilenler.add(XFile(seciliMedias[i].path!));
+                      }
+                      await Share.shareXFiles(secilenler,
+                          text: 'LokoMedia Tarafından Paylaşılan Dosyalar');
                     }),
               ],
             )
