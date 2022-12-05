@@ -36,9 +36,19 @@ class Media_VM {
                     Navigator.pop(context);
                   },
                 ),
-                ListTile(title: Text(acmaAdi), onTap: () {}),
+                ListTile(
+                    title: Text(acmaAdi),
+                    onTap: () {
+                      Navigator.pop(context);
+                      model.openImage(media);
+                    }),
                 ListTile(title: Text('Herkesle Paylaş'), onTap: () {}),
-                ListTile(title: Text('Sosyal Medyada Paylaş'), onTap: () {}),
+                ListTile(
+                    title: Text('Sosyal Medyada Paylaş'),
+                    onTap: () async {
+                      await Share.shareXFiles([XFile(media.path!)]);
+                      Navigator.pop(context);
+                    }),
                 ListTile(
                     title: Text('Sil'),
                     onTap: () async {

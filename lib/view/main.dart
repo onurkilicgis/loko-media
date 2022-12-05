@@ -103,7 +103,7 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(create: (context) => SwitchModel()),
           ChangeNotifierProvider(create: (context) => CheckboxModel()),
-          ChangeNotifierProvider(create: (context) => VisibleModel())
+          ChangeNotifierProvider(create: (context) => VisibleModel()),
         ],
         child: Consumer<SwitchModel>(builder: (context, switchModels, child) {
           return GetMaterialApp(

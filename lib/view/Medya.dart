@@ -5,10 +5,12 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
 import 'package:loko_media/services/utils.dart';
+import 'package:loko_media/view_model/MedyaProvider.dart';
 import 'package:loko_media/view_model/layout.dart';
 import 'package:loko_media/view_model/media_view_model.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:provider/provider.dart';
 
 class Medya extends StatefulWidget {
   int? id;
@@ -22,19 +24,12 @@ class Medya extends StatefulWidget {
   State<Medya> createState() => MedyaState();
 }
 
-class MedyaState extends State<Medya> {
+class MedyaState extends State<Medya> with ChangeNotifier {
   List<Medias> fileList = [];
   late int index = widget.index;
   List<int> selectedMedias = [];
   bool selectionMode = false;
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
-
-  getFileList(int album_id) async {
-    List<Medias> file = await AlbumDataBase.getFiles(album_id);
-    setState(() {
-      fileList = file;
-    });
-  }
 
   @override
   void initState() {
@@ -45,6 +40,17 @@ class MedyaState extends State<Medya> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  getFileList(int album_id) async {
+    List<Medias> file = await AlbumDataBase.getFiles(album_id);
+
+    fileList = file;
+  }
+
+  addMediasItem(Medias item) {
+    fileList.add(item);
+    notifyListeners();
   }
 
   // Media Seçme İşlemi Burada Yapılıyor
@@ -134,21 +140,18 @@ class MedyaState extends State<Medya> {
             Positioned(
               left: 1,
               top: 1,
-              child: Padding(
-                padding: const EdgeInsets.all(2),
-                child: Material(
-                  color: Colors.transparent,
-                  child: Ink(
-                    height: 10,
-                    width: 10,
-                    child: IconButton(
-                      iconSize: 16,
-                      icon: Icon(secimIcon, color: Colors.white),
-                      color: Colors.white,
-                      onPressed: () {
-                        selectMedia(Medias);
-                      },
-                    ),
+              child: Material(
+                color: Colors.transparent,
+                child: Ink(
+                  height: 10,
+                  width: 10,
+                  child: IconButton(
+                    iconSize: 16,
+                    icon: Icon(secimIcon, color: Colors.white),
+                    color: Colors.white,
+                    onPressed: () {
+                      selectMedia(Medias);
+                    },
                   ),
                 ),
               ),
@@ -222,6 +225,8 @@ class MedyaState extends State<Medya> {
               openCloseDial: isDialOpen,
               activeIcon: Icons.cancel,
               tooltip: 'Seçilenler',
+              overlayColor: Colors.transparent,
+              overlayOpacity: 0,
               icon: Icons.more_vert,
               //animatedIcon: AnimatedIcons.menu_close,
               backgroundColor: Color(0xff017eba),
@@ -316,19 +321,21 @@ class MedyaState extends State<Medya> {
                 ),
               ],
             ),
-            body: GridView.builder(
-                itemCount: fileList.length,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 10,
-                ),
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  mainAxisExtent: context.dynamicWidth(4),
-                  maxCrossAxisExtent: context.dynamicHeight(8),
-                ),
-                itemBuilder: (BuildContext context, int index) {
-                  return mediaCardBuilder(fileList[index]);
-                })),
+            body: Consumer<MedyaProvider>(builder: (context, medya, child) {
+              return GridView.builder(
+                  itemCount: fileList.length,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 10,
+                  ),
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    mainAxisExtent: context.dynamicWidth(4),
+                    maxCrossAxisExtent: context.dynamicHeight(8),
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    return mediaCardBuilder(fileList[index]);
+                  });
+            })),
       );
     } else {
       return Scaffold(
@@ -364,5 +371,25 @@ class MedyaState extends State<Medya> {
       selectionMode = false;
       fileList = clearList;
     });
+  }
+
+  openImage(Medias) {
+    return Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => PhotoView(
+        imageProvider: FileImage(
+          ioo.File(Medias.path.toString()),
+        ),
+        enableRotation: true,
+        backgroundDecoration:
+            BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
+        loadingBuilder: (context, event) => Center(
+          child: Container(
+            width: 30.0,
+            height: 30.0,
+            child: CircularProgressIndicator(color: Colors.white),
+          ),
+        ),
+      ),
+    ));
   }
 }

@@ -87,6 +87,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         dbImage.id = lastId;
         getAlbumList();
       });
+      if (aktifTabIndex == 1) {}
     } on PlatformException catch (e) {
       SBBildirim.hata(e.toString());
     }
@@ -127,7 +128,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         },
         leading: image,
         title: Text(album.name),
-        subtitle: Text('Öğe Sayısı : ${album.itemCount}, Durum : ${durum}'),
+        subtitle: Text('Öğe Sayısı : ${album.itemCount} Durum : ${durum}'),
         trailing: IconButton(
             onPressed: () {
               APP_VM.showAlbumDialog(context, this, album);
@@ -419,9 +420,9 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                             inactiveThumbColor: Colors.black,
                             onChanged: (bool data) async {
                               if (data == true) {
-                                MyLocal.setStringData('theme', 'light');
+                                await MyLocal.setStringData('theme', 'light');
                               } else {
-                                MyLocal.setStringData('theme', 'dark');
+                                await MyLocal.setStringData('theme', 'dark');
                               }
 
                               switchModel.switchChanged(data); // dinleyici
@@ -652,9 +653,13 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                   child: TextField(
                     controller: albumNameController,
                     keyboardType: TextInputType.text,
-                    textAlign: TextAlign.center,
-                    cursorColor: const Color(0xff80C783),
+                    // textAlign: TextAlign.center,
+                    cursorColor: Colors.white,
+
                     decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white)),
+                      labelStyle: TextStyle(color: Colors.white),
                       labelText: 'Albüm Adını Giriniz',
                     ),
                     onChanged: (value) {},
