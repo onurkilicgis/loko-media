@@ -5,12 +5,10 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
 import 'package:loko_media/services/utils.dart';
-import 'package:loko_media/view_model/MedyaProvider.dart';
 import 'package:loko_media/view_model/layout.dart';
 import 'package:loko_media/view_model/media_view_model.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
-import 'package:provider/provider.dart';
 
 class Medya extends StatefulWidget {
   int? id;
@@ -221,121 +219,120 @@ class MedyaState extends State<Medya> with ChangeNotifier {
           }
         },
         child: Scaffold(
-            floatingActionButton: SpeedDial(
-              openCloseDial: isDialOpen,
-              activeIcon: Icons.cancel,
-              tooltip: 'Seçilenler',
-              overlayColor: Colors.transparent,
-              overlayOpacity: 0,
-              icon: Icons.more_vert,
-              //animatedIcon: AnimatedIcons.menu_close,
-              backgroundColor: Color(0xff017eba),
-              activeBackgroundColor: Colors.red,
-              activeForegroundColor: Colors.white,
-              closeManually: true,
-              children: [
-                SpeedDialChild(
-                  onTap: () {},
-                  child: Icon(Icons.map),
-                  label: 'Seçilenleri Haritalandır',
-                  backgroundColor: Color(0xff26334d),
-                  labelBackgroundColor: Color(0xff26334d),
-                ),
-                SpeedDialChild(
-                  onTap: () {
-                    // seçilen Medyaları obje olarak almak için boş bir dizi oluşturduk
-                    List<Medias> secilenMedyalar = [];
-                    // Listedeki tüm medyaların sadece seçilenleri yukarıdaki diziye eklemek için for ile döndük.
-                    for (int i = 0; i < fileList.length; i++) {
-                      Medias item = fileList[i];
-                      if (selecteds.indexOf(item.id!) != -1) {
-                        secilenMedyalar.add(item);
-                      }
+          floatingActionButton: SpeedDial(
+            openCloseDial: isDialOpen,
+            activeIcon: Icons.cancel,
+            tooltip: 'Seçilenler',
+            overlayColor: Colors.transparent,
+            overlayOpacity: 0,
+            icon: Icons.more_vert,
+            //animatedIcon: AnimatedIcons.menu_close,
+            backgroundColor: Color(0xff017eba),
+            activeBackgroundColor: Colors.red,
+            activeForegroundColor: Colors.white,
+            closeManually: true,
+            children: [
+              SpeedDialChild(
+                onTap: () {},
+                child: Icon(Icons.map),
+                label: 'Seçilenleri Haritalandır',
+                backgroundColor: Color(0xff26334d),
+                labelBackgroundColor: Color(0xff26334d),
+              ),
+              SpeedDialChild(
+                onTap: () {
+                  // seçilen Medyaları obje olarak almak için boş bir dizi oluşturduk
+                  List<Medias> secilenMedyalar = [];
+                  // Listedeki tüm medyaların sadece seçilenleri yukarıdaki diziye eklemek için for ile döndük.
+                  for (int i = 0; i < fileList.length; i++) {
+                    Medias item = fileList[i];
+                    if (selecteds.indexOf(item.id!) != -1) {
+                      secilenMedyalar.add(item);
                     }
-                    // artık Seçili medyaları Medias objesi olarak listeleyip almış olduk
-                    Media_VM.getMedyaShareDialog(context, secilenMedyalar);
-                    setState(() {
-                      selectedMedias.clear();
-                      selectionMode = false;
-                    });
-                  },
-                  child: Icon(Icons.share),
-                  label: 'Seçilenleri Paylaş',
-                  backgroundColor: Color(0xff26334d),
-                  labelBackgroundColor: Color(0xff26334d),
-                ),
-                SpeedDialChild(
-                  onTap: () {
-                    setState(() {
-                      selectedMedias.clear();
-                      selectionMode = false;
-                    });
-                  },
-                  child: Icon(Icons.cancel),
-                  label: 'Seçimi İptal Et',
-                  backgroundColor: Color(0xff26334d),
-                  labelBackgroundColor: Color(0xff26334d),
-                ),
-                SpeedDialChild(
-                  onTap: () async {
-                    Util.evetHayir(context, 'Toplu Medya Silme İşlemi',
-                        '${selecteds.length} Adet medya öğesini silmek istediğinize emin misiniz?',
-                        (cevap) async {
-                      if (cevap == true) {
-                        int silinenDosyaSayisi =
-                            await AlbumDataBase.mediaMultiDelete(selecteds);
-
-                        SBBildirim.bilgi(
-                            '${silinenDosyaSayisi} Adet medya silinmiştir.');
-                        setState(() {
-                          deleteMediasFromList(selecteds);
-                        });
-                      }
-                    });
-                    setState(() {
-                      selectionMode = false;
-
-                      // getFileList(widget.id!);
-                    });
-                  },
-                  child: Icon(Icons.delete),
-                  label: 'Seçilenleri Sil',
-                  backgroundColor: Color(0xff26334d),
-                  labelBackgroundColor: Color(0xff26334d),
-                ),
-                SpeedDialChild(
-                  child: Icon(Icons.check),
-                  onTap: () {
-                    List<int> listem = [];
-                    for (int i = 0; i < fileList.length; i++) {
-                      int allList = fileList[i].id!;
-                      listem.add(allList);
-                    }
-                    setState(() {
-                      selectedMedias = listem;
-                    });
-                  },
-                  label: 'Hepsini Seç',
-                  backgroundColor: Color(0xff26334d),
-                  labelBackgroundColor: Color(0xff26334d),
-                ),
-              ],
-            ),
-            body: Consumer<MedyaProvider>(builder: (context, medya, child) {
-              return GridView.builder(
-                  itemCount: fileList.length,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 10,
-                  ),
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    mainAxisExtent: context.dynamicWidth(4),
-                    maxCrossAxisExtent: context.dynamicHeight(8),
-                  ),
-                  itemBuilder: (BuildContext context, int index) {
-                    return mediaCardBuilder(fileList[index]);
+                  }
+                  // artık Seçili medyaları Medias objesi olarak listeleyip almış olduk
+                  Media_VM.getMedyaShareDialog(context, secilenMedyalar);
+                  setState(() {
+                    selectedMedias.clear();
+                    selectionMode = false;
                   });
-            })),
+                },
+                child: Icon(Icons.share),
+                label: 'Seçilenleri Paylaş',
+                backgroundColor: Color(0xff26334d),
+                labelBackgroundColor: Color(0xff26334d),
+              ),
+              SpeedDialChild(
+                onTap: () {
+                  setState(() {
+                    selectedMedias.clear();
+                    selectionMode = false;
+                  });
+                },
+                child: Icon(Icons.cancel),
+                label: 'Seçimi İptal Et',
+                backgroundColor: Color(0xff26334d),
+                labelBackgroundColor: Color(0xff26334d),
+              ),
+              SpeedDialChild(
+                onTap: () async {
+                  Util.evetHayir(context, 'Toplu Medya Silme İşlemi',
+                      '${selecteds.length} Adet medya öğesini silmek istediğinize emin misiniz?',
+                      (cevap) async {
+                    if (cevap == true) {
+                      int silinenDosyaSayisi =
+                          await AlbumDataBase.mediaMultiDelete(selecteds);
+
+                      SBBildirim.bilgi(
+                          '${silinenDosyaSayisi} Adet medya silinmiştir.');
+                      setState(() {
+                        deleteMediasFromList(selecteds);
+                      });
+                    }
+                  });
+                  setState(() {
+                    selectionMode = false;
+
+                    // getFileList(widget.id!);
+                  });
+                },
+                child: Icon(Icons.delete),
+                label: 'Seçilenleri Sil',
+                backgroundColor: Color(0xff26334d),
+                labelBackgroundColor: Color(0xff26334d),
+              ),
+              SpeedDialChild(
+                child: Icon(Icons.check),
+                onTap: () {
+                  List<int> listem = [];
+                  for (int i = 0; i < fileList.length; i++) {
+                    int allList = fileList[i].id!;
+                    listem.add(allList);
+                  }
+                  setState(() {
+                    selectedMedias = listem;
+                  });
+                },
+                label: 'Hepsini Seç',
+                backgroundColor: Color(0xff26334d),
+                labelBackgroundColor: Color(0xff26334d),
+              ),
+            ],
+          ),
+          body: GridView.builder(
+              itemCount: fileList.length,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 10,
+              ),
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                mainAxisExtent: context.dynamicWidth(4),
+                maxCrossAxisExtent: context.dynamicHeight(8),
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return mediaCardBuilder(fileList[index]);
+              }),
+        ),
       );
     } else {
       return Scaffold(
