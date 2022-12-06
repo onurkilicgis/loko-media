@@ -9,15 +9,16 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:local_assets_server/local_assets_server.dart';
+import 'package:loko_media/providers/SwitchProvider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../database/AlbumDataBase.dart';
+import '../providers/MedyaProvider.dart';
 import '../services/MyLocal.dart';
 import '../view_model/MyHomePage_view_models.dart';
 import '../view_model/folder_model.dart';
-import '../view_model/main_view_models.dart';
 import '../view_model/multi_language.dart';
 import '../view_model/register_view_models.dart';
 import '../view_model/theme.dart';
@@ -104,6 +105,7 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (context) => SwitchModel()),
           ChangeNotifierProvider(create: (context) => CheckboxModel()),
           ChangeNotifierProvider(create: (context) => VisibleModel()),
+          ChangeNotifierProvider(create: (context) => MediaProvider()),
         ],
         child: Consumer<SwitchModel>(builder: (context, switchModels, child) {
           return GetMaterialApp(

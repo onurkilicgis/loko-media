@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
+import 'package:loko_media/providers/SwitchProvider.dart';
 import 'package:loko_media/services/GPS.dart';
 import 'package:loko_media/services/MyLocal.dart';
 import 'package:loko_media/services/utils.dart';
@@ -15,10 +16,10 @@ import 'package:loko_media/view_model/app_view_model.dart';
 import 'package:loko_media/view_model/layout.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/MedyaProvider.dart';
 import '../services/Loader.dart';
 import '../services/auth.dart';
 import '../view_model/folder_model.dart';
-import '../view_model/main_view_models.dart';
 import 'Harita.dart';
 
 class App extends StatefulWidget {
@@ -47,11 +48,17 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
   int aktifTabIndex = 0;
   String cardType = 'GFCard';
   File? image;
+  File? video;
 
   Future pickImage(ImageSource source) async {
     try {
       final image = await ImagePicker().pickImage(source: source);
       if (image == null) return;
+      if (image != null) {
+        Loading.waiting('Çektiğiniz Fotoğraf Yükleniyor');
+        Loading.close();
+      }
+
       dynamic positions = await GPS.getGPSPosition();
       if (positions['status'] == false) {
         SBBildirim.uyari(positions['message']);
@@ -87,7 +94,60 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         dbImage.id = lastId;
         getAlbumList();
       });
-      if (aktifTabIndex == 1) {}
+      if (aktifTabIndex == 1) {
+        _mediaProvider.addMedia(dbImage);
+      }
+    } on PlatformException catch (e) {
+      SBBildirim.hata(e.toString());
+    }
+  }
+
+  Future pickVideo(ImageSource source, File? video) async {
+    try {
+      final video = await ImagePicker().pickVideo(
+        source: source,
+        maxDuration: const Duration(seconds: 300),
+      );
+      if (video == null) return;
+
+      dynamic positions = await GPS.getGPSPosition();
+      if (positions['status'] == false) {
+        SBBildirim.uyari(positions['message']);
+        return;
+      }
+      await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
+      final imageTemporary = File(video.path);
+      int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
+      int now = DateTime.now().millisecondsSinceEpoch;
+      var parts = video.path.split('.');
+      String extension = parts[parts.length - 1];
+      String filename = 'image-' + now.toString() + '.' + extension;
+      String miniFilename = 'image-mini-' + now.toString() + '.' + extension;
+      Uint8List bytes = imageTemporary.readAsBytesSync();
+      String? newPath = await FolderModel.createFile(
+          'albums/album-${aktifAlbumId}',
+          bytes,
+          filename,
+          miniFilename,
+          'video');
+      Medias dbImage = new Medias(
+        album_id: aktifAlbumId,
+        name: filename,
+        miniName: miniFilename,
+        path: newPath,
+        latitude: positions['latitude'],
+        longitude: positions['longitude'],
+        altitude: positions['altitude'],
+        fileType: 'video',
+      );
+      dbImage.insertData();
+      await AlbumDataBase.insertFile(dbImage, (lastId) {
+        dbImage.id = lastId;
+        getAlbumList();
+      });
+      if (aktifTabIndex == 1) {
+        _mediaProvider.addMedia(dbImage);
+      }
     } on PlatformException catch (e) {
       SBBildirim.hata(e.toString());
     }
@@ -337,10 +397,13 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
     return cards;
   }
 
+  late MediaProvider _mediaProvider;
+
   void initState() {
     /* WidgetsBinding.instance.addPostFrameCallback((_) {
       getDialog();
     });*/
+    _mediaProvider = Provider.of<MediaProvider>(context, listen: false);
 
     getAlbumList();
 
@@ -545,16 +608,48 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                   case 0:
                     {
                       pickImage(ImageSource.camera);
+
                       break;
                     }
                   case 1:
                     {
                       pickImage(ImageSource.gallery);
+
                       break;
                     }
                 }
               });
             }
+            ;
+            if (index == 1) {
+              return BottomSheetItems(
+                  Icons.video_camera_back,
+                  'Video Kaydet ve Yükle',
+                  Icons.video_collection,
+                  'Galiriden Video Yükle', (num) {
+                switch (num) {
+                  case 0:
+                    {
+                      pickVideo(ImageSource.camera, video);
+                      if (video != null) {
+                        Loading.waiting('Kaydettiğiniz Video Yükleniyor');
+                        Loading.close();
+                      }
+                      break;
+                    }
+                  case 1:
+                    {
+                      pickVideo(ImageSource.gallery, video);
+                      if (video != null) {
+                        Loading.waiting('Seçtiğiniz Video Yükleniyor');
+                        Loading.close();
+                      }
+                      break;
+                    }
+                }
+              });
+            }
+            ;
             setState(() {
               currentIndex = index;
             });
