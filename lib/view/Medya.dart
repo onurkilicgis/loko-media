@@ -92,34 +92,37 @@ class MedyaState extends State<Medya> {
   }
 
   videoCard(Medias) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: FittedBox(
-        fit: BoxFit.cover,
-        child: Chewie(
-          controller: ChewieController(
-              videoPlayerController:
-                  VideoPlayerController.file(ioo.File(Medias.path.toString())),
-              autoPlay: true,
-              looping: true,
-              aspectRatio: 1,
-              autoInitialize: true,
-              errorBuilder: (context, errorMessage) {
-                return Center(
-                    child: Text(
-                  errorMessage,
-                  style: TextStyle(color: Colors.white),
-                ));
-              },
-              allowFullScreen: true,
-              additionalOptions: (context) {
-                return <OptionItem>[
-                  //OptionItem(onTap: onTap, iconData: iconData, title: title)
-                ];
-              }),
+    try {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: FittedBox(
+          fit: BoxFit.cover,
+          child: Chewie(
+            controller: ChewieController(
+                videoPlayerController: VideoPlayerController.file(
+                    ioo.File(Medias.path.toString())),
+                autoPlay: true,
+                looping: true,
+                aspectRatio: 1,
+                errorBuilder: (context, errorMessage) {
+                  return Center(
+                      child: Text(
+                    errorMessage,
+                    style: TextStyle(color: Colors.white),
+                  ));
+                },
+                // allowFullScreen: true,
+                additionalOptions: (context) {
+                  return <OptionItem>[
+                    //OptionItem(onTap: onTap, iconData: iconData, title: title)
+                  ];
+                }),
+          ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   mediaCardBuilder(Medias) {
@@ -157,6 +160,10 @@ class MedyaState extends State<Medya> {
             case 'image':
               {
                 openGallery();
+                break;
+              }
+            case 'video':
+              {
                 break;
               }
           }

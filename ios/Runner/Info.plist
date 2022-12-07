@@ -53,5 +53,10 @@
 	<String>To choose user profile image</String>
 	<key>NSMicrophoneUsageDescription</key>
 	<String>Used to capture audio for image picker plugin</String>
+	<key>NSAppTransportSecurity</key>
+    <dict>
+      <key>NSAllowsArbitraryLoads</key>
+      <true/>
+    </dict>
 </dict>
 </plist>
