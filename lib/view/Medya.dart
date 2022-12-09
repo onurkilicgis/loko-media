@@ -1,5 +1,6 @@
 import 'dart:io' as ioo;
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -10,7 +11,6 @@ import 'package:loko_media/services/utils.dart';
 import 'package:loko_media/view_model/layout.dart';
 import 'package:loko_media/view_model/media_view_model.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:photo_view/photo_view_gallery.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
@@ -82,47 +82,45 @@ class MedyaState extends State<Medya> {
   }
 
   imageCard(Medias) {
+    String path = Medias.path;
+    String newPath = path.replaceAll(Medias.name, Medias.miniName);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: Image.file(
-        ioo.File(Medias.path.toString()),
+        ioo.File(newPath),
         fit: BoxFit.cover,
       ),
     );
   }
 
   videoCard(Medias) {
-    try {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: FittedBox(
-          fit: BoxFit.cover,
-          child: Chewie(
-            controller: ChewieController(
-                videoPlayerController: VideoPlayerController.file(
-                    ioo.File(Medias.path.toString())),
-                autoPlay: true,
-                looping: true,
-                aspectRatio: 1,
-                errorBuilder: (context, errorMessage) {
-                  return Center(
-                      child: Text(
-                    errorMessage,
-                    style: TextStyle(color: Colors.white),
-                  ));
-                },
-                // allowFullScreen: true,
-                additionalOptions: (context) {
-                  return <OptionItem>[
-                    //OptionItem(onTap: onTap, iconData: iconData, title: title)
-                  ];
-                }),
-          ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: FittedBox(
+        fit: BoxFit.cover,
+        child: Chewie(
+          controller: ChewieController(
+              videoPlayerController:
+                  VideoPlayerController.file(ioo.File(Medias.path.toString())),
+              autoPlay: false,
+              looping: false,
+              aspectRatio: 1,
+              errorBuilder: (context, errorMessage) {
+                return Center(
+                    child: Text(
+                  errorMessage,
+                  style: TextStyle(color: Colors.white),
+                ));
+              },
+              // allowFullScreen: true,
+              additionalOptions: (context) {
+                return <OptionItem>[
+                  //OptionItem(onTap: onTap, iconData: iconData, title: title)
+                ];
+              }),
         ),
-      );
-    } catch (e) {
-      print(e.toString());
-    }
+      ),
+    );
   }
 
   mediaCardBuilder(Medias) {
@@ -159,7 +157,7 @@ class MedyaState extends State<Medya> {
           switch (Medias.fileType) {
             case 'image':
               {
-                openGallery();
+                // openGallery();
                 break;
               }
             case 'video':
@@ -208,7 +206,33 @@ class MedyaState extends State<Medya> {
     return getScaffold(selectedMedias);
   }
 
-  openGallery() {
+  openMedya(int startIndex) {
+    return Container(
+        child: CarouselSlider.builder(
+            itemCount: fileList.length,
+            options: CarouselOptions(
+              aspectRatio: 2.0,
+              enlargeCenterPage: true,
+              autoPlay: true,
+            ),
+            itemBuilder:
+                (BuildContext context, int itemIndex, int pageViewIndex) {
+              Medias mymedia = fileList[itemIndex];
+              switch (mymedia.fileType) {
+                case 'image':
+                  {
+                    return Container();
+                    break;
+                  }
+                default:
+                  {
+                    return Container();
+                  }
+              }
+            }));
+  }
+
+  /* openGallery() {
     return Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => Stack(alignment: Alignment.bottomLeft, children: [
               PhotoViewGallery.builder(
@@ -248,7 +272,7 @@ class MedyaState extends State<Medya> {
                 ),
               )
             ])));
-  }
+  }*/
 
   getScaffold(List<int> selecteds) {
     return Consumer<MediaProvider>(
@@ -371,8 +395,8 @@ class MedyaState extends State<Medya> {
                   vertical: 10,
                 ),
                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  mainAxisExtent: context.dynamicWidth(4),
-                  maxCrossAxisExtent: context.dynamicHeight(8),
+                  mainAxisExtent: context.dynamicWidth(5),
+                  maxCrossAxisExtent: context.dynamicHeight(10),
                 ),
                 itemBuilder: (BuildContext context, int index) {
                   return mediaCardBuilder(medyaProvider.fileList[index]);
@@ -388,8 +412,8 @@ class MedyaState extends State<Medya> {
               vertical: 10,
             ),
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              mainAxisExtent: context.dynamicWidth(4),
-              maxCrossAxisExtent: context.dynamicHeight(8),
+              mainAxisExtent: context.dynamicWidth(5),
+              maxCrossAxisExtent: context.dynamicHeight(10),
             ),
             itemBuilder: (BuildContext context, int index) {
               return mediaCardBuilder(medyaProvider.fileList[index]);

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:image/image.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class FolderModel {
   // Girilen parametredeki klasörü uygulamanın root'unda oluşturur
@@ -40,13 +41,25 @@ class FolderModel {
     var file = await ioo.File(filePath.path);
     // burda oluşturmak istediğimiz dosyanın içerisine veriyi ekliyor.
     await file.writeAsBytes(bytes);
+    final Directory miniFilePath =
+        Directory('${root.path}/$path/${miniFileName}');
+
+    var mini = await ioo.File(miniFilePath.path);
+
+    if (fileType == 'video') {
+      final bytes = await VideoThumbnail.thumbnailData(
+        video: mini.path,
+        imageFormat: ImageFormat.PNG,
+        maxWidth: 128,
+        quality: 25,
+      );
+    }
     // resimler için haritada gösterebilmek adına küçük bir emitosyanunu oluşturuyoruz. yeniden boyutlandırıyoruz.
     // bunu yapmazsak harita kasılır.
     if (fileType == 'image') {
       Image? image = decodeImage(bytes);
-      Image thumbnail = copyResize(image!, width: 48);
-      final Directory miniFilePath =
-          Directory('${root.path}/$path/${miniFileName}');
+      Image thumbnail = copyResize(image!, width: 128);
+
       List<String> parcalar = miniFileName.split('.');
       String uzanti = parcalar[parcalar.length - 1];
       uzanti = uzanti.toLowerCase();

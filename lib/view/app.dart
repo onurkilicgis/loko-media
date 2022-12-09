@@ -71,7 +71,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
       var parts = image.path.split('.');
       String extension = parts[parts.length - 1];
       String filename = 'image-' + now.toString() + '.' + extension;
-      String miniFilename = 'image-mini-' + now.toString() + '.' + extension;
+      String miniFilename = 'image-' + now.toString() + '-mini.' + extension;
       Uint8List bytes = imageTemporary.readAsBytesSync();
       String? newPath = await FolderModel.createFile(
           'albums/album-${aktifAlbumId}',
@@ -121,8 +121,8 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
       int now = DateTime.now().millisecondsSinceEpoch;
       var parts = video.path.split('.');
       String extension = parts[parts.length - 1];
-      String filename = 'image-' + now.toString() + '.' + extension;
-      String miniFilename = 'image-mini-' + now.toString() + '.' + extension;
+      String filename = 'video-' + now.toString() + '.' + extension;
+      String miniFilename = 'video-' + now.toString() + '-mini.png';
       Uint8List bytes = imageTemporary.readAsBytesSync();
       String? newPath = await FolderModel.createFile(
           'albums/album-${aktifAlbumId}',
@@ -631,19 +631,11 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                   case 0:
                     {
                       pickVideo(ImageSource.camera, video);
-                      if (video != null) {
-                        Loading.waiting('Kaydettiğiniz Video Yükleniyor');
-                        Loading.close();
-                      }
                       break;
                     }
                   case 1:
                     {
                       pickVideo(ImageSource.gallery, video);
-                      if (video != null) {
-                        Loading.waiting('Seçtiğiniz Video Yükleniyor');
-                        Loading.close();
-                      }
                       break;
                     }
                 }
