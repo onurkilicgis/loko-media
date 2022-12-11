@@ -2,18 +2,17 @@ import 'dart:io' as ioo;
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:loko_media/view/Medya.dart';
 import 'package:provider/provider.dart';
 
 import '../models/Album.dart';
 import '../providers/MedyaProvider.dart';
-import 'Medya.dart';
 
 class PlayMedya extends StatefulWidget {
   late int index;
+  late MedyaState model;
 
-  PlayMedya({
-    required this.index,
-  });
+  PlayMedya({required this.index, required this.model});
 
   @override
   State<PlayMedya> createState() => _PlayMedyaState();
@@ -21,7 +20,7 @@ class PlayMedya extends StatefulWidget {
 
 class _PlayMedyaState extends State<PlayMedya> {
   late MediaProvider mediaProvider;
-  MedyaState state = MedyaState();
+
   @override
   void initState() {
     mediaProvider = Provider.of<MediaProvider>(context, listen: false);
@@ -55,7 +54,7 @@ class _PlayMedyaState extends State<PlayMedya> {
                   case 'video':
                     {
                       return Container(
-                        child: state.openVideo(mymedia),
+                        child: widget.model.openVideo(mymedia),
                       );
                     }
                   case 'audio':

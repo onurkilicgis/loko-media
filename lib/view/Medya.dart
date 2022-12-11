@@ -102,7 +102,7 @@ class MedyaState extends State<Medya> {
     ]);
   }
 
-  mediaCardBuilder(Medias medias, int index) {
+  mediaCardBuilder(Medias medias, int index, MedyaState model) {
     Widget? media;
     bool secilimi = selectedMedias.indexOf(medias.id!) == -1 ? false : true;
 
@@ -133,10 +133,13 @@ class MedyaState extends State<Medya> {
         if (selectionMode == true) {
           selectMedia(medias);
         } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => PlayMedya(index: index)),
-          );
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PlayMedya(index: index, model: model)),
+            );
+          });
         }
       },
       onLongPress: () {
@@ -303,7 +306,8 @@ class MedyaState extends State<Medya> {
                   maxCrossAxisExtent: context.dynamicHeight(10),
                 ),
                 itemBuilder: (BuildContext context, int index) {
-                  return mediaCardBuilder(medyaProvider.fileList[index], index);
+                  return mediaCardBuilder(
+                      medyaProvider.fileList[index], index, this);
                 }),
           ),
         );
@@ -320,7 +324,8 @@ class MedyaState extends State<Medya> {
               maxCrossAxisExtent: context.dynamicHeight(10),
             ),
             itemBuilder: (BuildContext context, int index) {
-              return mediaCardBuilder(medyaProvider.fileList[index], index);
+              return mediaCardBuilder(
+                  medyaProvider.fileList[index], index, this);
             },
           ),
         );
@@ -364,7 +369,7 @@ class MedyaState extends State<Medya> {
                 controller: ChewieController(
                     videoPlayerController: VideoPlayerController.file(
                         ioo.File(medias.path.toString())),
-                    autoPlay: false,
+                    autoPlay: true,
                     looping: false,
                     aspectRatio: 1,
                     errorBuilder: (context, errorMessage) {
