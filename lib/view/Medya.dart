@@ -1,5 +1,6 @@
 import 'dart:io' as ioo;
 
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
@@ -11,6 +12,7 @@ import 'package:loko_media/view_model/layout.dart';
 import 'package:loko_media/view_model/media_view_model.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
+import 'package:video_player/video_player.dart';
 
 class Medya extends StatefulWidget {
   int? id;
@@ -354,30 +356,31 @@ class MedyaState extends State<Medya> {
     ));
   }
 
-  /* openVideo(Medias medias) {
-    return FittedBox(
-      fit: BoxFit.cover,
-      child: Chewie(
-        controller: ChewieController(
-            videoPlayerController:
-                VideoPlayerController.file(ioo.File(medias.path.toString())),
-            autoPlay: false,
-            looping: false,
-            aspectRatio: 1,
-            errorBuilder: (context, errorMessage) {
-              return Center(
-                  child: Text(
-                errorMessage,
-                style: TextStyle(color: Colors.white),
-              ));
-            },
-            // allowFullScreen: true,
-            additionalOptions: (context) {
-              return <OptionItem>[
-                //OptionItem(onTap: onTap, iconData: iconData, title: title)
-              ];
-            }),
-      ),
-    );
-  }*/
+  openVideo(Medias medias) {
+    return Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => FittedBox(
+              fit: BoxFit.cover,
+              child: Chewie(
+                controller: ChewieController(
+                    videoPlayerController: VideoPlayerController.file(
+                        ioo.File(medias.path.toString())),
+                    autoPlay: false,
+                    looping: false,
+                    aspectRatio: 1,
+                    errorBuilder: (context, errorMessage) {
+                      return Center(
+                          child: Text(
+                        errorMessage,
+                        style: TextStyle(color: Colors.white),
+                      ));
+                    },
+                    // allowFullScreen: true,
+                    additionalOptions: (context) {
+                      return <OptionItem>[
+                        //OptionItem(onTap: onTap, iconData: iconData, title: title)
+                      ];
+                    }),
+              ),
+            )));
+  }
 }

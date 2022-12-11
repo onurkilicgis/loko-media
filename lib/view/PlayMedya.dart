@@ -1,13 +1,12 @@
 import 'dart:io' as ioo;
 
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:video_player/video_player.dart';
 
 import '../models/Album.dart';
 import '../providers/MedyaProvider.dart';
+import 'Medya.dart';
 
 class PlayMedya extends StatefulWidget {
   late int index;
@@ -22,6 +21,7 @@ class PlayMedya extends StatefulWidget {
 
 class _PlayMedyaState extends State<PlayMedya> {
   late MediaProvider mediaProvider;
+  MedyaState state = MedyaState();
   @override
   void initState() {
     mediaProvider = Provider.of<MediaProvider>(context, listen: false);
@@ -55,7 +55,7 @@ class _PlayMedyaState extends State<PlayMedya> {
                   case 'video':
                     {
                       return Container(
-                        child: openVideo(mymedia),
+                        child: state.openVideo(mymedia),
                       );
                     }
                   case 'audio':
@@ -73,32 +73,5 @@ class _PlayMedyaState extends State<PlayMedya> {
                 }
               })),
     ));
-  }
-
-  openVideo(Medias medias) {
-    return FittedBox(
-      fit: BoxFit.cover,
-      child: Chewie(
-        controller: ChewieController(
-            videoPlayerController:
-                VideoPlayerController.file(ioo.File(medias.path.toString())),
-            autoPlay: false,
-            looping: false,
-            aspectRatio: 1,
-            errorBuilder: (context, errorMessage) {
-              return Center(
-                  child: Text(
-                errorMessage,
-                style: TextStyle(color: Colors.white),
-              ));
-            },
-            // allowFullScreen: true,
-            additionalOptions: (context) {
-              return <OptionItem>[
-                //OptionItem(onTap: onTap, iconData: iconData, title: title)
-              ];
-            }),
-      ),
-    );
   }
 }

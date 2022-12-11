@@ -40,8 +40,26 @@ class Media_VM {
                     title: Text(acmaAdi),
                     onTap: () {
                       Navigator.pop(context);
-                      model.openImage(media);
-                      model.openVideo(media);
+                      switch (acmaAdi) {
+                        case 'Göster':
+                          {
+                            model.openImage(media);
+                            break;
+                          }
+                        case 'İzle':
+                          {
+                            model.openVideo(media);
+                            break;
+                          }
+                        case 'Dinle':
+                          {
+                            break;
+                          }
+                        case 'Oku':
+                          {
+                            break;
+                          }
+                      }
                     }),
                 ListTile(title: Text('Herkesle Paylaş'), onTap: () {}),
                 ListTile(
