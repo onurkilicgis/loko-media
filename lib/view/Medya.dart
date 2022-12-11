@@ -1,18 +1,16 @@
 import 'dart:io' as ioo;
 
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
 import 'package:loko_media/providers/MedyaProvider.dart';
 import 'package:loko_media/services/utils.dart';
+import 'package:loko_media/view/PlayMedya.dart';
 import 'package:loko_media/view_model/layout.dart';
 import 'package:loko_media/view_model/media_view_model.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
-import 'package:video_player/video_player.dart';
 
 class Medya extends StatefulWidget {
   int? id;
@@ -36,7 +34,6 @@ class MedyaState extends State<Medya> {
 
   @override
   void initState() {
-    //getFileList(widget.id!);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _mediaProvider = Provider.of<MediaProvider>(context, listen: false);
       _mediaProvider.getFileList(widget.id!);
@@ -48,12 +45,6 @@ class MedyaState extends State<Medya> {
   void dispose() {
     super.dispose();
   }
-
-  /*getFileList(int album_id) async {
-    List<Medias> file = await AlbumDataBase.getFiles(album_id);
-
-    fileList = file;
-  }*/
 
   // Media Seçme İşlemi Burada Yapılıyor
   selectMedia(Medias media) {
@@ -81,9 +72,9 @@ class MedyaState extends State<Medya> {
     });
   }
 
-  imageCard(Medias) {
-    String path = Medias.path;
-    String newPath = path.replaceAll(Medias.name, Medias.miniName);
+  imageCard(Medias medias) {
+    String? path = medias.path;
+    String newPath = path!.replaceAll(medias.name!, medias.miniName!);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: Image.file(
@@ -93,51 +84,37 @@ class MedyaState extends State<Medya> {
     );
   }
 
-  videoCard(Medias) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: FittedBox(
-        fit: BoxFit.cover,
-        child: Chewie(
-          controller: ChewieController(
-              videoPlayerController:
-                  VideoPlayerController.file(ioo.File(Medias.path.toString())),
-              autoPlay: false,
-              looping: false,
-              aspectRatio: 1,
-              errorBuilder: (context, errorMessage) {
-                return Center(
-                    child: Text(
-                  errorMessage,
-                  style: TextStyle(color: Colors.white),
-                ));
-              },
-              // allowFullScreen: true,
-              additionalOptions: (context) {
-                return <OptionItem>[
-                  //OptionItem(onTap: onTap, iconData: iconData, title: title)
-                ];
-              }),
+  videoCard(Medias medias) {
+    String? path = medias.path;
+    String? newPath = path!.replaceAll(medias.name!, medias.miniName!);
+    return Stack(alignment: Alignment.center, children: [
+      ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Image.file(
+          ioo.File(newPath),
+          fit: BoxFit.cover,
+          width: 100,
         ),
       ),
-    );
+      Icon(Icons.play_circle_fill, color: Colors.white)
+    ]);
   }
 
-  mediaCardBuilder(Medias) {
+  mediaCardBuilder(Medias medias, int index) {
     Widget? media;
-    bool secilimi = selectedMedias.indexOf(Medias.id) == -1 ? false : true;
+    bool secilimi = selectedMedias.indexOf(medias.id!) == -1 ? false : true;
 
     var secimIcon = secilimi == true ? Icons.check_circle : null;
     double margin = secilimi == true ? 8 : 4;
-    switch (Medias.fileType) {
+    switch (medias.fileType) {
       case 'image':
         {
-          media = imageCard(Medias);
+          media = imageCard(medias);
           break;
         }
       case 'video':
         {
-          media = videoCard(Medias);
+          media = videoCard(medias);
           break;
         }
       case 'audio':
@@ -152,23 +129,16 @@ class MedyaState extends State<Medya> {
     return InkWell(
       onTap: () {
         if (selectionMode == true) {
-          selectMedia(Medias);
+          selectMedia(medias);
         } else {
-          switch (Medias.fileType) {
-            case 'image':
-              {
-                // openGallery();
-                break;
-              }
-            case 'video':
-              {
-                break;
-              }
-          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PlayMedya(index: index)),
+          );
         }
       },
       onLongPress: () {
-        Media_VM.openMediaLongPDialog(context, this, Medias);
+        Media_VM.openMediaLongPDialog(context, this, medias);
       },
       child: Container(
         margin: EdgeInsets.all(margin),
@@ -189,7 +159,7 @@ class MedyaState extends State<Medya> {
                     icon: Icon(secimIcon, color: Colors.white),
                     color: Colors.white,
                     onPressed: () {
-                      selectMedia(Medias);
+                      selectMedia(medias);
                     },
                   ),
                 ),
@@ -205,74 +175,6 @@ class MedyaState extends State<Medya> {
   Widget build(BuildContext context) {
     return getScaffold(selectedMedias);
   }
-
-  openMedya(int startIndex) {
-    return Container(
-        child: CarouselSlider.builder(
-            itemCount: fileList.length,
-            options: CarouselOptions(
-              aspectRatio: 2.0,
-              enlargeCenterPage: true,
-              autoPlay: true,
-            ),
-            itemBuilder:
-                (BuildContext context, int itemIndex, int pageViewIndex) {
-              Medias mymedia = fileList[itemIndex];
-              switch (mymedia.fileType) {
-                case 'image':
-                  {
-                    return Container();
-                    break;
-                  }
-                default:
-                  {
-                    return Container();
-                  }
-              }
-            }));
-  }
-
-  /* openGallery() {
-    return Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => Stack(alignment: Alignment.bottomLeft, children: [
-              PhotoViewGallery.builder(
-                pageController: widget.pageController,
-                itemCount: fileList.length,
-                builder: (BuildContext context, int index) {
-                  return PhotoViewGalleryPageOptions(
-                      imageProvider: FileImage(
-                        ioo.File(fileList[index].path.toString()),
-                      ),
-                      minScale: PhotoViewComputedScale.contained * 0.8,
-                      maxScale: PhotoViewComputedScale.covered * 2);
-                },
-                onPageChanged: (index) => setState(() {
-                  this.index = index;
-                }),
-                scrollPhysics: BouncingScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                enableRotation: true,
-                backgroundDecoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor),
-                loadingBuilder: (context, event) => Center(
-                  child: Container(
-                    width: 30.0,
-                    height: 30.0,
-                    child: CircularProgressIndicator(color: Colors.white),
-                  ),
-                ),
-              ),
-              Container(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 16, left: 8),
-                  child: Text(
-                    'Resim ${index + 1}/${fileList.length.toString()}',
-                    style: TextStyle(),
-                  ),
-                ),
-              )
-            ])));
-  }*/
 
   getScaffold(List<int> selecteds) {
     return Consumer<MediaProvider>(
@@ -399,7 +301,7 @@ class MedyaState extends State<Medya> {
                   maxCrossAxisExtent: context.dynamicHeight(10),
                 ),
                 itemBuilder: (BuildContext context, int index) {
-                  return mediaCardBuilder(medyaProvider.fileList[index]);
+                  return mediaCardBuilder(medyaProvider.fileList[index], index);
                 }),
           ),
         );
@@ -416,7 +318,7 @@ class MedyaState extends State<Medya> {
               maxCrossAxisExtent: context.dynamicHeight(10),
             ),
             itemBuilder: (BuildContext context, int index) {
-              return mediaCardBuilder(medyaProvider.fileList[index]);
+              return mediaCardBuilder(medyaProvider.fileList[index], index);
             },
           ),
         );
@@ -432,11 +334,11 @@ class MedyaState extends State<Medya> {
     });
   }
 
-  openImage(Medias) {
+  openImage(Medias medias) {
     return Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => PhotoView(
         imageProvider: FileImage(
-          ioo.File(Medias.path.toString()),
+          ioo.File(medias.path.toString()),
         ),
         enableRotation: true,
         backgroundDecoration:
@@ -451,4 +353,31 @@ class MedyaState extends State<Medya> {
       ),
     ));
   }
+
+  /* openVideo(Medias medias) {
+    return FittedBox(
+      fit: BoxFit.cover,
+      child: Chewie(
+        controller: ChewieController(
+            videoPlayerController:
+                VideoPlayerController.file(ioo.File(medias.path.toString())),
+            autoPlay: false,
+            looping: false,
+            aspectRatio: 1,
+            errorBuilder: (context, errorMessage) {
+              return Center(
+                  child: Text(
+                errorMessage,
+                style: TextStyle(color: Colors.white),
+              ));
+            },
+            // allowFullScreen: true,
+            additionalOptions: (context) {
+              return <OptionItem>[
+                //OptionItem(onTap: onTap, iconData: iconData, title: title)
+              ];
+            }),
+      ),
+    );
+  }*/
 }

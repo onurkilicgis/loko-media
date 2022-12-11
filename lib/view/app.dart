@@ -108,7 +108,11 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         source: source,
         maxDuration: const Duration(seconds: 300),
       );
-      if (video == null) return;
+      if (video == null) {
+        return;
+      } else {
+        Loading.waiting('Çektiğiniz Video Yükleniyor');
+      }
 
       dynamic positions = await GPS.getGPSPosition();
       if (positions['status'] == false) {
@@ -145,6 +149,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         dbImage.id = lastId;
         getAlbumList();
       });
+      Loading.close();
       if (aktifTabIndex == 1) {
         _mediaProvider.addMedia(dbImage);
       }

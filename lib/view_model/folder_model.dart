@@ -44,15 +44,15 @@ class FolderModel {
     final Directory miniFilePath =
         Directory('${root.path}/$path/${miniFileName}');
 
-    var mini = await ioo.File(miniFilePath.path);
-
     if (fileType == 'video') {
-      final bytes = await VideoThumbnail.thumbnailData(
-        video: mini.path,
+      final miniFileName = await VideoThumbnail.thumbnailFile(
+        video: filePath.path,
+        thumbnailPath: miniFilePath.path,
         imageFormat: ImageFormat.PNG,
-        maxWidth: 128,
-        quality: 25,
+        maxHeight: 128,
+        quality: 100,
       );
+      return filePath.path;
     }
     // resimler için haritada gösterebilmek adına küçük bir emitosyanunu oluşturuyoruz. yeniden boyutlandırıyoruz.
     // bunu yapmazsak harita kasılır.

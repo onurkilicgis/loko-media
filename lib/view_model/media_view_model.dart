@@ -41,6 +41,7 @@ class Media_VM {
                     onTap: () {
                       Navigator.pop(context);
                       model.openImage(media);
+                      model.openVideo(media);
                     }),
                 ListTile(title: Text('Herkesle Paylaş'), onTap: () {}),
                 ListTile(
