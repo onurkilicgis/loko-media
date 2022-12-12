@@ -361,31 +361,30 @@ class MedyaState extends State<Medya> {
     ));
   }
 
-  openVideo(Medias medias) {
-    return Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => FittedBox(
-              fit: BoxFit.cover,
-              child: Chewie(
-                controller: ChewieController(
-                    videoPlayerController: VideoPlayerController.file(
-                        ioo.File(medias.path.toString())),
-                    autoPlay: true,
-                    looping: false,
-                    aspectRatio: 1,
-                    errorBuilder: (context, errorMessage) {
-                      return Center(
-                          child: Text(
-                        errorMessage,
-                        style: TextStyle(color: Colors.white),
-                      ));
-                    },
-                    // allowFullScreen: true,
-                    additionalOptions: (context) {
-                      return <OptionItem>[
-                        //OptionItem(onTap: onTap, iconData: iconData, title: title)
-                      ];
-                    }),
-              ),
-            )));
+  openVideo(Medias medias, bool autoplay) {
+    return FittedBox(
+      fit: BoxFit.fitHeight,
+      child: Chewie(
+        controller: ChewieController(
+            videoPlayerController: VideoPlayerController.file(
+                ioo.File(medias.path.toString())),
+            autoPlay: autoplay,
+            looping: false,
+            aspectRatio: 1,
+            errorBuilder: (context, errorMessage) {
+              return Center(
+                  child: Text(
+                    errorMessage,
+                    style: TextStyle(color: Colors.white),
+                  ));
+            },
+            // allowFullScreen: true,
+            additionalOptions: (context) {
+              return <OptionItem>[
+                //OptionItem(onTap: onTap, iconData: iconData, title: title)
+              ];
+            }),
+      ),
+    );
   }
 }

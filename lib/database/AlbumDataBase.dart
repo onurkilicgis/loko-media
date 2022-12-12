@@ -58,11 +58,10 @@ class AlbumDataBase {
     return lastid;
   }
 
-  static insertFile(Medias media, Function callback) async {
+  static insertFile(Medias media, String minipath, Function callback) async {
     Album? album = await getAAlbum(media.album_id!);
     album?.itemCount = album.itemCount! + 1;
-    album?.image = media.path;
-    String asd = 'Asd';
+    album?.image = minipath;
     int deger = await updateAAlbum(album!);
     Database database = await openDatabase(_albumDatabaseName,
         version: _version, onCreate: (Database db, int version) async {});

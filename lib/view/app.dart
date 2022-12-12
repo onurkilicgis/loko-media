@@ -73,7 +73,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
       String filename = 'image-' + now.toString() + '.' + extension;
       String miniFilename = 'image-' + now.toString() + '-mini.' + extension;
       Uint8List bytes = imageTemporary.readAsBytesSync();
-      String? newPath = await FolderModel.createFile(
+      dynamic? newPath = await FolderModel.createFile(
           'albums/album-${aktifAlbumId}',
           bytes,
           filename,
@@ -83,14 +83,14 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         album_id: aktifAlbumId,
         name: filename,
         miniName: miniFilename,
-        path: newPath,
+        path: newPath['file'],
         latitude: positions['latitude'],
         longitude: positions['longitude'],
         altitude: positions['altitude'],
         fileType: 'image',
       );
       dbImage.insertData();
-      await AlbumDataBase.insertFile(dbImage, (lastId) {
+      await AlbumDataBase.insertFile(dbImage,newPath['mini'], (lastId) {
         dbImage.id = lastId;
         getAlbumList();
       });
@@ -128,7 +128,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
       String filename = 'video-' + now.toString() + '.' + extension;
       String miniFilename = 'video-' + now.toString() + '-mini.png';
       Uint8List bytes = imageTemporary.readAsBytesSync();
-      String? newPath = await FolderModel.createFile(
+      dynamic? newPath = await FolderModel.createFile(
           'albums/album-${aktifAlbumId}',
           bytes,
           filename,
@@ -138,14 +138,14 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         album_id: aktifAlbumId,
         name: filename,
         miniName: miniFilename,
-        path: newPath,
+        path: newPath['file'],
         latitude: positions['latitude'],
         longitude: positions['longitude'],
         altitude: positions['altitude'],
         fileType: 'video',
       );
       dbImage.insertData();
-      await AlbumDataBase.insertFile(dbImage, (lastId) {
+      await AlbumDataBase.insertFile(dbImage, newPath['mini'],(lastId) {
         dbImage.id = lastId;
         getAlbumList();
       });

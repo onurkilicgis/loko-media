@@ -31,17 +31,24 @@ class _PlayMedyaState extends State<PlayMedya> {
   @override
   Widget build(BuildContext context) {
     List<Medias> myfileList = mediaProvider.fileList;
+    var mq = MediaQuery.of(context);
     return Scaffold(
+      appBar: AppBar(title: Text('Albümün İçindekiler')),
         body: Center(
       child: Container(
+        height: mq.size.height,
+        padding: EdgeInsets.all(0),
           child: CarouselSlider.builder(
               itemCount: myfileList.length,
               options: CarouselOptions(
+                height: mq.size.height,
+                pageSnapping: true,
                 initialPage: widget.index,
-                aspectRatio: 1.0,
+                aspectRatio: 16/9,
+                viewportFraction: 0.8,
                 enlargeCenterPage: true,
                 enlargeStrategy: CenterPageEnlargeStrategy.height,
-                autoPlay: true,
+                autoPlay: false,
               ),
               itemBuilder: (BuildContext context, index, int pageViewIndex) {
                 Medias mymedia = myfileList[index];
@@ -54,7 +61,7 @@ class _PlayMedyaState extends State<PlayMedya> {
                   case 'video':
                     {
                       return Container(
-                        child: widget.model.openVideo(mymedia),
+                        child: widget.model.openVideo(mymedia,true),
                       );
                     }
                   case 'audio':

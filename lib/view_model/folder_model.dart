@@ -31,7 +31,7 @@ class FolderModel {
   }
 
   // çekilen,seçilen resim, video, ses ve yazıları sisteme kayıt eder.
-  static Future<String?> createFile(String path, Uint8List bytes,
+  static Future<dynamic?> createFile(String path, Uint8List bytes,
       String fileName, String miniFileName, String fileType) async {
     // uygulamanını kök klasörünün yolunu aldı (yol:path, kökklasör:root)
     final Directory root = await getApplicationDocumentsDirectory();
@@ -52,7 +52,7 @@ class FolderModel {
         maxHeight: 128,
         quality: 100,
       );
-      return filePath.path;
+      return {'file':filePath.path,'mini':miniFilePath.path};
     }
     // resimler için haritada gösterebilmek adına küçük bir emitosyanunu oluşturuyoruz. yeniden boyutlandırıyoruz.
     // bunu yapmazsak harita kasılır.
@@ -102,6 +102,7 @@ class FolderModel {
           }
       }
     }
-    return file.path;
+    return {'file':filePath.path,'mini':miniFilePath.path};
+    return ;
   }
 }
