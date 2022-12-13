@@ -366,17 +366,17 @@ class MedyaState extends State<Medya> {
       fit: BoxFit.fitHeight,
       child: Chewie(
         controller: ChewieController(
-            videoPlayerController: VideoPlayerController.file(
-                ioo.File(medias.path.toString())),
+            videoPlayerController:
+                VideoPlayerController.file(ioo.File(medias.path.toString())),
             autoPlay: autoplay,
             looping: false,
             aspectRatio: 1,
             errorBuilder: (context, errorMessage) {
               return Center(
                   child: Text(
-                    errorMessage,
-                    style: TextStyle(color: Colors.white),
-                  ));
+                errorMessage,
+                style: TextStyle(color: Colors.white),
+              ));
             },
             // allowFullScreen: true,
             additionalOptions: (context) {
@@ -386,5 +386,33 @@ class MedyaState extends State<Medya> {
             }),
       ),
     );
+  }
+
+  openLongVideo(Medias medias) {
+    return Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => FittedBox(
+              fit: BoxFit.fitHeight,
+              child: Chewie(
+                controller: ChewieController(
+                    videoPlayerController: VideoPlayerController.file(
+                        ioo.File(medias.path.toString())),
+                    autoPlay: false,
+                    looping: false,
+                    aspectRatio: 1,
+                    errorBuilder: (context, errorMessage) {
+                      return Center(
+                          child: Text(
+                        errorMessage,
+                        style: TextStyle(color: Colors.white),
+                      ));
+                    },
+                    // allowFullScreen: true,
+                    additionalOptions: (context) {
+                      return <OptionItem>[
+                        //OptionItem(onTap: onTap, iconData: iconData, title: title)
+                      ];
+                    }),
+              ),
+            )));
   }
 }

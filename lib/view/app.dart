@@ -11,6 +11,7 @@ import 'package:loko_media/providers/SwitchProvider.dart';
 import 'package:loko_media/services/GPS.dart';
 import 'package:loko_media/services/MyLocal.dart';
 import 'package:loko_media/services/utils.dart';
+import 'package:loko_media/view/AudioRecorder.dart';
 import 'package:loko_media/view/Medya.dart';
 import 'package:loko_media/view_model/app_view_model.dart';
 import 'package:loko_media/view_model/layout.dart';
@@ -90,7 +91,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         fileType: 'image',
       );
       dbImage.insertData();
-      await AlbumDataBase.insertFile(dbImage,newPath['mini'], (lastId) {
+      await AlbumDataBase.insertFile(dbImage, newPath['mini'], (lastId) {
         dbImage.id = lastId;
         getAlbumList();
       });
@@ -145,7 +146,7 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
         fileType: 'video',
       );
       dbImage.insertData();
-      await AlbumDataBase.insertFile(dbImage, newPath['mini'],(lastId) {
+      await AlbumDataBase.insertFile(dbImage, newPath['mini'], (lastId) {
         dbImage.id = lastId;
         getAlbumList();
       });
@@ -641,6 +642,26 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
                   case 1:
                     {
                       pickVideo(ImageSource.gallery, video);
+                      break;
+                    }
+                }
+              });
+            }
+            ;
+            if (index == 2) {
+              return BottomSheetItems(Icons.mic, 'Anlık Ses Kaydet ve Yükle',
+                  Icons.audio_file, 'Mevcut Bir Ses Kaydını Ekle', (num) {
+                switch (num) {
+                  case 0:
+                    {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AudioRecorder()));
+                      break;
+                    }
+                  case 1:
+                    {
                       break;
                     }
                 }

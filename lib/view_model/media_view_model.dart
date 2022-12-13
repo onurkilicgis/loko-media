@@ -48,7 +48,7 @@ class Media_VM {
                           }
                         case 'İzle':
                           {
-                            model.openVideo(media, false);
+                            model.openLongVideo(media);
                             break;
                           }
                         case 'Dinle':

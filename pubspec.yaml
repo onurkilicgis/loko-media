@@ -68,6 +68,8 @@ dependencies:
   flutter_speed_dial: ^6.2.0
   carousel_slider: ^4.1.1
   video_thumbnail: ^0.5.3
+  flutter_sound: ^9.2.13
+
 
 
 

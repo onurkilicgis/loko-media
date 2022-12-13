@@ -33,51 +33,52 @@ class _PlayMedyaState extends State<PlayMedya> {
     List<Medias> myfileList = mediaProvider.fileList;
     var mq = MediaQuery.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text('Albümün İçindekiler')),
+        appBar: AppBar(title: Text('Albümün İçindekiler')),
         body: Center(
-      child: Container(
-        height: mq.size.height,
-        padding: EdgeInsets.all(0),
-          child: CarouselSlider.builder(
-              itemCount: myfileList.length,
-              options: CarouselOptions(
-                height: mq.size.height,
-                pageSnapping: true,
-                initialPage: widget.index,
-                aspectRatio: 16/9,
-                viewportFraction: 0.8,
-                enlargeCenterPage: true,
-                enlargeStrategy: CenterPageEnlargeStrategy.height,
-                autoPlay: false,
-              ),
-              itemBuilder: (BuildContext context, index, int pageViewIndex) {
-                Medias mymedia = myfileList[index];
-                switch (mymedia.fileType) {
-                  case 'image':
-                    {
-                      return Container(
-                          child: Image.file(ioo.File(mymedia.path!)));
+          child: Container(
+              // height: mq.size.height,
+              padding: EdgeInsets.all(0),
+              child: CarouselSlider.builder(
+                  itemCount: myfileList.length,
+                  options: CarouselOptions(
+                    // height: mq.size.height,
+                    pageSnapping: false,
+                    initialPage: widget.index,
+                    aspectRatio: 0.9,
+                    //viewportFraction: 0.8,
+                    enlargeCenterPage: true,
+                    enlargeStrategy: CenterPageEnlargeStrategy.height,
+                    autoPlay: false,
+                  ),
+                  itemBuilder:
+                      (BuildContext context, index, int pageViewIndex) {
+                    Medias mymedia = myfileList[index];
+                    switch (mymedia.fileType) {
+                      case 'image':
+                        {
+                          return Container(
+                              child: Image.file(ioo.File(mymedia.path!)));
+                        }
+                      case 'video':
+                        {
+                          return Container(
+                            child: widget.model.openVideo(mymedia, false),
+                          );
+                        }
+                      case 'audio':
+                        {
+                          return Container();
+                        }
+                      case 'txt':
+                        {
+                          return Container();
+                        }
+                      default:
+                        {
+                          return Container();
+                        }
                     }
-                  case 'video':
-                    {
-                      return Container(
-                        child: widget.model.openVideo(mymedia,true),
-                      );
-                    }
-                  case 'audio':
-                    {
-                      return Container();
-                    }
-                  case 'txt':
-                    {
-                      return Container();
-                    }
-                  default:
-                    {
-                      return Container();
-                    }
-                }
-              })),
-    ));
+                  })),
+        ));
   }
 }
