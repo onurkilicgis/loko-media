@@ -302,6 +302,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_audio_waveforms:
+    dependency: "direct main"
+    description:
+      name: flutter_audio_waveforms
+      sha256: b0e5d18c0b4caf56cd3cb245385cdd40294f7a24605d0252394c2c42c8b854ed
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1+7"
   flutter_dotenv:
     dependency: "direct main"
     description:

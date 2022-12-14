@@ -3,10 +3,17 @@ import 'dart:io' as ioo;
 import 'dart:typed_data';
 
 import 'package:image/image.dart';
+import 'package:loko_media/services/MyLocal.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 class FolderModel {
+  static generateAudioPath() async {
+    int album_id = await MyLocal.getIntData('aktifalbum');
+    final Directory root = await getApplicationDocumentsDirectory();
+    return '${root.path}/album-$album_id';
+  }
+
   // Girilen parametredeki klasörü uygulamanın root'unda oluşturur
   static Future<String?> createFolder(String folderName) async {
     try {
@@ -52,7 +59,7 @@ class FolderModel {
         maxHeight: 128,
         quality: 100,
       );
-      return {'file':filePath.path,'mini':miniFilePath.path};
+      return {'file': filePath.path, 'mini': miniFilePath.path};
     }
     // resimler için haritada gösterebilmek adına küçük bir emitosyanunu oluşturuyoruz. yeniden boyutlandırıyoruz.
     // bunu yapmazsak harita kasılır.
@@ -102,7 +109,7 @@ class FolderModel {
           }
       }
     }
-    return {'file':filePath.path,'mini':miniFilePath.path};
-    return ;
+    return {'file': filePath.path, 'mini': miniFilePath.path};
+    return;
   }
 }
