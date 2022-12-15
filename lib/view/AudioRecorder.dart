@@ -1,4 +1,6 @@
-import 'package:audioplayers/audioplayers.dart';
+import 'dart:io' as ioo;
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:loko_media/view_model/folder_model.dart';
@@ -13,17 +15,19 @@ class AudioRecorder extends StatefulWidget {
 
 class _AudioRecorderState extends State<AudioRecorder> {
   final recorder = FlutterSoundRecorder();
-  final player = FlutterSoundPlayer();
-  final audioPlayer = AudioPlayer();
-  dynamic? source;
+  late FlutterSoundPlayer player;
+
+  //late AudioPlayer audioPlayer;
+
   // final cache = AudioCache();
-  bool isPlaying = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
   bool isrecorderReady = false;
+  bool playGostersinmi = true;
 
   String mod = 'kayit-yok';
   String? filePath;
+  late Uint8List sesDosyasi;
   String? fileName;
   //late Duration maxDuration;
   // late Duration elapsedDuration;
@@ -33,33 +37,52 @@ class _AudioRecorderState extends State<AudioRecorder> {
   //kayit-durduruldu - bitir ve devam eti göster
   //kayit-bitti - hiç birini gösterme - Tekrar kayıt diye bir butpn olsun.
 
+  openPlayer() async {
+    await player.openPlayer();
+    if (player.isOpen()) {
+      player.setSubscriptionDuration(Duration(milliseconds: 100));
+      player.onProgress!.listen((e) async {
+        /*
+        if (fark > 1000) {
+          int milsec = e.position.inMilliseconds + 1000;
+          duration = e.duration;
+          position = Duration(milliseconds: milsec);
+        } else {
+          duration = e.duration;
+          position = e.duration;
+        }*/
+        int fark = e.duration.inMilliseconds - e.position.inMilliseconds;
+        duration = e.duration;
+        position = e.position;
+        if (fark <= 200) {
+          duration = e.duration;
+          position = e.duration;
+          playGostersinmi = true;
+        }
+        setState(() {});
+      });
+    }
+  }
+
   @override
   void initState() {
     initRecorder();
-    setAudio();
+    player = FlutterSoundPlayer();
+    openPlayer();
+    //  audioPlayer = AudioPlayer();
+    // setAudio();
 
-    /*  audioPlayer.onPlayerStateChanged.listen((state) {
-      setState(() {
-        //  isPlaying = state == PlayerState.PLAYING;
-      });
-    });*/
-    audioPlayer.onDurationChanged.listen((newDuraiton) {
-      setState(() {
-        duration = newDuraiton;
-      });
-    });
-    audioPlayer.onPositionChanged.listen((newPosition) {
-      setState(() {
-        position = newPosition;
-      });
-    });
+    /**/
+
     super.initState();
   }
 
   @override
   void dispose() {
     recorder.closeRecorder();
-    audioPlayer.dispose();
+    player.closePlayer();
+
+    //  audioPlayer.dispose();
     super.dispose();
   }
 
@@ -178,7 +201,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
         children: [
           StreamBuilder<RecordingDisposition>(
             builder: (context, snapshot) {
-              final duration =
+              duration =
                   snapshot.hasData ? snapshot.data!.duration : Duration.zero;
               currentDuration = duration;
               String twoDigits(int n) => n.toString().padLeft(2, '0');
@@ -219,20 +242,27 @@ class _AudioRecorderState extends State<AudioRecorder> {
             visible: mod == 'kayit-bitti' ? true : false,
             child: Column(
               children: [
-                Slider(
-                  activeColor: Colors.teal,
-                  inactiveColor: Colors.deepPurple,
-                  min: 0,
-                  max: duration.inSeconds.toDouble(),
-                  value: position.inSeconds.toDouble(),
-                  onChanged: (value) async {
-                    final position = Duration(seconds: value.toInt());
-                    await audioPlayer.seek(position);
-                    await audioPlayer.resume();
-                  },
-                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
+                  child: Slider(
+                    activeColor: Colors.teal,
+                    inactiveColor: Colors.deepPurple,
+                    min: 0,
+                    max: duration.inMilliseconds.toDouble(),
+                    value: position.inMilliseconds.toDouble(),
+                    onChangeEnd: (value) async {
+                      int milisecond = (value).toInt();
+                      position = Duration(milliseconds: milisecond);
+                      await player.seekToPlayer(position);
+                      await resumePlay();
+                      setState(() {});
+                      //
+                    },
+                    onChanged: (double value) {},
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -241,58 +271,58 @@ class _AudioRecorderState extends State<AudioRecorder> {
                     ],
                   ),
                 ),
-                CircleAvatar(
-                  radius: 35,
-                  child: IconButton(
-                    icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-                    iconSize: 50,
-                    onPressed: () async {
-                      if (isPlaying) {
-                        await audioPlayer.pause();
-                      } else {
-                        await audioPlayer.play(source);
-                      }
-                    },
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(100, 50),
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                        ),
-                        onPressed: () {},
-                        icon: Icon(Icons.save),
-                        label: Text('Kaydet')),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: Size(100, 50),
-                            backgroundColor: Colors.green,
-                            foregroundColor: Colors.white,
-                          ),
-                          onPressed: () {},
-                          icon: Icon(Icons.headset),
-                          label: Text('Dinle')),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  CircleAvatar(
+                    radius: 35,
+                    child: IconButton(
+                      icon: Icon(Icons.delete),
+                      tooltip: 'Kaydı Sil',
+                      iconSize: 30,
+                      onPressed: () async {
+                        await deleteRecord();
+                        setState(() {});
+                      },
                     ),
-                    ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(100, 50),
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                        ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CircleAvatar(
+                      radius: 35,
+                      child: IconButton(
+                        icon: Icon(playGostersinmi
+                            ? Icons.play_arrow
+                            : player.isPaused
+                                ? Icons.play_arrow
+                                : player.isPlaying
+                                    ? Icons.pause
+                                    : Icons.play_arrow),
+                        iconSize: 30,
                         onPressed: () async {
-                          await deleteRecord();
+                          if (player.isPaused) {
+                            await resumePlay();
+                          } else {
+                            if (player.isPlaying) {
+                              await pausePlay();
+                            } else {
+                              await startPlay();
+                              playGostersinmi = false;
+                            }
+                          }
                           setState(() {});
                         },
-                        icon: Icon(Icons.delete),
-                        label: Text('İptal Et')),
-                  ],
-                ),
+                      ),
+                    ),
+                  ),
+                  CircleAvatar(
+                    radius: 35,
+                    child: IconButton(
+                      icon: Icon(Icons.save),
+                      tooltip: 'Kaydet',
+                      iconSize: 30,
+                      onPressed: () async {},
+                    ),
+                  ),
+                ])
               ],
             ),
           )
@@ -301,12 +331,13 @@ class _AudioRecorderState extends State<AudioRecorder> {
     );
   }
 
-  Future setAudio() async {
-    audioPlayer.setReleaseMode(ReleaseMode.loop);
-    source = audioPlayer.setSourceUrl(
+  /* Future setAudio() async {
+    // audioPlayer.setReleaseMode(ReleaseMode.loop);
+    Final file = File(filePath);
+    audioPlayer.setSourceUrl(
       filePath!,
     );
-  }
+  }*/
 
   String formatTime(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
@@ -339,7 +370,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
   Future stopRecord() async {
     if (!isrecorderReady) return;
     filePath = await recorder.stopRecorder();
-    // final audioFile = File(filePath!);
+    sesDosyasi = ioo.File(filePath!).readAsBytesSync();
 
     setState(() {});
     //print(audioFile);
@@ -358,15 +389,25 @@ class _AudioRecorderState extends State<AudioRecorder> {
     await recorder.deleteRecord(fileName: filePath!);
   }
 
-  Future startPlay(whenfinished) async {
+  Future startPlay() async {
+    /* ByteBuffer buffer = (sesDosyasi as Uint8List).buffer;
+    Uint8List dosya = buffer.asUint8List();*/
+
     await player.startPlayer(
         //oynatmak istediğin dosya
-        fromURI: filePath,
-        codec: Codec.mp3,
-        whenFinished: whenfinished);
+        // fromDataBuffer: dosya,
+        fromURI: filePath);
   }
 
   Future stopPlay() async {
     await player.stopPlayer();
+  }
+
+  Future pausePlay() async {
+    await player.pausePlayer();
+  }
+
+  Future resumePlay() async {
+    await player.resumePlayer();
   }
 }
