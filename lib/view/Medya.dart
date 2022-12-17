@@ -14,6 +14,8 @@ import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
+import '../services/MyLocal.dart';
+
 class Medya extends StatefulWidget {
   int? id;
   final PageController pageController;
@@ -33,9 +35,14 @@ class MedyaState extends State<Medya> {
   bool selectionMode = false;
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
   late MediaProvider _mediaProvider;
+  late String isDark = 'dark';
+  findTheme() async {
+    isDark = await MyLocal.getStringData('theme');
+  }
 
   @override
   void initState() {
+    findTheme();
     _mediaProvider = Provider.of<MediaProvider>(context, listen: false);
     _mediaProvider.getFileList(widget.id!);
 
@@ -71,6 +78,32 @@ class MedyaState extends State<Medya> {
       selectedMedias;
       selectionMode;
     });
+  }
+
+  audioCard(Medias medias) {
+    if (isDark == 'dark') {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          color: Colors.black45,
+          child: Image.asset(
+            'assets/images/audio_dark.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    } else {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          color: Colors.white,
+          child: Image.asset(
+            'assets/images/audio_light.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    }
   }
 
   imageCard(Medias medias) {
@@ -120,6 +153,7 @@ class MedyaState extends State<Medya> {
         }
       case 'audio':
         {
+          media = audioCard(medias);
           break;
         }
       case 'txt':

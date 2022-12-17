@@ -60,7 +60,6 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
       if (image == null) return;
       if (image != null) {
         Loading.waiting('Çektiğiniz Fotoğraf Yükleniyor');
-        Loading.close();
       }
 
       dynamic positions = await GPS.getGPSPosition();
@@ -98,6 +97,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         dbImage.id = lastId;
         getAlbumList();
       });
+      Loading.close();
       if (aktifTabIndex == 1) {
         _mediaProvider.addMedia(dbImage);
       }
@@ -657,12 +657,11 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                 switch (num) {
                   case 0:
                     {
-                      AppState model = AppState();
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  AudioRecorder(model: model)));
+                                  AudioRecorder(aktifTabIndex: aktifTabIndex)));
                       break;
                     }
                   case 1:

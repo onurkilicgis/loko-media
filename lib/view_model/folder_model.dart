@@ -48,8 +48,11 @@ class FolderModel {
     var file = await ioo.File(filePath.path);
     // burda oluşturmak istediğimiz dosyanın içerisine veriyi ekliyor.
     await file.writeAsBytes(bytes);
-    final Directory miniFilePath =
-        Directory('${root.path}/$path/${miniFileName}');
+    Directory miniFilePath = Directory('${root.path}/$path/${miniFileName}');
+
+    if (fileType == 'audio') {
+      miniFilePath = Directory('');
+    }
 
     if (fileType == 'video') {
       final miniFileName = await VideoThumbnail.thumbnailFile(

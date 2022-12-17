@@ -14,7 +14,9 @@ class MediaProvider extends ChangeNotifier {
   }
 
   addMedia(Medias item) {
-    fileList.add(item);
+    List<Medias> newArray = [];
+    newArray = [item] + fileList;
+    fileList = newArray;
     notifyListeners();
   }
 

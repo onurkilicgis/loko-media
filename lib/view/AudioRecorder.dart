@@ -16,12 +16,11 @@ import '../services/GPS.dart';
 import '../services/Loader.dart';
 import '../services/MyLocal.dart';
 import '../services/utils.dart';
-import 'app.dart';
 
 class AudioRecorder extends StatefulWidget {
-  late AppState model;
+  late int aktifTabIndex;
 
-  AudioRecorder({required this.model});
+  AudioRecorder({required this.aktifTabIndex});
 
   @override
   State<AudioRecorder> createState() => _AudioRecorderState();
@@ -75,9 +74,12 @@ class _AudioRecorderState extends State<AudioRecorder> {
   }
 
   @override
-  void dispose() {
+  Future<void> dispose() async {
     recorder.closeRecorder();
     player.closePlayer();
+    if (filePath != null) {
+      await deleteRecord(filePath);
+    }
 
     super.dispose();
   }
@@ -293,7 +295,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
                     backgroundColor: Color(0xff31376a),
                     radius: 35,
                     child: IconButton(
-                      icon: Icon(Icons.delete),
+                      icon: Icon(Icons.delete, color: Color(0xBEFFFFFF)),
                       tooltip: 'Kaydı Sil',
                       iconSize: 30,
                       onPressed: () async {
@@ -315,14 +317,17 @@ class _AudioRecorderState extends State<AudioRecorder> {
                       backgroundColor: Color(0xff31376a),
                       radius: 35,
                       child: IconButton(
-                        icon: Icon(playGostersinmi
-                            ? Icons.play_arrow
-                            : player.isPaused
+                        icon: Icon(
+                            playGostersinmi
                                 ? Icons.play_arrow
-                                : player.isPlaying
-                                    ? Icons.pause
-                                    : Icons.play_arrow),
+                                : player.isPaused
+                                    ? Icons.play_arrow
+                                    : player.isPlaying
+                                        ? Icons.pause
+                                        : Icons.play_arrow,
+                            color: Color(0xBEFFFFFF)),
                         iconSize: 30,
+                        tooltip: 'Dinle',
                         onPressed: () async {
                           if (player.isPaused) {
                             await resumePlay();
@@ -343,7 +348,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
                     backgroundColor: Color(0xff31376a),
                     radius: 35,
                     child: IconButton(
-                      icon: Icon(Icons.save),
+                      icon: Icon(Icons.save, color: Color(0xBEFFFFFF)),
                       tooltip: 'Kaydet',
                       iconSize: 30,
                       onPressed: () {
@@ -361,13 +366,12 @@ class _AudioRecorderState extends State<AudioRecorder> {
   }
 
   Future audioInsertFile(
-    String fileName,
-    File? audio,
-    String fileType,
+    String name,
+    String filePath,
   ) async {
     try {
-      if (audio == null) return;
-      if (audio != null) {
+      if (filePath == null) return;
+      if (filePath != null) {
         Loading.waiting('Ses Kayıt Yükleniyor');
       }
 
@@ -377,19 +381,11 @@ class _AudioRecorderState extends State<AudioRecorder> {
         return;
       }
       await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
-      final imageTemporary = File(filePath!);
+      final imageTemporary = File(filePath);
       int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
       int now = DateTime.now().millisecondsSinceEpoch;
-      var parts = filePath!.split('.');
-      String extension = parts[parts.length - 1];
-      if (fileType == 'audio') {
-        Image? image;
-        if (isDark == 'dark') {
-          image = Image.asset('assets/images/audio_dark.png');
-        } else {
-          image = Image.asset('assets/images/audio_light.png');
-        }
-      }
+      var parts = filePath.split('.');
+      String extension = 'm4a';
 
       String filename = 'audio-' + now.toString() + '.' + extension;
       String miniFilename = 'audio-' + now.toString() + '-mini.' + extension;
@@ -402,8 +398,8 @@ class _AudioRecorderState extends State<AudioRecorder> {
           'audio');
       Medias dbAudio = new Medias(
         album_id: aktifAlbumId,
-        name: filename,
-        miniName: miniFilename,
+        name: name,
+        miniName: '',
         path: newPath['file'],
         latitude: positions['latitude'],
         longitude: positions['longitude'],
@@ -411,10 +407,11 @@ class _AudioRecorderState extends State<AudioRecorder> {
         fileType: 'audio',
       );
       dbAudio.insertData();
-      await AlbumDataBase.insertFile(dbAudio, newPath['mini'], (lastId) {
+      await AlbumDataBase.insertFile(dbAudio, '', (lastId) {
         dbAudio.id = lastId;
       });
-      if (widget.model.aktifTabIndex == 1) {
+      Loading.close();
+      if (widget.aktifTabIndex == 1) {
         _mediaProvider.addMedia(dbAudio);
       }
     } on PlatformException catch (e) {
@@ -471,11 +468,9 @@ class _AudioRecorderState extends State<AudioRecorder> {
                         onPressed: () async {
                           if (audioNameController.text != '') {
                             Navigator.pop(context);
-                            audioInsertFile(
-                              audioNameController.text,
-                              audio,
-                              'audio',
-                            );
+                            await audioInsertFile(
+                                audioNameController.text, filePath!);
+                            //MedyaState.audioCard();
                           }
                         },
                         child: Text('Tamam',
@@ -539,6 +534,9 @@ class _AudioRecorderState extends State<AudioRecorder> {
 
   Future deleteRecord(String? filePath) async {
     await recorder.deleteRecord(fileName: filePath!);
+    filePath = null;
+    SBBildirim.bilgi("Bu Medya Öğesi Silinmiştir.");
+    setState(() {});
   }
 
   Future startPlay() async {
