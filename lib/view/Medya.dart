@@ -36,10 +36,9 @@ class MedyaState extends State<Medya> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _mediaProvider = Provider.of<MediaProvider>(context, listen: false);
-      _mediaProvider.getFileList(widget.id!);
-    });
+    _mediaProvider = Provider.of<MediaProvider>(context, listen: false);
+    _mediaProvider.getFileList(widget.id!);
+
     super.initState();
   }
 

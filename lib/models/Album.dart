@@ -152,6 +152,7 @@ class Medias {
   }
 
   insertData() {
+    this.name = name;
     this.isPublic = false;
     this.url = '';
     this.api_id = 0;

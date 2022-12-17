@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -29,15 +30,17 @@ class App extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<App> createState() => _App();
+  State<App> createState() => AppState();
 }
 
-class _App extends State<App> with SingleTickerProviderStateMixin {
+class AppState extends State<App> with SingleTickerProviderStateMixin {
   late TabController controller;
   TextEditingController albumNameController = TextEditingController();
   TextEditingController searchController = TextEditingController();
   late Color boxColor;
-
+  File? audioFile;
+  String? fileName;
+  PlatformFile? pickedFile;
   AlbumDataBase albumDataBase = AlbumDataBase();
   //dolu havuzumuz
   List<Album> albumList = [];
@@ -650,18 +653,37 @@ class _App extends State<App> with SingleTickerProviderStateMixin {
             ;
             if (index == 2) {
               return BottomSheetItems(Icons.mic, 'Anlık Ses Kaydet ve Yükle',
-                  Icons.audio_file, 'Mevcut Bir Ses Kaydını Ekle', (num) {
+                  Icons.audio_file, 'Mevcut Bir Ses Kaydını Ekle', (num) async {
                 switch (num) {
                   case 0:
                     {
+                      AppState model = AppState();
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => AudioRecorder()));
+                              builder: (context) =>
+                                  AudioRecorder(model: model)));
                       break;
                     }
                   case 1:
                     {
+                      Navigator.pop(context);
+                      FilePickerResult? result =
+                          await FilePicker.platform.pickFiles(
+                        type: FileType.custom,
+                        allowedExtensions: ['mp3', 'ogg', 'wav', 'm4a', 'ogv'],
+                      );
+                      if (result != null) {
+                        fileName = result.files.first.name;
+                        pickedFile = result.files.first;
+                        audioFile = File(pickedFile!.path!);
+
+                        Loading.waiting('Seçtiğiniz Ses Dosyası Yükleniyor...');
+
+                        Loading.close();
+                      } else {
+                        return null;
+                      }
                       break;
                     }
                 }

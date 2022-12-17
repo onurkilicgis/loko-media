@@ -1,13 +1,27 @@
 import 'dart:io' as ioo;
+import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:loko_media/view_model/folder_model.dart';
+import 'package:loko_media/view_model/layout.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+
+import '../database/AlbumDataBase.dart';
+import '../models/Album.dart';
+import '../providers/MedyaProvider.dart';
+import '../services/GPS.dart';
+import '../services/Loader.dart';
+import '../services/MyLocal.dart';
+import '../services/utils.dart';
+import 'app.dart';
 
 class AudioRecorder extends StatefulWidget {
-  const AudioRecorder({Key? key}) : super(key: key);
+  late AppState model;
+
+  AudioRecorder({required this.model});
 
   @override
   State<AudioRecorder> createState() => _AudioRecorderState();
@@ -16,10 +30,7 @@ class AudioRecorder extends StatefulWidget {
 class _AudioRecorderState extends State<AudioRecorder> {
   final recorder = FlutterSoundRecorder();
   late FlutterSoundPlayer player;
-
-  //late AudioPlayer audioPlayer;
-
-  // final cache = AudioCache();
+  String? isDark;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
   bool isrecorderReady = false;
@@ -29,28 +40,16 @@ class _AudioRecorderState extends State<AudioRecorder> {
   String? filePath;
   late Uint8List sesDosyasi;
   String? fileName;
-  //late Duration maxDuration;
-  // late Duration elapsedDuration;
+  File? audio;
+
   late Duration currentDuration;
-  //kayit-yok - sadece başlatı göster
-  //kayit-basladi - bitir ve durduru göster
-  //kayit-durduruldu - bitir ve devam eti göster
-  //kayit-bitti - hiç birini gösterme - Tekrar kayıt diye bir butpn olsun.
+  TextEditingController audioNameController = TextEditingController();
 
   openPlayer() async {
     await player.openPlayer();
     if (player.isOpen()) {
       player.setSubscriptionDuration(Duration(milliseconds: 100));
       player.onProgress!.listen((e) async {
-        /*
-        if (fark > 1000) {
-          int milsec = e.position.inMilliseconds + 1000;
-          duration = e.duration;
-          position = Duration(milliseconds: milsec);
-        } else {
-          duration = e.duration;
-          position = e.duration;
-        }*/
         int fark = e.duration.inMilliseconds - e.position.inMilliseconds;
         duration = e.duration;
         position = e.position;
@@ -64,16 +63,14 @@ class _AudioRecorderState extends State<AudioRecorder> {
     }
   }
 
+  late MediaProvider _mediaProvider;
+
   @override
   void initState() {
     initRecorder();
     player = FlutterSoundPlayer();
     openPlayer();
-    //  audioPlayer = AudioPlayer();
-    // setAudio();
-
-    /**/
-
+    _mediaProvider = Provider.of<MediaProvider>(context, listen: false);
     super.initState();
   }
 
@@ -82,17 +79,17 @@ class _AudioRecorderState extends State<AudioRecorder> {
     recorder.closeRecorder();
     player.closePlayer();
 
-    //  audioPlayer.dispose();
     super.dispose();
   }
 
   Widget baslaButonu() {
     return ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          minimumSize: Size(100, 50),
-          backgroundColor: Colors.green,
-          foregroundColor: Colors.white,
-        ),
+            minimumSize: Size(100, 50),
+            backgroundColor: Color(0xff5ba560),
+            foregroundColor: Color(0xD8FFFFFF),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10))),
         onPressed: () async {
           await startRecord();
           setState(() {
@@ -100,7 +97,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
           });
         },
         icon: Icon(Icons.mic),
-        label: Text('Başla'));
+        label: Text('Başlat'));
   }
 
   Widget iptalEtTekrarBaslaButonu() {
@@ -123,10 +120,11 @@ class _AudioRecorderState extends State<AudioRecorder> {
   Widget bitirButonu() {
     return ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          minimumSize: Size(100, 50),
-          backgroundColor: Colors.red,
-          foregroundColor: Colors.black,
-        ),
+            minimumSize: Size(100, 50),
+            backgroundColor: Color(0xffa50909),
+            foregroundColor: Colors.black,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10))),
         onPressed: () async {
           await stopRecord();
           setState(() {
@@ -140,34 +138,39 @@ class _AudioRecorderState extends State<AudioRecorder> {
   Widget durdurCalistirIconu(bool durum) {
     final icon = durum ? Icons.pause : Icons.play_arrow;
     final text = durum ? 'Durdur' : 'Devam et';
-    final backgroundColor = durum ? Colors.yellow : Colors.white;
+    final backgroundColor = durum ? Color(0xffb4a30c) : Color(0xff5ba560);
     final foregroundColor = Colors.black;
 
-    return ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-            minimumSize: Size(100, 50),
-            backgroundColor: backgroundColor,
-            foregroundColor: foregroundColor),
-        onPressed: () async {
-          if (recorder.isRecording) {
-            await pauseRecord();
-          } else {
-            await resumeRecord();
-          }
-          setState(() {
-            mod = recorder.isRecording == false
-                ? 'kayit-durduruldu'
-                : 'kayit-basladi';
-          });
-        },
-        icon: Icon(icon),
-        label: Text(text));
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
+              minimumSize: Size(100, 50),
+              backgroundColor: backgroundColor,
+              foregroundColor: foregroundColor,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10))),
+          onPressed: () async {
+            if (recorder.isRecording) {
+              await pauseRecord();
+            } else {
+              await resumeRecord();
+            }
+            setState(() {
+              mod = recorder.isRecording == false
+                  ? 'kayit-durduruldu'
+                  : 'kayit-basladi';
+            });
+          },
+          icon: Icon(icon),
+          label: Text(text)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     List<Widget> ustButonlar = [];
-    Widget wave = Container();
+
     switch (mod) {
       case 'kayit-yok':
         {
@@ -176,7 +179,11 @@ class _AudioRecorderState extends State<AudioRecorder> {
         }
       case 'kayit-basladi':
         {
-          ustButonlar.add(bitirButonu());
+          ustButonlar.add(Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: bitirButonu(),
+          ));
+
           ustButonlar.add(durdurCalistirIconu(true));
           break;
         }
@@ -215,17 +222,27 @@ class _AudioRecorderState extends State<AudioRecorder> {
                   backgroundColor: Colors.white,
                   child: CircleAvatar(
                       radius: 90,
-                      backgroundColor: Colors.indigo,
+                      backgroundColor: Color(0xff31376a),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Icon(Icons.mic),
+                          Icon(
+                            Icons.mic,
+                            color: Color(0xBEFFFFFF),
+                          ),
                           Text(
                             '${twoDigitMinutes}:${twodigitSeconds}',
-                            style: TextStyle(fontSize: 30),
+                            style: TextStyle(
+                                fontSize: 40, color: Color(0xBEFFFFFF)),
                           ),
                           SizedBox(),
-                          Text(recorder.isRecording ? 'Kayıt' : 'Başlat')
+                          Text(
+                            recorder.isRecording
+                                ? 'Kayıt  Ediyor...'
+                                : 'Başlata Basınız.',
+                            style: TextStyle(
+                                fontSize: 13, color: Color(0xC3FFFFFF)),
+                          ),
                         ],
                       )));
             },
@@ -245,8 +262,8 @@ class _AudioRecorderState extends State<AudioRecorder> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Slider(
-                    activeColor: Colors.teal,
-                    inactiveColor: Colors.deepPurple,
+                    activeColor: Color(0xff31376a),
+                    inactiveColor: Color(0xBEFFFFFF),
                     min: 0,
                     max: duration.inMilliseconds.toDouble(),
                     value: position.inMilliseconds.toDouble(),
@@ -262,7 +279,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.only(left: 30, right: 30),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -273,13 +290,21 @@ class _AudioRecorderState extends State<AudioRecorder> {
                 ),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   CircleAvatar(
+                    backgroundColor: Color(0xff31376a),
                     radius: 35,
                     child: IconButton(
                       icon: Icon(Icons.delete),
                       tooltip: 'Kaydı Sil',
                       iconSize: 30,
                       onPressed: () async {
-                        await deleteRecord();
+                        Util.evetHayir(context, 'Kayıt Silme İşlemi',
+                            'Bu medya öğesini silmek istediğinize emin misiniz?',
+                            (cevap) async {
+                          if (cevap == true) {
+                            await deleteRecord(filePath);
+                          }
+                        });
+
                         setState(() {});
                       },
                     ),
@@ -287,6 +312,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: CircleAvatar(
+                      backgroundColor: Color(0xff31376a),
                       radius: 35,
                       child: IconButton(
                         icon: Icon(playGostersinmi
@@ -314,12 +340,15 @@ class _AudioRecorderState extends State<AudioRecorder> {
                     ),
                   ),
                   CircleAvatar(
+                    backgroundColor: Color(0xff31376a),
                     radius: 35,
                     child: IconButton(
                       icon: Icon(Icons.save),
                       tooltip: 'Kaydet',
                       iconSize: 30,
-                      onPressed: () async {},
+                      onPressed: () {
+                        getAudioDialog();
+                      },
                     ),
                   ),
                 ])
@@ -331,13 +360,136 @@ class _AudioRecorderState extends State<AudioRecorder> {
     );
   }
 
-  /* Future setAudio() async {
-    // audioPlayer.setReleaseMode(ReleaseMode.loop);
-    Final file = File(filePath);
-    audioPlayer.setSourceUrl(
-      filePath!,
+  Future audioInsertFile(
+    String fileName,
+    File? audio,
+    String fileType,
+  ) async {
+    try {
+      if (audio == null) return;
+      if (audio != null) {
+        Loading.waiting('Ses Kayıt Yükleniyor');
+      }
+
+      dynamic positions = await GPS.getGPSPosition();
+      if (positions['status'] == false) {
+        SBBildirim.uyari(positions['message']);
+        return;
+      }
+      await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
+      final imageTemporary = File(filePath!);
+      int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
+      int now = DateTime.now().millisecondsSinceEpoch;
+      var parts = filePath!.split('.');
+      String extension = parts[parts.length - 1];
+      if (fileType == 'audio') {
+        Image? image;
+        if (isDark == 'dark') {
+          image = Image.asset('assets/images/audio_dark.png');
+        } else {
+          image = Image.asset('assets/images/audio_light.png');
+        }
+      }
+
+      String filename = 'audio-' + now.toString() + '.' + extension;
+      String miniFilename = 'audio-' + now.toString() + '-mini.' + extension;
+      Uint8List bytes = imageTemporary.readAsBytesSync();
+      dynamic? newPath = await FolderModel.createFile(
+          'albums/album-${aktifAlbumId}',
+          bytes,
+          filename,
+          miniFilename,
+          'audio');
+      Medias dbAudio = new Medias(
+        album_id: aktifAlbumId,
+        name: filename,
+        miniName: miniFilename,
+        path: newPath['file'],
+        latitude: positions['latitude'],
+        longitude: positions['longitude'],
+        altitude: positions['altitude'],
+        fileType: 'audio',
+      );
+      dbAudio.insertData();
+      await AlbumDataBase.insertFile(dbAudio, newPath['mini'], (lastId) {
+        dbAudio.id = lastId;
+      });
+      if (widget.model.aktifTabIndex == 1) {
+        _mediaProvider.addMedia(dbAudio);
+      }
+    } on PlatformException catch (e) {
+      SBBildirim.hata(e.toString());
+    }
+  }
+
+  getAudioDialog() {
+    Navigator.pop(context);
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          title: Text('Ses Kayıt'),
+          backgroundColor:
+              Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+          actions: [
+            Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: context.dynamicWidth(18),
+                      right: context.dynamicWidth(18)),
+                  child: TextField(
+                    controller: audioNameController,
+                    keyboardType: TextInputType.text,
+                    // textAlign: TextAlign.center,
+                    cursorColor: Colors.white,
+
+                    decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white)),
+                      labelStyle: TextStyle(color: Colors.white),
+                      labelText: 'Ses Kayıt Adı Giriniz',
+                    ),
+                    onChanged: (value) {},
+                  ),
+                ),
+                Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                  TextButton(
+                    child: Text(
+                      'İptal',
+                      style: TextStyle(color: Color(0xffe55656), fontSize: 17),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextButton(
+                        onPressed: () async {
+                          if (audioNameController.text != '') {
+                            Navigator.pop(context);
+                            audioInsertFile(
+                              audioNameController.text,
+                              audio,
+                              'audio',
+                            );
+                          }
+                        },
+                        child: Text('Tamam',
+                            style: TextStyle(
+                                color: Color(0xff80C783), fontSize: 17))),
+                  )
+                ])
+              ],
+            )
+          ],
+        );
+      },
     );
-  }*/
+  }
 
   String formatTime(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
@@ -385,14 +537,11 @@ class _AudioRecorderState extends State<AudioRecorder> {
     await recorder.resumeRecorder();
   }
 
-  Future deleteRecord() async {
+  Future deleteRecord(String? filePath) async {
     await recorder.deleteRecord(fileName: filePath!);
   }
 
   Future startPlay() async {
-    /* ByteBuffer buffer = (sesDosyasi as Uint8List).buffer;
-    Uint8List dosya = buffer.asUint8List();*/
-
     await player.startPlayer(
         //oynatmak istediğin dosya
         // fromDataBuffer: dosya,

@@ -52,6 +52,7 @@ dependencies:
   record: ^4.4.2
   audioplayers: ^1.1.1
   file_picker: ^5.2.2
+
   sqflite: ^2.2.0+3
   getwidget: ^3.0.1
   permission_handler: ^10.2.0
@@ -116,7 +117,8 @@ flutter:
     - assets/harita/
     - assets/harita/css/
     - assets/harita/js/
-
+    - assets/images/audio_dark.png
+    - assets/images/audio_light.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
