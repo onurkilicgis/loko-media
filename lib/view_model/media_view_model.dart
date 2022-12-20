@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/services/utils.dart';
+import 'package:loko_media/view/AudioRecorder.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../models/Album.dart';
@@ -52,7 +53,11 @@ class Media_VM {
                             break;
                           }
                         case 'Dinle':
+                          AudioRecorderState recorder = AudioRecorderState();
+
                           {
+                            recorder.openLongAudio(context, media, media.path);
+
                             break;
                           }
                         case 'Oku':

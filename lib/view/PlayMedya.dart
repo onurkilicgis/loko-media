@@ -2,6 +2,7 @@ import 'dart:io' as ioo;
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:loko_media/view/AudioRecorder.dart';
 import 'package:loko_media/view/Medya.dart';
 import 'package:provider/provider.dart';
 
@@ -31,17 +32,15 @@ class _PlayMedyaState extends State<PlayMedya> {
   @override
   Widget build(BuildContext context) {
     List<Medias> myfileList = mediaProvider.fileList;
-    var mq = MediaQuery.of(context);
+
     return Scaffold(
         appBar: AppBar(title: Text('Albümün İçindekiler')),
         body: Center(
           child: Container(
-              // height: mq.size.height,
               padding: EdgeInsets.all(0),
               child: CarouselSlider.builder(
                   itemCount: myfileList.length,
                   options: CarouselOptions(
-                    // height: mq.size.height,
                     pageSnapping: false,
                     initialPage: widget.index,
                     aspectRatio: 0.9,
@@ -67,6 +66,7 @@ class _PlayMedyaState extends State<PlayMedya> {
                         }
                       case 'audio':
                         {
+                          AudioRecorderState recorder = AudioRecorderState();
                           return Container();
                         }
                       case 'txt':

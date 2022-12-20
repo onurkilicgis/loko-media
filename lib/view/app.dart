@@ -666,23 +666,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                     }
                   case 1:
                     {
-                      Navigator.pop(context);
-                      FilePickerResult? result =
-                          await FilePicker.platform.pickFiles(
-                        type: FileType.custom,
-                        allowedExtensions: ['mp3', 'ogg', 'wav', 'm4a', 'ogv'],
-                      );
-                      if (result != null) {
-                        fileName = result.files.first.name;
-                        pickedFile = result.files.first;
-                        audioFile = File(pickedFile!.path!);
-
-                        Loading.waiting('Seçtiğiniz Ses Dosyası Yükleniyor...');
-
-                        Loading.close();
-                      } else {
-                        return null;
-                      }
+                      await audioFilePicker();
                       break;
                     }
                 }
@@ -893,5 +877,54 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
     setState(() {
       filteredAlbumList;
     });
+  }
+
+  audioFilePicker() async {
+    // Navigator.pop(context);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3', 'ogg', 'wav', 'm4a', 'ogv'],
+    );
+    if (result != null) {
+      fileName = result.files.first.name;
+      // Uint8List? bytes = result.files.first.bytes;
+      pickedFile = result.files.first;
+
+      audioFile = File(pickedFile!.path!);
+      dynamic positions = await GPS.getGPSPosition();
+      if (positions['status'] == false) {
+        SBBildirim.uyari(positions['message']);
+        return;
+      }
+      Loading.waiting('Seçtiğiniz Ses Dosyası Yükleniyor...');
+
+      await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
+
+      int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
+      Uint8List bytes = audioFile!.readAsBytesSync();
+      dynamic? newPath = await FolderModel.createFile(
+          'albums/album-${aktifAlbumId}', bytes, fileName!, '', 'audio');
+      Medias dbAudio = new Medias(
+        album_id: aktifAlbumId,
+        name: fileName!,
+        miniName: '',
+        path: newPath['file'],
+        latitude: positions['latitude'],
+        longitude: positions['longitude'],
+        altitude: positions['altitude'],
+        fileType: 'audio',
+      );
+      dbAudio.insertData();
+      await AlbumDataBase.insertFile(dbAudio, '', (lastId) {
+        dbAudio.id = lastId;
+      });
+
+      Loading.close();
+      if (aktifTabIndex == 1) {
+        _mediaProvider.addMedia(dbAudio);
+      }
+    } else {
+      return null;
+    }
   }
 }

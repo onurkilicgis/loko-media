@@ -23,13 +23,13 @@ class AudioRecorder extends StatefulWidget {
   AudioRecorder({required this.aktifTabIndex});
 
   @override
-  State<AudioRecorder> createState() => _AudioRecorderState();
+  State<AudioRecorder> createState() => AudioRecorderState();
 }
 
-class _AudioRecorderState extends State<AudioRecorder> {
+class AudioRecorderState extends State<AudioRecorder> {
   final recorder = FlutterSoundRecorder();
-  late FlutterSoundPlayer player;
-  String? isDark;
+  final player = FlutterSoundPlayer();
+
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
   bool isrecorderReady = false;
@@ -40,6 +40,10 @@ class _AudioRecorderState extends State<AudioRecorder> {
   late Uint8List sesDosyasi;
   String? fileName;
   File? audio;
+  late String isDark = 'dark';
+  findTheme() async {
+    isDark = await MyLocal.getStringData('theme');
+  }
 
   late Duration currentDuration;
   TextEditingController audioNameController = TextEditingController();
@@ -64,10 +68,14 @@ class _AudioRecorderState extends State<AudioRecorder> {
 
   late MediaProvider _mediaProvider;
 
+  //static BuildContext? appContext;
+
   @override
   void initState() {
+    //AudioRecorderState.appContext = context;
+    findTheme();
     initRecorder();
-    player = FlutterSoundPlayer();
+
     openPlayer();
     _mediaProvider = Provider.of<MediaProvider>(context, listen: false);
     super.initState();
@@ -335,7 +343,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
                             if (player.isPlaying) {
                               await pausePlay();
                             } else {
-                              await startPlay();
+                              await startPlay(filePath);
                               playGostersinmi = false;
                             }
                           }
@@ -486,7 +494,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
     );
   }
 
-  String formatTime(Duration duration) {
+  static String formatTime(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final hours = twoDigits(duration.inHours);
     final minutes = twoDigits(duration.inMinutes.remainder(60));
@@ -539,7 +547,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
     setState(() {});
   }
 
-  Future startPlay() async {
+  Future startPlay(filePath) async {
     await player.startPlayer(
         //oynatmak istediğin dosya
         // fromDataBuffer: dosya,
@@ -556,5 +564,113 @@ class _AudioRecorderState extends State<AudioRecorder> {
 
   Future resumePlay() async {
     await player.resumePlayer();
+  }
+
+  openLongAudio(context, Medias medias, filePath) {
+    return Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
+        builder: (context) => Container(
+              color: Color(0xff7a7c99),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Stack(alignment: Alignment.topCenter, children: [
+                    Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: isDark == 'dark'
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Container(
+                                  color: Colors.black45,
+                                  child: Image.asset(
+                                    'assets/images/audio_dark.png',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              )
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Container(
+                                  color: Colors.black45,
+                                  child: Image.asset(
+                                    'assets/images/audio_light.png',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              )),
+                    medias.name == null
+                        ? Text('')
+                        : Positioned(
+                            top: 15,
+                            child: Text(
+                              medias.name!,
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                  ]),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Slider(
+                      activeColor: Color(0xff31376a),
+                      inactiveColor: Color(0xBEFFFFFF),
+                      min: 0,
+                      max: duration.inMilliseconds.toDouble(),
+                      value: position.inMilliseconds.toDouble(),
+                      onChangeEnd: (value) async {
+                        int milisecond = (value).toInt();
+                        position = Duration(milliseconds: milisecond);
+                        await player.seekToPlayer(position);
+                        await resumePlay();
+                        setState(() {});
+                        //
+                      },
+                      onChanged: (double value) {},
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 30, right: 30),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(formatTime(position)),
+                        Text(formatTime(duration - position))
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CircleAvatar(
+                      backgroundColor: Color(0xff31376a),
+                      radius: 35,
+                      child: IconButton(
+                        icon: Icon(
+                            playGostersinmi
+                                ? Icons.play_arrow
+                                : player.isPaused
+                                    ? Icons.play_arrow
+                                    : player.isPlaying
+                                        ? Icons.pause
+                                        : Icons.play_arrow,
+                            color: Color(0xBEFFFFFF)),
+                        iconSize: 30,
+                        tooltip: 'Dinle',
+                        onPressed: () async {
+                          if (player.isPaused) {
+                            await resumePlay();
+                          } else {
+                            if (player.isPlaying) {
+                              await pausePlay();
+                            } else {
+                              await startPlay(filePath);
+                              playGostersinmi = false;
+                            }
+                          }
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )));
   }
 }
