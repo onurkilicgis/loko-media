@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_sound/public/flutter_sound_player.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
@@ -92,7 +93,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         altitude: positions['altitude'],
         fileType: 'image',
       );
-      dbImage.insertData();
+      dbImage.insertData({});
       await AlbumDataBase.insertFile(dbImage, newPath['mini'], (lastId) {
         dbImage.id = lastId;
         getAlbumList();
@@ -148,7 +149,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         altitude: positions['altitude'],
         fileType: 'video',
       );
-      dbImage.insertData();
+      dbImage.insertData({});
       await AlbumDataBase.insertFile(dbImage, newPath['mini'], (lastId) {
         dbImage.id = lastId;
         getAlbumList();
@@ -914,7 +915,11 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         altitude: positions['altitude'],
         fileType: 'audio',
       );
-      dbAudio.insertData();
+      final player = FlutterSoundPlayer();
+      player.openPlayer();
+      Duration? duration = await player.startPlayer(fromURI: newPath['file']);
+      dbAudio.insertData({'duration': duration?.inMilliseconds});
+      player.closePlayer();
       await AlbumDataBase.insertFile(dbAudio, '', (lastId) {
         dbAudio.id = lastId;
       });

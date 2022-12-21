@@ -53,9 +53,8 @@ class Media_VM {
                             break;
                           }
                         case 'Dinle':
-                          AudioRecorderState recorder = AudioRecorderState();
-
                           {
+                            AudioRecorderState recorder = AudioRecorderState();
                             recorder.openLongAudio(context, media, media.path);
 
                             break;

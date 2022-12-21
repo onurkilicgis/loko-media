@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 class CurrentDate {
@@ -94,6 +96,7 @@ class Medias {
   String? url;
   int? api_id;
   String? date;
+  String? settings;
   bool? status;
   double? latitude;
   double? longitude;
@@ -110,6 +113,7 @@ class Medias {
       this.url,
       this.api_id,
       this.date,
+      this.settings,
       required this.latitude,
       required this.longitude,
       required this.altitude,
@@ -126,6 +130,7 @@ class Medias {
     url = json['url'];
     api_id = json['api_id'];
     date = json['date'];
+    settings = json['settings'];
     status = json['status'] == 1 ? true : false;
     latitude = json['latitude'];
     longitude = json['longitude'];
@@ -144,6 +149,7 @@ class Medias {
     data['url'] = this.url;
     data['api_id'] = this.api_id;
     data['date'] = this.date;
+    data['settings'] = this.settings;
     data['status'] = this.status;
     data['latitude'] = this.latitude;
     data['longitude'] = this.longitude;
@@ -151,12 +157,13 @@ class Medias {
     return data;
   }
 
-  insertData() {
+  insertData(dynamic settings) {
     this.name = name;
     this.isPublic = false;
     this.url = '';
     this.api_id = 0;
     this.date = CurrentDate.getNow();
+    this.settings = json.encode(settings);
     this.status = true;
   }
 }

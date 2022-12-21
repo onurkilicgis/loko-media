@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io' as ioo;
 import 'dart:io';
 
@@ -75,8 +76,10 @@ class AudioRecorderState extends State<AudioRecorder> {
     //AudioRecorderState.appContext = context;
     findTheme();
     initRecorder();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      openPlayer();
+    });
 
-    openPlayer();
     _mediaProvider = Provider.of<MediaProvider>(context, listen: false);
     super.initState();
   }
@@ -414,7 +417,7 @@ class AudioRecorderState extends State<AudioRecorder> {
         altitude: positions['altitude'],
         fileType: 'audio',
       );
-      dbAudio.insertData();
+      dbAudio.insertData({'duration': duration.inMilliseconds});
       await AlbumDataBase.insertFile(dbAudio, '', (lastId) {
         dbAudio.id = lastId;
       });
@@ -567,6 +570,12 @@ class AudioRecorderState extends State<AudioRecorder> {
   }
 
   openLongAudio(context, Medias medias, filePath) {
+    dynamic settings = json.decode(medias.settings.toString());
+    duration = Duration(milliseconds: settings['duration']);
+    position = Duration(milliseconds: 0);
+
+    openPlayer();
+
     return Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
         builder: (context) => Container(
               color: Color(0xff7a7c99),

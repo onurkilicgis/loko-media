@@ -82,27 +82,36 @@ class MedyaState extends State<Medya> {
 
   audioCard(Medias medias) {
     if (isDark == 'dark') {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          color: Colors.black45,
-          child: Image.asset(
-            'assets/images/audio_dark.png',
-            fit: BoxFit.cover,
-          ),
-        ),
-      );
+      return Stack(
+          fit: StackFit.expand,
+          alignment: Alignment.center,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                color: Colors.black45,
+                child: Image.asset(
+                  'assets/images/audio_dark.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Icon(Icons.play_circle_fill, color: Colors.white)
+          ]);
     } else {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          color: Colors.white,
-          child: Image.asset(
-            'assets/images/audio_light.png',
-            fit: BoxFit.cover,
+      return Stack(alignment: Alignment.center, children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            color: Colors.white,
+            child: Image.asset(
+              'assets/images/audio_light.png',
+              fit: BoxFit.cover,
+            ),
           ),
         ),
-      );
+        Icon(Icons.play_circle_fill, color: Colors.white)
+      ]);
     }
   }
 

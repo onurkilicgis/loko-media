@@ -7,7 +7,7 @@ import 'package:loko_media/view_model/folder_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AlbumDataBase {
-  static const String _albumDatabaseName = 'albumdatabase8.db';
+  static const String _albumDatabaseName = 'albumdatabase9.db';
   static const String albumTableName = 'albums';
   static const String mediaTableName = 'medias';
   static const int _version = 1;
@@ -37,6 +37,7 @@ class AlbumDataBase {
            url TEXT DEFAULT '' NOT NULL,
            api_id INTEGER DEFAULT 0 NOT NULL,
            date TEXT,
+           settings TEXT,
            latitude REAL DEFAULT 0 NOT NULL,
            longitude REAL DEFAULT 0 NOT NULL,
            altitude REAL DEFAULT 0 NOT NULL, 
