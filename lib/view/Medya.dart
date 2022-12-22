@@ -86,6 +86,7 @@ class MedyaState extends State<Medya> {
           fit: StackFit.expand,
           alignment: Alignment.center,
           children: [
+
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Container(
@@ -96,7 +97,11 @@ class MedyaState extends State<Medya> {
                 ),
               ),
             ),
-            Icon(Icons.play_circle_fill, color: Colors.white)
+            Icon(Icons.play_circle_fill, color: Colors.white),
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Text(medias.name!,style: TextStyle(fontSize: 7),textAlign: TextAlign.center),
+            ),
           ]);
     } else {
       return Stack(alignment: Alignment.center, children: [

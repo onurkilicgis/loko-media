@@ -72,7 +72,7 @@ Future<void> main() async {
   await Permission.microphone.request(); //ok
   await Permission.storage.request(); //ok buna gerek yok gibi
   await Permission.location.request(); //ok
-  await Permission.locationAlways.request(); //ok
+  //await Permission.locationAlways.request(); //ok
 
   await Firebase.initializeApp();
   await localhostServer.start();
