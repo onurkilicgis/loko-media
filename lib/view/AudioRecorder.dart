@@ -41,7 +41,7 @@ class AudioRecorderState extends State<AudioRecorder> {
   late Uint8List sesDosyasi;
   String? fileName;
   File? audio;
-  late String isDark = 'dark';
+  String isDark = 'dark';
   findTheme() async {
     isDark = await MyLocal.getStringData('theme');
   }
@@ -76,9 +76,8 @@ class AudioRecorderState extends State<AudioRecorder> {
     //AudioRecorderState.appContext = context;
     findTheme();
     initRecorder();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      openPlayer();
-    });
+
+    openPlayer();
 
     _mediaProvider = Provider.of<MediaProvider>(context, listen: false);
     super.initState();

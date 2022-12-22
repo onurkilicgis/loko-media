@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/services/utils.dart';
-import 'package:loko_media/view/AudioRecorder.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../models/Album.dart';
+import '../view/AudioView.dart';
 
 class Media_VM {
   static openMediaLongPDialog(context, model, Medias media) {
@@ -54,8 +54,11 @@ class Media_VM {
                           }
                         case 'Dinle':
                           {
-                            AudioRecorderState recorder = AudioRecorderState();
-                            recorder.openLongAudio(context, media, media.path);
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => AudioView(
+                                    medias: media, appbarstatus: true)));
+                            /*  AudioRecorderState recorder = AudioRecorderState();
+                            recorder.openLongAudio(context, media, media.path);*/
 
                             break;
                           }

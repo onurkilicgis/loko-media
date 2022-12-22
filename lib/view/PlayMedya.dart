@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../models/Album.dart';
 import '../providers/MedyaProvider.dart';
+import 'AudioView.dart';
 
 class PlayMedya extends StatefulWidget {
   late int index;
@@ -67,7 +68,10 @@ class _PlayMedyaState extends State<PlayMedya> {
                       case 'audio':
                         {
                           AudioRecorderState recorder = AudioRecorderState();
-                          return Container();
+                          return Container(
+                            child:
+                                AudioView(medias: mymedia, appbarstatus: false),
+                          );
                         }
                       case 'txt':
                         {
