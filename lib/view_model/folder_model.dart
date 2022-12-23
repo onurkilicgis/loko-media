@@ -53,6 +53,9 @@ class FolderModel {
     if (fileType == 'audio') {
       miniFilePath = Directory('');
     }
+    if (fileType == 'text') {
+      miniFilePath = Directory('');
+    }
 
     if (fileType == 'video') {
       final miniFileName = await VideoThumbnail.thumbnailFile(

@@ -24,6 +24,7 @@ import '../services/Loader.dart';
 import '../services/auth.dart';
 import '../view_model/folder_model.dart';
 import 'Harita.dart';
+import 'TextView.dart';
 
 class App extends StatefulWidget {
   const App({
@@ -674,6 +675,32 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
               });
             }
             ;
+            if (index == 3) {
+              return BottomSheetItems(
+                  Icons.text_snippet_sharp,
+                  'Not Yaz Ve Kaydet',
+                  Icons.insert_drive_file_rounded,
+                  'Mevcut Bir Text Dosyası Yükle', (num) async {
+                switch (num) {
+                  case 0:
+                    {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => TextView(
+                                    aktifTabIndex: aktifTabIndex,
+                                  )));
+
+                      break;
+                    }
+                  case 1:
+                    {
+                      break;
+                    }
+                }
+              });
+            }
+
             setState(() {
               currentIndex = index;
             });
@@ -884,7 +911,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
     // Navigator.pop(context);
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['mp3', 'ogg', 'wav', 'm4a', 'ogv'],
+      allowedExtensions: ['mp3', 'wav', 'm4a', 'ogv'],
     );
     if (result != null) {
       fileName = result.files.first.name;
@@ -902,12 +929,17 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
       await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
 
       int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
+      int now = DateTime.now().millisecondsSinceEpoch;
+      var parts = audioFile!.path.split('.');
+      String extension = parts[parts.length - 1];
+      String filename = 'audio-' + now.toString() + '.' + extension;
+      //String miniFilename = 'audio-' + now.toString() + '-mini.' + extension;
       Uint8List bytes = audioFile!.readAsBytesSync();
       dynamic? newPath = await FolderModel.createFile(
-          'albums/album-${aktifAlbumId}', bytes, fileName!, '', 'audio');
+          'albums/album-${aktifAlbumId}', bytes, filename, '', 'audio');
       Medias dbAudio = new Medias(
         album_id: aktifAlbumId,
-        name: fileName!,
+        name: filename,
         miniName: '',
         path: newPath['file'],
         latitude: positions['latitude'],

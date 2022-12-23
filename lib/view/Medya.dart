@@ -80,13 +80,12 @@ class MedyaState extends State<Medya> {
     });
   }
 
-  audioCard(Medias medias) {
+  textCard(Medias medias) {
     if (isDark == 'dark') {
       return Stack(
           fit: StackFit.expand,
           alignment: Alignment.center,
           children: [
-
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Container(
@@ -97,10 +96,10 @@ class MedyaState extends State<Medya> {
                 ),
               ),
             ),
-            Icon(Icons.play_circle_fill, color: Colors.white),
             Padding(
               padding: const EdgeInsets.all(4.0),
-              child: Text(medias.name!,style: TextStyle(fontSize: 7),textAlign: TextAlign.center),
+              child: Text(medias.name!,
+                  style: TextStyle(fontSize: 7), textAlign: TextAlign.center),
             ),
           ]);
     } else {
@@ -115,7 +114,56 @@ class MedyaState extends State<Medya> {
             ),
           ),
         ),
-        Icon(Icons.play_circle_fill, color: Colors.white)
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Text(medias.name!,
+              style: TextStyle(fontSize: 7), textAlign: TextAlign.center),
+        ),
+      ]);
+    }
+  }
+
+  audioCard(Medias medias) {
+    if (isDark == 'dark') {
+      return Stack(
+          fit: StackFit.expand,
+          alignment: Alignment.center,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                color: Colors.black45,
+                child: Image.asset(
+                  'assets/images/audio_dark.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Icon(Icons.play_circle_fill, color: Colors.white),
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Text(medias.name!,
+                  style: TextStyle(fontSize: 7), textAlign: TextAlign.center),
+            ),
+          ]);
+    } else {
+      return Stack(alignment: Alignment.center, children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            color: Colors.white,
+            child: Image.asset(
+              'assets/images/audio_light.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Icon(Icons.play_circle_fill, color: Colors.white),
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Text(medias.name!,
+              style: TextStyle(fontSize: 7), textAlign: TextAlign.center),
+        ),
       ]);
     }
   }
@@ -172,6 +220,7 @@ class MedyaState extends State<Medya> {
         }
       case 'txt':
         {
+          media = textCard(medias);
           break;
         }
     }
