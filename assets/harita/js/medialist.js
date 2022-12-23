@@ -13,29 +13,30 @@ Vue.component('medialist', {
         items:[
           /*{
             id:1,
-            image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
-            fileType:'image',
+            mini_image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
+            fileType:'audio',
             latitude:0,
-            longitude:0
+            longitude:0,
+            name:'Denemememem asdas dqw eq asd'
           },
           {
             id:2,
-            image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
+            mini_image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
             fileType:'image',
           },
           {
             id:3,
-            image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
+            mini_image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
             fileType:'image',
           },
           {
             id:4,
-            image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
+            mini_image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
             fileType:'image',
           },
           {
             id:5,
-            image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
+            mini_image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
             fileType:'image',
           },*/
         ],
@@ -99,7 +100,7 @@ Vue.component('medialist', {
           }
           var img = document.createElement('img');
           img.alt = it.name;
-          img.src = it.image_url;
+          img.src = it.path;
           img.dataset.id=it.id;
           img.dataset.lat=it.latitude;
           img.dataset.lng=it.longitude;
@@ -108,7 +109,7 @@ Vue.component('medialist', {
       }else{
         var img = document.createElement('img');
         img.alt = item.name;
-        img.src = item.image_url;
+        img.src = item.path;
         img.dataset.id=item.id;
         img.dataset.lat=item.latitude;
         img.dataset.lng=item.longitude;
@@ -143,6 +144,22 @@ Vue.component('medialist', {
         this.resimGoster(it,'single');
       }
     },
+    showAVideo(id){
+      var it = this.items.find((a)=>a.id==id);
+      if(it){
+        this.selected=it.id;
+        this.item = it;
+        this.videoIzle(it);
+      }
+    },
+    showAAudio(id){
+      var it = this.items.find((a)=>a.id==id);
+      if(it){
+        this.selected=it.id;
+        this.item = it;
+        this.sesDinle(it);
+      }
+    },
     showPoint(lat,lng){
       lat=Number(lat);
       lng=Number(lng);
@@ -153,16 +170,22 @@ Vue.component('medialist', {
     },
     navigasyon(){
       GL.sendToAndroid({type:'navigasyon',data:this.item});
+    },
+    videoIzle(item){
+      myvideo.$children[0].open(item);
+    },
+    sesDinle(item){
+      myaudio.$children[0].open(item);
     }
   },
   template: `<div v-if="onoff && hidden">
     <div :class="selected!==-1?'medialist flex-col h160':'medialist flex-col h120'" v-if="items.length>0">
       <div class="mb5 actions1" v-if="selected!==-1">
         <div>
-          <button @click="resimGoster(item,'multi')" v-if="item.fileType=='image'" class="button is-small is-dark is-responsive">Göster</button>
-          <button v-if="item.fileType=='video'" class="button is-small is-dark is-responsive">İzle</button>
-          <button v-if="item.fileType=='audio'" class="button is-small is-dark is-responsive">Dinle</button>
-          <button v-if="item.fileType=='txt'"   class="button is-small is-dark is-responsive">Oku</button>
+          <button @click="resimGoster(item,'multi')" v-if="item.fileType=='image'" class="button is-small is-success is-responsive">Göster</button>
+          <button @click="videoIzle(item);" v-if="item.fileType=='video'" class="button is-small is-success is-responsive">İzle</button>
+          <button @click="sesDinle(item);" v-if="item.fileType=='audio'" class="button is-small is-success is-responsive">Dinle</button>
+          <button v-if="item.fileType=='txt'"   class="button is-small is-success is-responsive">Oku</button>
           <button @click="navigasyon(item);" class="button is-small is-dark is-responsive">Navigasyon</button>
           <button class="button is-small is-dark is-responsive">Bilgi</button>
         </div>
@@ -172,9 +195,35 @@ Vue.component('medialist', {
       </div>
       <div class="flexBox">
         <div :key="i" v-for="(media,i) in items" @click="showOnTheMap(media)">
-          <div :class="media.id==selected?'imageCardSelected':'imageCard'">
-            <img class="slideImage" :src="media.image_url">
+
+          <div v-if="media.fileType=='txt'" :class="media.id==selected?'imageCardSelected':'imageCard'">
+            <img class="slideImage" src="./img/textfile.png">
           </div>
+
+          <div v-if="media.fileType=='audio'" :class="media.id==selected?'imageCardSelected':'imageCard'">
+            <div style="position:relative;">
+              <img class="slideImage" src="./img/audiofile3.png">
+              <div class="ccb1">
+                {{media.name}}
+              </div>
+            </div>
+          </div>
+
+          <div v-if="media.fileType=='image'" :class="media.id==selected?'imageCardSelected':'imageCard'">
+            <img class="slideImage" :src="media.mini_image_url">
+          </div>
+
+          <div v-if="media.fileType=='video'" :class="media.id==selected?'imageCardSelected cc':'imageCard cc'">
+            <div style="position:relative;">
+              <img class="slideImage" :src="media.mini_image_url">
+              <button @click="showOnTheMap(media)" class="button ccb circle">
+                <span class="icon is-small">
+                <svg style="height:16px;" xmlns="http://www.w3.org/2000/svg" fill="#333" viewBox="0 0 384 512"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>
+                </span>
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

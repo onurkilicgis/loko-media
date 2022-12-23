@@ -57,7 +57,7 @@ class _HaritaState extends State<Harita> {
           'miniName': item.miniName,
           'fileType': item.fileType,
           'isPublic': item.isPublic,
-          'image_url':'http://127.0.0.1:1991/album-'+item.album_id.toString()+'/'+item.name.toString(),
+          'path':'http://127.0.0.1:1991/album-'+item.album_id.toString()+'/'+item.name.toString(),
           'mini_image_url':'http://127.0.0.1:1991/album-'+item.album_id.toString()+'/'+item.miniName.toString(),
           'url': item.url,
           'api_id': item.api_id,
@@ -66,7 +66,17 @@ class _HaritaState extends State<Harita> {
           'latitude': item.latitude,
           'longitude': item.longitude,
           'altitude': item.altitude,
+          'settings': json.decode(item.settings.toString()),
         };
+        if(item.fileType=='audio'){
+          part['mini_image_url']='./img/audio.png';
+        }
+        if(item.fileType=='video'){
+          //part['mini_image_url']='./img/audio.png';
+        }
+        if(item.fileType=='txt'){
+          part['mini_image_url']='./img/txt.png';
+        }
         list.add(part);
       }
     }
@@ -114,6 +124,14 @@ class _HaritaState extends State<Harita> {
     } else {
       return Container(
         child: InAppWebView(
+          androidOnGeolocationPermissionsShowPrompt:
+              (InAppWebViewController controller, String origin) async {
+            return GeolocationPermissionShowPromptResponse(
+                origin: origin,
+                allow: true,
+                retain: true
+            );
+          },
           initialUrlRequest:
               URLRequest(url: Uri.parse("http://localhost:1990")),
           onWebViewCreated: (InAppWebViewController controller) {

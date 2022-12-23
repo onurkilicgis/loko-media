@@ -102,7 +102,25 @@ GL.openImagePopup = (item)=>{
   var ind =GL.config.popups_id.indexOf(item.id);
   const div = document.createElement('div');
   div.style.paddingBottom='0';
-  div.innerHTML = `<img src="${item.mini_image_url}" style="width:36px;" class="bradius5 p0" onclick="GL.showImage(${item.id})">`;
+  switch(item.fileType){
+    case 'image':{
+      div.innerHTML = `<img src="${item.mini_image_url}" style="width:36px;" class="bradius5 p0" onclick="GL.showImage(${item.id})">`;
+      break;
+    }
+    case 'video':{
+      div.innerHTML = `<img src="${item.mini_image_url}" style="width:36px;" class="bradius5 p0" onclick="GL.showVideo(${item.id})">`;
+      break;
+    }
+    case 'audio':{
+      div.innerHTML = `<img src="${item.mini_image_url}" style="width:36px;" class="bradius5 p0" onclick="GL.showAudio(${item.id})">`;
+      break;
+    }
+    case 'txt':{
+      div.innerHTML = `<img src="${item.mini_image_url}" style="width:36px;" class="bradius5 p0" onclick="GL.showTxt(${item.id})">`;
+      break;
+    }
+  }
+  
   if(ind!==-1){
     GL.popupRemove(item.id);
     ind=-1;
@@ -126,6 +144,13 @@ GL.showImage = (id)=>{
   medialist.$children[0].showAimage(id);
 };
 
+GL.showVideo = (id)=>{
+  medialist.$children[0].showAVideo(id);
+}
+
+GL.showAudio = (id)=>{
+  medialist.$children[0].showAAudio(id);
+}
 
 GL.addLocationVector = () => {
   var geojson = {type:'FeatureCollection',features:[]};

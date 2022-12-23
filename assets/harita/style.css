@@ -118,3 +118,35 @@ body { margin: 0; padding: 0; }
   width: 32px;
   height: 32px;
 }
+
+.cc{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ccb{
+  position: absolute;
+  top: calc(50% - 20px);
+  left: calc(50% - 20px);
+}
+.ccb1{
+  position: absolute;
+  bottom: 8px;
+  font-size: 11px;
+  left: 8px;
+  width: 65px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.circle{
+  opacity: 0.5;
+    padding: 16px;
+    border-radius: 100%;
+}
+.p5{
+  padding: 5px;
+}
+.p10{
+  padding: 10px;
+}
