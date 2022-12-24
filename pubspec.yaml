@@ -71,6 +71,8 @@ dependencies:
   video_thumbnail: ^0.5.3
   flutter_sound: ^9.2.13
   flutter_audio_waveforms: ^1.2.1+7
+  home_widget: ^0.1.6
+  workmanager: ^0.5.1
 
 
 

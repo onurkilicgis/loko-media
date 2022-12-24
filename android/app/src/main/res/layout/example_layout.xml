@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="195dp"
+    android:layout_height="65dp"
+    android:orientation="horizontal"
+    android:background="@drawable/widget_background"
+    android:id="@+id/widget_container">
+
+    <ImageButton
+        android:id="@+id/photo"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_height="65dp"
+        android:layout_width="65dp"
+        android:padding="5dp"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:src="@drawable/photo" />
+
+    <ImageButton
+        android:id="@+id/video"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_height="65dp"
+        android:layout_width="65dp"
+        android:padding="5dp"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:src="@drawable/video" />
+
+    <ImageButton
+        android:id="@+id/audio"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_height="65dp"
+        android:layout_width="65dp"
+        android:padding="5dp"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:src="@drawable/audio" />
+
+</LinearLayout>

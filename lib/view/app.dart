@@ -1,11 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:core';
+import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sound/public/flutter_sound_player.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
@@ -26,6 +30,7 @@ import '../view_model/folder_model.dart';
 import 'Harita.dart';
 import 'TextView.dart';
 
+
 class App extends StatefulWidget {
   const App({
     Key? key,
@@ -36,6 +41,7 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> with SingleTickerProviderStateMixin {
+
   late TabController controller;
   TextEditingController albumNameController = TextEditingController();
   TextEditingController searchController = TextEditingController();
@@ -410,10 +416,13 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
 
   late MediaProvider _mediaProvider;
 
+
+
   void initState() {
     /* WidgetsBinding.instance.addPostFrameCallback((_) {
       getDialog();
     });*/
+
     _mediaProvider = Provider.of<MediaProvider>(context, listen: false);
 
     getAlbumList();
@@ -426,6 +435,39 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
       });
     });
     super.initState();
+  }
+
+  void _checkForWidgetLaunch() {
+    HomeWidget.initiallyLaunchedFromHomeWidget().then(_launchedFromWidget);
+  }
+
+  void _launchedFromWidget(Uri? uri) {
+    String? q = uri?.query.toString();
+    switch(q){
+      case 'photo':{
+        pickImage(ImageSource.camera);
+        break;
+      }
+      case 'video':{
+        pickVideo(ImageSource.camera, video);
+        break;
+      }
+      case 'audio':{
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    AudioRecorder(aktifTabIndex: aktifTabIndex)));
+        break;
+      }
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _checkForWidgetLaunch();
+    HomeWidget.widgetClicked.listen(_launchedFromWidget);
   }
 
   @override

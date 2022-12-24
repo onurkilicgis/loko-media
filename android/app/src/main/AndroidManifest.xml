@@ -2,6 +2,8 @@
     package="com.gislayer.lokomedia.loko_media"
     >
 
+
+
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -62,6 +64,25 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+       <receiver android:name="HomeWidgetExampleProvider"
+           android:exported="true">
+           <intent-filter>
+               <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+           </intent-filter>
+           <meta-data android:name="android.appwidget.provider"
+               android:resource="@xml/home_widget_example" />
+       </receiver>
+
+       <!-- Used for Background Work -->
+       <receiver android:name="com.gislayer.lokomedia.loko_media.HomeWidgetBackgroundReceiver"
+           android:exported="true">
+           <intent-filter>
+               <action android:name="es.antonborri.home_widget.action.BACKGROUND" />
+           </intent-filter>
+       </receiver>
+       <service android:name="com.gislayer.lokomedia.loko_media.HomeWidgetBackgroundService"
+           android:permission="android.permission.BIND_JOB_SERVICE" android:exported="true"/>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

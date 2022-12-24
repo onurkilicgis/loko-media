@@ -1,15 +1,19 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
+
 import 'package:local_assets_server/local_assets_server.dart';
 import 'package:loko_media/providers/SwitchProvider.dart';
+import 'package:loko_media/services/utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -23,9 +27,58 @@ import '../view_model/multi_language.dart';
 import '../view_model/register_view_models.dart';
 import '../view_model/theme.dart';
 import 'LoginPage.dart';
+import 'package:home_widget/home_widget.dart';
+import 'package:workmanager/workmanager.dart';
+
+void callbackDispatcher() {
+  Workmanager().executeTask((taskName, inputData) {
+    final now = DateTime.now();
+    return Future.wait<bool?>([
+      HomeWidget.saveWidgetData(
+        'title',
+        'Updated from Background',
+      ),
+      HomeWidget.saveWidgetData(
+        'message',
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
+      ),
+      HomeWidget.updateWidget(
+        name: 'HomeWidgetExampleProvider',
+        iOSName: 'HomeWidgetExample',
+      ),
+    ]).then((value) {
+      return !value.contains(false);
+    });
+  });
+}
+
+/// Called when Doing Background Work initiated from Widget
+@pragma("vm:entry-point")
+void backgroundCallback(Uri? data) async {
+  print(data);
+
+  if (data?.host == 'titleclicked') {
+    final greetings = [
+      'Hello',
+      'Hallo',
+      'Bonjour',
+      'Hola',
+      'Ciao',
+      '哈洛',
+      '안녕하세요',
+      'xin chào'
+    ];
+    final selectedGreeting = greetings[Random().nextInt(greetings.length)];
+
+    await HomeWidget.saveWidgetData<String>('title', selectedGreeting);
+    await HomeWidget.updateWidget(
+        name: 'HomeWidgetExampleProvider', iOSName: 'HomeWidgetExample');
+  }
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Workmanager().initialize(callbackDispatcher, isInDebugMode: kDebugMode);
 
   // localhost:1990/index.html harita dosyalarımızı yayınlanladımız yer.
   InAppLocalhostServer localhostServer = InAppLocalhostServer(
@@ -77,7 +130,10 @@ Future<void> main() async {
   await Firebase.initializeApp();
   await localhostServer.start();
   //HttpOverrides.global = MyHttpOverrides();
-  runApp(MyApp(isDark: isDark));
+
+
+
+  runApp(MyApp());
 }
 
 /*class MyHttpOverrides extends HttpOverrides {
@@ -89,14 +145,29 @@ Future<void> main() async {
   }
 }*/
 
+
 Future initialization(BuildContext, context) async {
   await Future.delayed(const Duration(milliseconds: 500));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState(isDark: 'dark');
+}
+
+class _MyAppState extends State<MyApp> {
   SwitchModel switchModels = SwitchModel();
   late String isDark;
-  MyApp({required this.isDark});
+  _MyAppState({required this.isDark});
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    HomeWidget.registerBackgroundCallback(backgroundCallback);
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -126,4 +197,5 @@ class MyApp extends StatelessWidget {
           );
         }));
   }
+
 }
