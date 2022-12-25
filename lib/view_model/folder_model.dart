@@ -11,7 +11,15 @@ class FolderModel {
   static generateAudioPath() async {
     int album_id = await MyLocal.getIntData('aktifalbum');
     final Directory root = await getApplicationDocumentsDirectory();
-    return '${root.path}/album-$album_id';
+    return '${root.path}/albums/album-$album_id';
+  }
+
+  static generateTextPath() async {
+    int album_id = await MyLocal.getIntData('aktifalbum');
+    final Directory root = await getApplicationDocumentsDirectory();
+    int now = DateTime.now().millisecondsSinceEpoch;
+    String fileName = 'txt-' + now.toString() + '.txt';
+    return '${root.path}/albums/album-$album_id/$fileName';
   }
 
   // Girilen parametredeki klasörü uygulamanın root'unda oluşturur

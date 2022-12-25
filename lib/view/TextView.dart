@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:loko_media/view/app.dart';
 import 'package:loko_media/view_model/layout.dart';
+import 'package:provider/provider.dart';
 
 import '../database/AlbumDataBase.dart';
 import '../models/Album.dart';
@@ -15,50 +17,124 @@ import '../view_model/folder_model.dart';
 
 class TextView extends StatefulWidget {
   late int aktifTabIndex;
+  late AppState model;
 
-  TextView({required this.aktifTabIndex});
+  TextView({required this.aktifTabIndex, required this.model});
 
   @override
   State<TextView> createState() => _TextViewState();
 }
 
 class _TextViewState extends State<TextView> {
+  TextEditingController _textTitleController = TextEditingController();
   TextEditingController _textController = TextEditingController();
-  TextEditingController textNameController = TextEditingController();
   late MediaProvider _mediaProvider;
   File? textFile;
   String? filePath;
   // String? filePath;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _mediaProvider = Provider.of<MediaProvider>(context, listen: false);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: ListView(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          TextField(
-            controller: _textController,
-            keyboardType: TextInputType.text,
-            cursorColor: Colors.white,
-            textCapitalization: TextCapitalization.words,
-            maxLines: 35,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Color(0xff1e2c49),
-              contentPadding: EdgeInsets.all(8),
-              border: InputBorder.none,
-              /*focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white)),*/
-              hintText: 'Not Giriniz.',
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _textTitleController,
+              keyboardType: TextInputType.text,
+              cursorColor: Colors.white,
+              textAlign: TextAlign.center,
+              textCapitalization: TextCapitalization.words,
+              maxLines: 2,
+              decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Color(0xff1e2c49),
+                  contentPadding: EdgeInsets.all(8),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(7),
+                    borderSide: BorderSide(
+                      color: Color(0xff017eba),
+                    ),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0xff017eba),
+                    ),
+                  ),
+                  // border: InputBorder.none,
+                  /*focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                    color: Color(0xff017eba),
+                  )),*/
+                  labelText: 'Başlık ',
+                  labelStyle: TextStyle(
+                    color: Color(0xff017eba),
+                  )),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _textController,
+              keyboardType: TextInputType.text,
+              cursorColor: Colors.white,
+              textCapitalization: TextCapitalization.words,
+              maxLines: 5,
+              decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Color(0xff1e2c49),
+                  contentPadding: EdgeInsets.all(8),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(7),
+                    borderSide: BorderSide(
+                      color: Color(0xff017eba),
+                    ),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0xff017eba),
+                    ),
+                  ),
+                  // border: InputBorder.none,
+                  /* focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                    color: Color(0xff017eba),
+                  )),*/
+                  labelText: 'İçerik ',
+                  labelStyle: TextStyle(
+                    color: Color(0xff017eba),
+                  )),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 8,
+              right: 8,
+              top: 20,
+            ),
             child: SizedBox(
               height: 40,
+              width: context.dynamicWidth(1.2),
               child: ElevatedButton(
-                  onPressed: () {
-                    getTextDialog();
+                  onPressed: () async {
+                    filePath = await FolderModel.generateTextPath();
+                    await textInsertFile(_textTitleController.text,
+                        _textController.text, filePath!);
+                    Navigator.of(context).pop;
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xff017eba),
+                  ),
                   child: Text(
                     'Kaydet',
                     style: TextStyle(fontSize: 15),
@@ -71,7 +147,8 @@ class _TextViewState extends State<TextView> {
   }
 
   Future textInsertFile(
-    String name,
+    String title,
+    String icerik,
     String filePath,
   ) async {
     try {
@@ -86,110 +163,32 @@ class _TextViewState extends State<TextView> {
         return;
       }
       await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
-      // Directory text = Directory(filePath);
-      filePath = await FolderModel.generateAudioPath();
       textFile = File(filePath);
+      await textFile?.writeAsString(icerik);
       int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
-      int now = DateTime.now().millisecondsSinceEpoch;
-      var parts = filePath.split('.');
-      String extension = parts[parts.length - 1];
-
-      String filename = 'text-' + now.toString() + '.' + extension;
-      String miniFilename = 'text-' + now.toString() + '-mini.' + extension;
-      Uint8List bytes = textFile!.readAsBytesSync();
-      dynamic? newPath = await FolderModel.createFile(
-          'albums/album-${aktifAlbumId}',
-          bytes,
-          filename,
-          miniFilename,
-          'text');
       Medias dbText = new Medias(
         album_id: aktifAlbumId,
-        name: name,
+        name: title,
         miniName: '',
-        path: newPath['file'],
+        path: textFile?.path,
         latitude: positions['latitude'],
         longitude: positions['longitude'],
         altitude: positions['altitude'],
-        fileType: 'text',
+        fileType: 'txt',
       );
-      dbText.insertData({'title': name, 'desc': _textController.text});
+      dbText.insertData({});
       await AlbumDataBase.insertFile(dbText, '', (lastId) {
         dbText.id = lastId;
+        widget.model.getAlbumList();
       });
+
       Loading.close();
+      SBBildirim.bilgi('Notunuz Kaydedilmiştir');
       if (widget.aktifTabIndex == 1) {
         _mediaProvider.addMedia(dbText);
       }
     } on PlatformException catch (e) {
       SBBildirim.hata(e.toString());
     }
-  }
-
-  getTextDialog() {
-    Navigator.pop(context);
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0))),
-          title: Text('Not Kayıt'),
-          backgroundColor:
-              Theme.of(context).bottomNavigationBarTheme.backgroundColor,
-          actions: [
-            Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: context.dynamicWidth(18),
-                      right: context.dynamicWidth(18)),
-                  child: TextField(
-                    controller: textNameController,
-                    keyboardType: TextInputType.text,
-                    // textAlign: TextAlign.center,
-                    cursorColor: Colors.white,
-
-                    decoration: InputDecoration(
-                      focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white)),
-                      labelStyle: TextStyle(color: Colors.white),
-                      labelText: 'Ses Kayıt Adı Giriniz',
-                    ),
-                    onChanged: (value) {},
-                  ),
-                ),
-                Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  TextButton(
-                    child: Text(
-                      'İptal',
-                      style: TextStyle(color: Color(0xffe55656), fontSize: 17),
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextButton(
-                        onPressed: () async {
-                          if (textNameController.text != '') {
-                            Navigator.pop(context);
-                            await textInsertFile(
-                                textNameController.text, filePath!);
-                            //MedyaState.audioCard();
-                          }
-                        },
-                        child: Text('Tamam',
-                            style: TextStyle(
-                                color: Color(0xff80C783), fontSize: 17))),
-                  )
-                ])
-              ],
-            )
-          ],
-        );
-      },
-    );
   }
 }

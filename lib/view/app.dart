@@ -1,7 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:core';
-import 'dart:math';
+import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -30,7 +29,6 @@ import '../view_model/folder_model.dart';
 import 'Harita.dart';
 import 'TextView.dart';
 
-
 class App extends StatefulWidget {
   const App({
     Key? key,
@@ -41,12 +39,12 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> with SingleTickerProviderStateMixin {
-
   late TabController controller;
   TextEditingController albumNameController = TextEditingController();
   TextEditingController searchController = TextEditingController();
   late Color boxColor;
   File? audioFile;
+  File? textFile;
   String? fileName;
   PlatformFile? pickedFile;
   AlbumDataBase albumDataBase = AlbumDataBase();
@@ -416,8 +414,6 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
 
   late MediaProvider _mediaProvider;
 
-
-
   void initState() {
     /* WidgetsBinding.instance.addPostFrameCallback((_) {
       getDialog();
@@ -443,23 +439,22 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
 
   void _launchedFromWidget(Uri? uri) {
     String? q = uri?.query.toString();
-    switch(q){
-      case 'photo':{
-        pickImage(ImageSource.camera);
-        break;
-      }
-      case 'video':{
-        pickVideo(ImageSource.camera, video);
-        break;
-      }
-      case 'audio':{
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    AudioRecorder(aktifTabIndex: aktifTabIndex)));
-        break;
-      }
+    switch (q) {
+      case 'photo':
+        {
+          pickImage(ImageSource.camera);
+          break;
+        }
+      case 'video':
+        {
+          pickVideo(ImageSource.camera, video);
+          break;
+        }
+      case 'audio':
+        {
+          buildPushAudio(context, this);
+          break;
+        }
     }
   }
 
@@ -701,11 +696,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                 switch (num) {
                   case 0:
                     {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  AudioRecorder(aktifTabIndex: aktifTabIndex)));
+                      buildPushAudio(context, this);
                       break;
                     }
                   case 1:
@@ -726,17 +717,13 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                 switch (num) {
                   case 0:
                     {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => TextView(
-                                    aktifTabIndex: aktifTabIndex,
-                                  )));
+                      buildPushText(context, this);
 
                       break;
                     }
                   case 1:
                     {
+                      await textFilePicker();
                       break;
                     }
                 }
@@ -772,6 +759,24 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  Future<dynamic> buildPushAudio(BuildContext context, AppState model) {
+    return Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                AudioRecorder(aktifTabIndex: aktifTabIndex, model: model)));
+  }
+
+  Future<dynamic> buildPushText(BuildContext context, AppState model) {
+    return Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => TextView(
+                  aktifTabIndex: aktifTabIndex,
+                  model: model,
+                )));
   }
 
   Widget listMenuItems(IconData icon, String title, Function callback) {
@@ -976,6 +981,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
       String extension = parts[parts.length - 1];
       String filename = 'audio-' + now.toString() + '.' + extension;
       //String miniFilename = 'audio-' + now.toString() + '-mini.' + extension;
+      // dosyaları byte tipinde okur. byte içerisinde integerlar bulunan bir dizidir.
       Uint8List bytes = audioFile!.readAsBytesSync();
       dynamic? newPath = await FolderModel.createFile(
           'albums/album-${aktifAlbumId}', bytes, filename, '', 'audio');
@@ -996,11 +1002,70 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
       player.closePlayer();
       await AlbumDataBase.insertFile(dbAudio, '', (lastId) {
         dbAudio.id = lastId;
+        getAlbumList();
       });
 
       Loading.close();
       if (aktifTabIndex == 1) {
         _mediaProvider.addMedia(dbAudio);
+      }
+    } else {
+      return null;
+    }
+  }
+
+  textFilePicker() async {
+    // Navigator.pop(context);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: [
+        'txt',
+        'pdf',
+        'html',
+      ],
+    );
+    if (result != null) {
+      fileName = result.files.first.name;
+      pickedFile = result.files.first;
+
+      textFile = File(pickedFile!.path!);
+      dynamic positions = await GPS.getGPSPosition();
+      if (positions['status'] == false) {
+        SBBildirim.uyari(positions['message']);
+        return;
+      }
+      Loading.waiting('Seçtiğiniz Yazı Dosyası Yükleniyor...');
+
+      await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
+
+      int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
+      int now = DateTime.now().millisecondsSinceEpoch;
+      var parts = textFile!.path.split('.');
+      String extension = parts[parts.length - 1];
+      String filename = 'txt-' + now.toString() + '.' + extension;
+
+      Medias dbText = new Medias(
+        album_id: aktifAlbumId,
+        name: filename,
+        miniName: '',
+        path: textFile!.path,
+        latitude: positions['latitude'],
+        longitude: positions['longitude'],
+        altitude: positions['altitude'],
+        fileType: 'txt',
+      );
+
+      dbText.insertData({});
+
+      await AlbumDataBase.insertFile(dbText, '', (lastId) {
+        dbText.id = lastId;
+        getAlbumList();
+      });
+
+      Loading.close();
+      SBBildirim.bilgi('Mevcut Dosyanız Yüklendi');
+      if (aktifTabIndex == 1) {
+        _mediaProvider.addMedia(dbText);
       }
     } else {
       return null;

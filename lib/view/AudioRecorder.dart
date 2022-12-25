@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:loko_media/view/app.dart';
 import 'package:loko_media/view_model/folder_model.dart';
 import 'package:loko_media/view_model/layout.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -20,8 +21,9 @@ import '../services/utils.dart';
 
 class AudioRecorder extends StatefulWidget {
   late int aktifTabIndex;
+  late AppState model;
 
-  AudioRecorder({required this.aktifTabIndex});
+  AudioRecorder({required this.aktifTabIndex, required this.model});
 
   @override
   State<AudioRecorder> createState() => AudioRecorderState();
@@ -314,6 +316,7 @@ class AudioRecorderState extends State<AudioRecorder> {
                             (cevap) async {
                           if (cevap == true) {
                             await deleteRecord(filePath);
+                            SBBildirim.bilgi("Bu Medya Öğesi Silinmiştir.");
                           }
                         });
 
@@ -419,6 +422,7 @@ class AudioRecorderState extends State<AudioRecorder> {
       dbAudio.insertData({'duration': duration.inMilliseconds});
       await AlbumDataBase.insertFile(dbAudio, '', (lastId) {
         dbAudio.id = lastId;
+        widget.model.getAlbumList();
       });
       Loading.close();
       if (widget.aktifTabIndex == 1) {
@@ -545,7 +549,7 @@ class AudioRecorderState extends State<AudioRecorder> {
   Future deleteRecord(String? filePath) async {
     await recorder.deleteRecord(fileName: filePath!);
     filePath = null;
-    SBBildirim.bilgi("Bu Medya Öğesi Silinmiştir.");
+
     setState(() {});
   }
 
