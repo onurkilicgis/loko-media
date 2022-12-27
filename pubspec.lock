@@ -9,6 +9,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
+  advance_pdf_viewer:
+    dependency: "direct main"
+    description:
+      name: advance_pdf_viewer
+      sha256: "0263dd0a9e1314937d63db64fcc7e8f3b0a1d96da7a07849e2de31f195393e0c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   archive:
     dependency: transitive
     description:
@@ -310,6 +318,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.1+7"
+  flutter_cache_manager:
+    dependency: transitive
+    description:
+      name: flutter_cache_manager
+      sha256: "32cd900555219333326a2d0653aaaf8671264c29befa65bbd9856d204a4c9fb3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.3.0"
   flutter_dotenv:
     dependency: "direct main"
     description:
@@ -580,10 +596,10 @@ packages:
     dependency: transitive
     description:
       name: image_picker_ios
-      sha256: "2c59612273411ecb0beccb11e49db7272975c882f5866c7948017cb6acb3557e"
+      sha256: "84231f4a538ad48055d419e6e891848a717962af789bf7427f94e41710a45f83"
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.6+3"
+    version: "0.8.6+4"
   image_picker_platform_interface:
     dependency: transitive
     description:
@@ -592,6 +608,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.2"
+  infinite_listview:
+    dependency: transitive
+    description:
+      name: infinite_listview
+      sha256: f6062c1720eb59be553dfa6b89813d3e8dd2f054538445aaa5edaddfa5195ce6
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   internet_connection_checker:
     dependency: "direct main"
     description:
@@ -612,10 +636,10 @@ packages:
     dependency: transitive
     description:
       name: js
-      sha256: "5528c2f391ededb7775ec1daa69e65a2d61276f7552de2b5f7b8d34ee9fd4ab7"
+      sha256: "323b7c70073cccf6b9b8d8b334be418a3293cfb612a560dc2737160a37bf61bd"
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.5"
+    version: "0.6.6"
   local_assets_server:
     dependency: "direct main"
     description:
@@ -680,6 +704,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  numberpicker:
+    dependency: transitive
+    description:
+      name: numberpicker
+      sha256: "73723bd13c940ebcd9e5f0ed56b4874588c1748a9a6a38254f97ad627715142e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.1"
   path:
     dependency: transitive
     description:
@@ -744,6 +776,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.3"
+  pedantic:
+    dependency: transitive
+    description:
+      name: pedantic
+      sha256: "67fc27ed9639506c856c840ccce7594d0bdcd91bc8d53d6e52359449a1d50602"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.11.1"
   permission_handler:
     dependency: "direct main"
     description:
@@ -860,18 +900,18 @@ packages:
     dependency: "direct main"
     description:
       name: record
-      sha256: e7100b03bcb0a8ecec86035247b7b9ad5ca92dd7e6f22f5885f2a1d64ff525d1
+      sha256: f703397f5a60d9b2b655b3acc94ba079b2d9a67dc0725bdb90ef2fee2441ebf7
       url: "https://pub.dev"
     source: hosted
-    version: "4.4.3"
+    version: "4.4.4"
   record_linux:
     dependency: transitive
     description:
       name: record_linux
-      sha256: "32b8937bae11b7224237e4b2514197808e6ab11e3dfc6ffa37add69d1834cd8e"
+      sha256: "348db92c4ec1b67b1b85d791381c8c99d7c6908de141e7c9edc20dad399b15ce"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.4"
+    version: "0.4.1"
   record_macos:
     dependency: transitive
     description:
@@ -900,10 +940,18 @@ packages:
     dependency: transitive
     description:
       name: record_windows
-      sha256: "8a5f10652ac7a3aa004429e254a9f35e4d1b47265521edaca62544e19354e1b8"
+      sha256: "42d545155a26b20d74f5107648dbb3382dbbc84dc3f1adc767040359e57a1345"
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.2"
+    version: "0.7.1"
+  rxdart:
+    dependency: transitive
+    description:
+      name: rxdart
+      sha256: "0c7c0cedd93788d996e33041ffecda924cc54389199cde4e6a34b440f50044cb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.27.7"
   share_plus:
     dependency: "direct main"
     description:
@@ -1318,5 +1366,5 @@ packages:
     source: hosted
     version: "3.1.1"
 sdks:
-  dart: ">=2.18.0 <4.0.0"
+  dart: ">=2.19.0-345.0.dev <4.0.0"
   flutter: ">=3.3.0"

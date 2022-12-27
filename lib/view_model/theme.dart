@@ -23,6 +23,9 @@ class MyTheme {
       ));
 
   static ThemeData darkTheme = ThemeData(
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: Color(0xff017eba),
+      ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: Color(0xff202b40),
         selectedItemColor: Color(0xff017eba),

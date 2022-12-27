@@ -7,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../models/Album.dart';
 import '../view/AudioView.dart';
+import '../view/PdfView.dart';
 import '../view/TxtView.dart';
 
 class Media_VM {
@@ -69,6 +70,10 @@ class Media_VM {
                             if (tip['type'] == 'txt') {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => TxtView(
+                                      medias: media, appbarstatus: true)));
+                            } else {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => PdfView(
                                       medias: media, appbarstatus: true)));
                             }
                             break;

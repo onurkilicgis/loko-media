@@ -130,7 +130,7 @@ class _TextViewState extends State<TextView> {
                     filePath = await FolderModel.generateTextPath();
                     await textInsertFile(_textTitleController.text,
                         _textController.text, filePath!);
-                    Navigator.of(context).pop();
+                    Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xff017eba),

@@ -1053,7 +1053,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         album_id: aktifAlbumId,
         name: fileName,
         miniName: '',
-        path: newPath['path'],
+        path: newPath['file'],
         latitude: positions['latitude'],
         longitude: positions['longitude'],
         altitude: positions['altitude'],
