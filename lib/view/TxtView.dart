@@ -56,9 +56,12 @@ class _TxtViewState extends State<TxtView> {
                       Padding(
                         padding: const EdgeInsets.only(
                             top: 8, left: 8, right: 8, bottom: 30),
-                        child: Text(
-                          '${snapshot.data}',
-                          style: TextStyle(fontSize: 16),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            '${snapshot.data}',
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
                       ),
                     ],

@@ -5,18 +5,10 @@ packages:
     dependency: transitive
     description:
       name: _flutterfire_internals
-      sha256: "2f428053492f92303e42c9afa8e3a78ad1886760e7b594e2b5a6b6ee47376360"
+      sha256: d58dc7eda77a05866ad4fac26a4953e82bac29167aa571224d499da5d2027bc6
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.2"
-  advance_pdf_viewer:
-    dependency: "direct main"
-    description:
-      name: advance_pdf_viewer
-      sha256: "0263dd0a9e1314937d63db64fcc7e8f3b0a1d96da7a07849e2de31f195393e0c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.1"
+    version: "1.0.11"
   archive:
     dependency: transitive
     description:
@@ -141,26 +133,26 @@ packages:
     dependency: "direct main"
     description:
       name: cloud_firestore
-      sha256: "9194bf1845ee073bea64ec94e72c9dcf5d15f755e96496d8ccfee9def38b666f"
+      sha256: c8c422a8c191b9689a0a392db9987824b47f54c93e3ccaea32962d0b6be96a26
       url: "https://pub.dev"
     source: hosted
-    version: "3.5.1"
+    version: "4.3.0"
   cloud_firestore_platform_interface:
     dependency: transitive
     description:
       name: cloud_firestore_platform_interface
-      sha256: d023142c18c28b2610c23c196e829c96976569cc2aa2f8e45328ae8a64c428d1
+      sha256: "86a21d4fd3afe89268e72f62691547e440eff3bcb2781d77c428df706e958149"
       url: "https://pub.dev"
     source: hosted
-    version: "5.7.7"
+    version: "5.10.0"
   cloud_firestore_web:
     dependency: transitive
     description:
       name: cloud_firestore_web
-      sha256: "3d7d4fa8c1dc5a1f7cb33985ae0ab9924d33d76d4959fe26aed84b7d282887e3"
+      sha256: "2d7339bf3f79adcdb123a88e908474478b060317332189bdd5dcb2d498952127"
       url: "https://pub.dev"
     source: hosted
-    version: "2.8.10"
+    version: "3.2.0"
   collection:
     dependency: transitive
     description:
@@ -261,50 +253,50 @@ packages:
     dependency: "direct main"
     description:
       name: firebase_auth
-      sha256: ca3034d35d6ca894487ec80aa1162a135fef7c5d0abef8154789cbeea3a6deaf
+      sha256: "323e6f756c8d1f86c7751277a0ba4160cb1a4d09a027f21a98438fce218a8dbf"
       url: "https://pub.dev"
     source: hosted
-    version: "3.11.2"
+    version: "4.2.3"
   firebase_auth_platform_interface:
     dependency: transitive
     description:
       name: firebase_auth_platform_interface
-      sha256: ab20ecbc411726e139250a49fa03fe1ae0105fd990c5330b2a148ec08dfb140b
+      sha256: bb06708fe31bb5928157e3fe8d4bc5ccfaca9477fb902e6a772288eea609d28d
       url: "https://pub.dev"
     source: hosted
-    version: "6.10.1"
+    version: "6.11.6"
   firebase_auth_web:
     dependency: transitive
     description:
       name: firebase_auth_web
-      sha256: bbe4f4fffcc378ca05c3d8ff33853be86dd27d0fafc85a953acaf5190531b6f9
+      sha256: b6de47a9059ef51f8d9ae20b765755165155a2c69b369a5ce23378c9de39ca9f
       url: "https://pub.dev"
     source: hosted
-    version: "4.6.1"
+    version: "5.2.3"
   firebase_core:
     dependency: "direct main"
     description:
       name: firebase_core
-      sha256: "4f1d7c13a909e82ff026679c9b8493cdeb35a9c76bc46c42bf9e2240c9e57e80"
+      sha256: "01962872df08437d9be593caeab8c700624c93b629f3d3d60f061612d6263666"
       url: "https://pub.dev"
     source: hosted
-    version: "1.24.0"
+    version: "2.4.0"
   firebase_core_platform_interface:
     dependency: "direct main"
     description:
       name: firebase_core_platform_interface
-      sha256: b51257a8b4388565cd66062d727d3e60067b5f5cc3390eb0ecd20b8f97741bdb
+      sha256: "5fab93f5b354648efa62e7cc829c90efb68c8796eecf87e0888cae2d5f3accd4"
       url: "https://pub.dev"
     source: hosted
-    version: "4.5.1"
+    version: "4.5.2"
   firebase_core_web:
     dependency: transitive
     description:
       name: firebase_core_web
-      sha256: "839f1b48032a61962792cea1225fae030d4f27163867f181d6d2072dd40acbee"
+      sha256: b2917618cbe75196261621d676a992e05215ce6a70daca5f655794d5a008d369
       url: "https://pub.dev"
     source: hosted
-    version: "1.7.3"
+    version: "2.0.2"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -318,14 +310,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.1+7"
-  flutter_cache_manager:
-    dependency: transitive
-    description:
-      name: flutter_cache_manager
-      sha256: "32cd900555219333326a2d0653aaaf8671264c29befa65bbd9856d204a4c9fb3"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.3.0"
   flutter_dotenv:
     dependency: "direct main"
     description:
@@ -358,6 +342,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.16"
+  flutter_pdfview:
+    dependency: "direct main"
+    description:
+      name: flutter_pdfview
+      sha256: d819ff9b5497da744edb41f73b2b827adf5214d5f0a68923a60f7fa30d0d3f16
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.5"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -608,14 +600,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.2"
-  infinite_listview:
-    dependency: transitive
-    description:
-      name: infinite_listview
-      sha256: f6062c1720eb59be553dfa6b89813d3e8dd2f054538445aaa5edaddfa5195ce6
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
   internet_connection_checker:
     dependency: "direct main"
     description:
@@ -704,14 +688,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
-  numberpicker:
-    dependency: transitive
-    description:
-      name: numberpicker
-      sha256: "73723bd13c940ebcd9e5f0ed56b4874588c1748a9a6a38254f97ad627715142e"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.1"
   path:
     dependency: transitive
     description:
@@ -776,14 +752,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.3"
-  pedantic:
-    dependency: transitive
-    description:
-      name: pedantic
-      sha256: "67fc27ed9639506c856c840ccce7594d0bdcd91bc8d53d6e52359449a1d50602"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.11.1"
   permission_handler:
     dependency: "direct main"
     description:
@@ -944,14 +912,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.1"
-  rxdart:
-    dependency: transitive
-    description:
-      name: rxdart
-      sha256: "0c7c0cedd93788d996e33041ffecda924cc54389199cde4e6a34b440f50044cb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.27.7"
   share_plus:
     dependency: "direct main"
     description:

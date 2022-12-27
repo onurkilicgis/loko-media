@@ -1,14 +1,17 @@
+import 'dart:convert';
 import 'dart:io' as ioo;
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:loko_media/view/AudioRecorder.dart';
 import 'package:loko_media/view/Medya.dart';
+import 'package:loko_media/view/TxtView.dart';
 import 'package:provider/provider.dart';
 
 import '../models/Album.dart';
 import '../providers/MedyaProvider.dart';
 import 'AudioView.dart';
+import 'PdfView.dart';
 
 class PlayMedya extends StatefulWidget {
   late int index;
@@ -42,7 +45,7 @@ class _PlayMedyaState extends State<PlayMedya> {
               child: CarouselSlider.builder(
                   itemCount: myfileList.length,
                   options: CarouselOptions(
-                    pageSnapping: false,
+                    pageSnapping: true,
                     initialPage: widget.index,
                     aspectRatio: 0.9,
                     //viewportFraction: 0.8,
@@ -75,7 +78,18 @@ class _PlayMedyaState extends State<PlayMedya> {
                         }
                       case 'txt':
                         {
-                          return Container();
+                          dynamic tip = json.decode(mymedia.settings!);
+                          if (tip['type'] == 'txt') {
+                            return Container(
+                              child:
+                                  TxtView(medias: mymedia, appbarstatus: false),
+                            );
+                          } else {
+                            return Container(
+                              child:
+                                  PdfView(medias: mymedia, appbarstatus: false),
+                            );
+                          }
                         }
                       default:
                         {
