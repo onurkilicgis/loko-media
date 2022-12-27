@@ -59,10 +59,10 @@ class FolderModel {
     Directory miniFilePath = Directory('${root.path}/$path/${miniFileName}');
 
     if (fileType == 'audio') {
-      miniFilePath = Directory('');
+      return {'file': filePath.path, 'mini': ''};
     }
-    if (fileType == 'text') {
-      miniFilePath = Directory('');
+    if (fileType == 'txt') {
+      return {'file': filePath.path, 'mini': ''};
     }
 
     if (fileType == 'video') {
@@ -122,8 +122,9 @@ class FolderModel {
             break;
           }
       }
+      return {'file': filePath.path, 'mini': miniFilePath.path};
     }
-    return {'file': filePath.path, 'mini': miniFilePath.path};
+
     return;
   }
 }

@@ -130,7 +130,7 @@ class _TextViewState extends State<TextView> {
                     filePath = await FolderModel.generateTextPath();
                     await textInsertFile(_textTitleController.text,
                         _textController.text, filePath!);
-                    Navigator.of(context).pop;
+                    Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xff017eba),
@@ -176,7 +176,7 @@ class _TextViewState extends State<TextView> {
         altitude: positions['altitude'],
         fileType: 'txt',
       );
-      dbText.insertData({});
+      dbText.insertData({'type': 'txt'});
       await AlbumDataBase.insertFile(dbText, '', (lastId) {
         dbText.id = lastId;
         widget.model.getAlbumList();

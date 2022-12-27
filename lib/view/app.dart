@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter_sound/public/flutter_sound_player.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:home_widget/home_widget.dart';
@@ -1021,14 +1022,13 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
       allowedExtensions: [
         'txt',
         'pdf',
-        'html',
       ],
     );
     if (result != null) {
       fileName = result.files.first.name;
       pickedFile = result.files.first;
 
-      textFile = File(pickedFile!.path!);
+      final textFile2 = File(pickedFile!.path!);
       dynamic positions = await GPS.getGPSPosition();
       if (positions['status'] == false) {
         SBBildirim.uyari(positions['message']);
@@ -1040,22 +1040,27 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
 
       int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
       int now = DateTime.now().millisecondsSinceEpoch;
-      var parts = textFile!.path.split('.');
+      var parts = textFile2.path.split('.');
       String extension = parts[parts.length - 1];
-      String filename = 'txt-' + now.toString() + '.' + extension;
+      extension = extension.toLowerCase();
+      String filename = extension + '-' + now.toString() + '.' + extension;
+      String miniFilename = '';
+      Uint8List bytes = textFile2.readAsBytesSync();
+      dynamic newPath = await FolderModel.createFile(
+          'albums/album-${aktifAlbumId}', bytes, filename, miniFilename, 'txt');
 
       Medias dbText = new Medias(
         album_id: aktifAlbumId,
-        name: filename,
+        name: fileName,
         miniName: '',
-        path: textFile!.path,
+        path: newPath['path'],
         latitude: positions['latitude'],
         longitude: positions['longitude'],
         altitude: positions['altitude'],
         fileType: 'txt',
       );
 
-      dbText.insertData({});
+      dbText.insertData({'type': extension});
 
       await AlbumDataBase.insertFile(dbText, '', (lastId) {
         dbText.id = lastId;

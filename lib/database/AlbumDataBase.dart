@@ -7,7 +7,7 @@ import 'package:loko_media/view_model/folder_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AlbumDataBase {
-  static const String _albumDatabaseName = 'albumdatabase1.db';
+  static const String _albumDatabaseName = 'albumdatabase2.db';
   static const String albumTableName = 'albums';
   static const String mediaTableName = 'medias';
   static const int _version = 1;
