@@ -7,16 +7,17 @@ import 'package:loko_media/services/MyLocal.dart';
 import 'package:loko_media/view/app.dart';
 import 'package:loko_media/view/register.dart';
 import 'package:loko_media/view_model/layout.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/UserRegistration.dart';
+import '../models/Album.dart';
 import '../services/API2.dart';
 import '../services/utils.dart';
 
 class VerifyScreen extends StatefulWidget {
   String email;
+  String uid;
 
-  VerifyScreen({Key? key, required this.email}) : super(key: key);
+  VerifyScreen({Key? key, required this.email, required this.uid})
+      : super(key: key);
 
   @override
   State<VerifyScreen> createState() => _VerifyScreenState();
@@ -59,6 +60,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           : null,
                   keyboardType: TextInputType.emailAddress,
                   cursorColor: Color(0xff80C783),
+                  enabled: false,
                   style: TextStyle(
                     color: Color(0xff7C9099),
                   ),
@@ -138,19 +140,26 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           fontWeight: FontWeight.bold),
                     ),
                     onPressed: () async {
-                      dynamic result = await API.postRequest(
-                          'api/v1/user/confrimation', {
-                        'email': widget.email,
+                      dynamic userApiControl = await API.postRequest(
+                          'api/user/activation', {
+                        'mail': widget.email,
+                        'uid': widget.uid,
                         'code': _checkController.text
                       });
-                      MyLocal.setStringData('token', result['data']['token'].toString());
-                      MyLocal.setStringData('user', json.encode(result['data']));
-
-                      SBBildirim.onay(
-                          'Mailiniz onaylanmıştır. Hoşgeldiniz sayın ${result['data']['name']}.');
-
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => App()));
+                      if (userApiControl['status'] == true) {
+                        dynamic data = userApiControl['data'];
+                        String user = json.encode(data);
+                        String token = data['token'];
+                        await MyLocal.setStringData('user', user);
+                        await MyLocal.setStringData('token', token);
+                        SBBildirim.onay(
+                            'Mailiniz onaylanmıştır. Hoşgeldiniz sayın ${data['name']}.');
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => App()));
+                      } else {
+                        SBBildirim.uyari(
+                            'Onay kodu geçerli değil ya da eski bir zamana ait. Lütfen yeni kod alınız.');
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                         shadowColor: Colors.black,
@@ -178,14 +187,26 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           fontWeight: FontWeight.bold),
                     ),
                     onPressed: () async {
-                      dynamic resultEmail = await API.postRequest(
-                          'api/v1/user/sendConfrimation',
-                          {'email': widget.email});
-                      print(resultEmail);
-                      if (resultEmail['status'] == true) {
-                        SBBildirim.bilgi(
-                            '${widget.email} adresine tekrar onay kodunu gönderdik.lütfen kontrol ediniz');
-                      }
+                      Util.evetHayir(
+                          context,
+                          'Onay Kodu Gönderme',
+                          'Belirtmiş olduğunuz ' +
+                              widget.email +
+                              ' mail adresine yeni bir onay kodu göndermek istediğinize emin misinz?',
+                          (cevap) async {
+                        if (cevap == true) {
+                          dynamic userApiControl = await API.postRequest(
+                              'api/user/activationmail',
+                              {'mail': widget.email});
+                          if (userApiControl['status'] == true) {
+                            SBBildirim.bilgi(
+                                '${widget.email} adresine tekrar onay kodunu gönderdik.lütfen kontrol ediniz');
+                          } else {
+                            SBBildirim.hata(
+                                'Maalesef onay kodu gönderemedik. Daha sonra tekrar deneyiniz');
+                          }
+                        }
+                      });
                     },
                     style: ElevatedButton.styleFrom(
                         shadowColor: Colors.black,

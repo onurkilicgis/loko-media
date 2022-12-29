@@ -1,11 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loko_media/services/MyLocal.dart';
+import 'package:loko_media/services/utils.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // çıkış fonksiyonu
   signOut() async {
@@ -16,15 +15,14 @@ class AuthService {
 
 // kayıt fonksiyonu
   Future<User?> createPerson(String name, String email, String password) async {
-    var user = await _auth.createUserWithEmailAndPassword(
-        email: email, password: password);
-
-    // firestore a veri gönderme
-    await _firestore.collection('Person').doc(user.user?.uid).set({
-      'userName': name,
-      'email': email,
-    });
-    return user.user;
+    try {
+      var user = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      user.user?.updateDisplayName(name);
+      return user.user;
+    } catch (err) {
+      errorHandling(err);
+    }
   }
 
   // şifre sıfırlama fonksiyonu
@@ -34,9 +32,13 @@ class AuthService {
 
   // giriş Fonksiyonu
   Future<User?> signInPerson(String email, String password) async {
-    var user = await _auth.signInWithEmailAndPassword(
-        email: email, password: password);
-    return user.user;
+    try {
+      var user = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      return user.user;
+    } catch (err) {
+      errorHandling(err);
+    }
   }
 
   // email onaylama
@@ -62,5 +64,37 @@ class AuthService {
 
     // Once signed in, return the UserCredential
     return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  errorHandling(err) {
+    switch (err.code) {
+      case 'email-already-in-use':
+        {
+          SBBildirim.uyari(
+              'Bu mail zaten sisteme kayıtlıdır. Lütfen Giriş yapınız.');
+          break;
+        }
+      case 'wrong-password':
+        {
+          SBBildirim.uyari(
+              'Parolanız hatalı ya da daha önce hiç şifre belirlemediniz.');
+          break;
+        }
+      case 'user-not-found':
+        {
+          SBBildirim.uyari('Böyle bir üye sistemimizde kayıtlı değildir');
+          break;
+        }
+      case 'too-many-requests':
+        {
+          SBBildirim.uyari('Çok fazla istek gönderdiniz. Bir süre bekleyiniz.');
+          break;
+        }
+      case 'unknown':
+        {
+          SBBildirim.uyari('Lütfen giriş bilgilerinizi kontrol ediniz.');
+          break;
+        }
+    }
   }
 }

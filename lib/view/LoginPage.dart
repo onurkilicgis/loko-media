@@ -9,9 +9,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:loko_media/view/app.dart';
 import 'package:loko_media/view/register.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/UserRegistration.dart';
 import '../services/API2.dart';
 import '../services/Loader.dart';
 import '../services/MyLocal.dart';
@@ -70,7 +68,11 @@ class _LoginPageState extends State<LoginPage> {
       bool internetStatus = await InternetConnectionChecker().hasConnection;
       if (internetStatus == true) {
         Loading.waiting('Giriş Kontrol Ediliyor');
-        dynamic data = await API.postRequest('api/v1/user/tokenControl', {});
+        String userString = await MyLocal.getStringData('user');
+        dynamic user = json.decode(userString);
+        firebaseLogin(user['mail'], user['id'], user['name']);
+        Loading.close();
+        /*dynamic data = await API.postRequest('api/v1/user/tokenControl', {});
         if (data?['status'] == true) {
           dynamic usr = data['data'];
           await saveUserInfo(
@@ -93,8 +95,10 @@ class _LoginPageState extends State<LoginPage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              VerifyScreen(email: user['mail'])));
+                          builder: (context) => VerifyScreen(
+                                email: user['mail'],
+                                uid: user['uid'],
+                              )));
                   break;
                 }
               case 'err12':
@@ -110,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                 }
             }
           }
-        }
+        }*/
       } else {
         String userString = await MyLocal.getStringData('user');
         dynamic user = json.decode(userString);
@@ -122,6 +126,52 @@ class _LoginPageState extends State<LoginPage> {
           });
         }
       }
+    }
+  }
+
+  firebaseLogin(String email, String uid, String name) async {
+    dynamic userApiControl = await API.postRequest(
+        'api/user/login', {'mail': email.toString(), 'uid': uid.toString()});
+    if (userApiControl['status'] == false) {
+      switch (userApiControl['message']) {
+        case 'err000003':
+          {
+            dynamic dbUser = await API.postRequest('api/user/register', {
+              'mail': email.toString(),
+              'uid': uid.toString(),
+              'name': name
+            });
+            if (dbUser['status'] == true) {
+              SBBildirim.bilgi(email +
+                  ' mail adresinize aktivasyon kodu gönderilmiştir. Lüyfen kodunuzu aşağıdaki alana giriniz.');
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => VerifyScreen(
+                            email: email,
+                            uid: uid.toString(),
+                          )));
+            }
+            break;
+          }
+        case 'err000005':
+          {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        VerifyScreen(email: email, uid: uid.toString())));
+            break;
+          }
+      }
+    } else {
+      dynamic data = userApiControl['data'];
+      String user = json.encode(data);
+      String token = data['token'];
+      await MyLocal.setStringData('user', user);
+      await MyLocal.setStringData('token', token);
+      SBBildirim.onay('Hoşgeldiniz sayın ${data['name']}.');
+      Navigator.push(context, MaterialPageRoute(builder: (context) => App()));
     }
   }
 
@@ -295,7 +345,7 @@ class _LoginPageState extends State<LoginPage> {
   ElevatedButton buildEntryElevatedButton() {
     return ElevatedButton(
       child: loadingButton(),
-      onPressed: () {
+      onPressed: () async {
         if (isEntry == false) {
           setState(() {
             isEntry = true;
@@ -313,9 +363,11 @@ class _LoginPageState extends State<LoginPage> {
           return null;
         }
 
-        _authService
-            .signInPerson(_emailController.text, _passwordController.text)
-            .then((value) async {
+//
+        User? user = await _authService.signInPerson(
+            _emailController.text, _passwordController.text);
+        firebaseLogin(user!.email.toString(), user.uid.toString(), 'Unnamed');
+        /* .then((value) async {
           String? uid = value?.uid;
           String? email = value?.email;
           dynamic result = await API
@@ -330,7 +382,8 @@ class _LoginPageState extends State<LoginPage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => VerifyScreen(email: email)));
+                        builder: (context) =>
+                            VerifyScreen(email: email, uid: uid.toString())));
               }
             }
             if (result['errCode'] == 'err12') {
@@ -392,7 +445,7 @@ class _LoginPageState extends State<LoginPage> {
             }
             print(onError);
           }
-        });
+        });*/
       },
     );
   }
@@ -437,7 +490,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void GmailElevatedButton() {
+  void GmailElevatedButton() async {
     if (isEntry == false) {
       setState(() {
         isEntry = true;
@@ -445,8 +498,11 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       return null;
     }
+    UserCredential? user = await _authService.signInWithGoogle();
 
-    _authService.signInWithGoogle().then((value) async {
+    firebaseLogin(user.user!.email.toString(), user.user!.uid.toString(),
+        user.user!.displayName.toString());
+    /*_authService.signInWithGoogle().then((value) async {
       String? uid = value.user!.uid;
       String? email = value.user!.email;
       dynamic result = await API
@@ -460,7 +516,10 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => VerifyScreen(email: email)));
+                    builder: (context) => VerifyScreen(
+                          email: email,
+                          uid: uid,
+                        )));
           }
         }
       } else {
@@ -515,7 +574,7 @@ class _LoginPageState extends State<LoginPage> {
         }
         print(onError);
       }
-    });
+    });*/
   }
 
   GestureDetector buildSignGestureDetector(BuildContext context) {

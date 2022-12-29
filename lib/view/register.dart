@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:loko_media/view/VerifyScreen.dart';
 import 'package:loko_media/view/app.dart';
 import 'package:provider/provider.dart';
 
+import '../services/API2.dart';
 import '../services/auth.dart';
 import '../services/utils.dart';
 import '../view_model/MyHomePage_view_models.dart';
-import '../view_model/register_view_models.dart';
 import 'LoginPage.dart';
 import 'WebPage.dart';
 
@@ -24,6 +25,7 @@ class _RegisterState extends State<Register> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool checkKosullar = false;
 
   @override
   Widget build(BuildContext context) {
@@ -236,23 +238,22 @@ class _RegisterState extends State<Register> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 15, bottom: 15),
-                        child: Consumer<CheckboxModel>(
-                            builder: (context, checkboxModel, child) {
-                          return CheckboxListTile(
-                            title: Text('a11'.tr,
-                                style: TextStyle(color: Color(0xff7C9099))),
-                            value: checkboxModel.isCheckControl,
-                            controlAffinity: ListTileControlAffinity.leading,
-                            secondary: Icon(Icons.beach_access),
-                            checkColor: Color(0xff80C783),
-                            activeColor: Color(0xff273238),
-                            onChanged: (
-                              bool? data,
-                            ) {
-                              checkboxModel.checkboxChanged(data!);
-                            },
-                          );
-                        }),
+                        child: CheckboxListTile(
+                          title: Text('a11'.tr,
+                              style: TextStyle(color: Color(0xff7C9099))),
+                          value: checkKosullar,
+                          controlAffinity: ListTileControlAffinity.leading,
+                          secondary: Icon(Icons.beach_access),
+                          checkColor: Color(0xff80C783),
+                          activeColor: Color(0xff273238),
+                          onChanged: (
+                            bool? data,
+                          ) {
+                            setState(() {
+                              checkKosullar = !checkKosullar;
+                            });
+                          },
+                        ),
                       ),
                       SizedBox(
                         width: ekranGenisligi / 1.2,
@@ -265,36 +266,80 @@ class _RegisterState extends State<Register> {
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold),
                           ),
-                          onPressed: () {
-                            String userName = _nameController.text;
+                          onPressed: () async {
+                            String name = _nameController.text;
+                            String mail = _emailController.text;
+                            String password = _passwordController.text;
 
-                            if (userName == '') {
+                            if (name.isEmpty) {
                               SBBildirim.uyari('Lütfen Ad Soyad giriniz');
                               return null;
                             }
 
-                            if (userName == '') {
+                            if (mail.isEmpty) {
                               SBBildirim.uyari('Lütfen E-mail giriniz');
                               return null;
                             }
-                            if (userName == '') {
+                            if (mail.isEmail == false) {
+                              SBBildirim.uyari('Bu mail geçerli değildir.');
+                              return null;
+                            }
+                            if (password.isEmpty) {
                               SBBildirim.uyari('Lütfen Şifre giriniz');
                               return null;
                             }
-                            var checkModel = CheckboxModel();
-                            if (checkModel.isCheckControl == false) {
+                            if (password.length < 6) {
+                              SBBildirim.uyari(
+                                  'Şifreniz Minimum 6 karakterden oluşmalıdır.');
+                              return null;
+                            }
+
+                            if (checkKosullar == false) {
                               SBBildirim.uyari('lütfen koşulları onaylayınız.');
                               return null;
                             }
 
-                            _authService
+                            dynamic dbUser = await API.postRequest(
+                                'api/user/mailControl', {'mail': mail});
+                            if (dbUser['status'] == false) {
+                              if (dbUser['message'] == "err000008") {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginPage()));
+                              }
+                            } else {
+                              var user = await _authService.createPerson(
+                                  name, mail, password);
+                              if (user != null) {
+                                dynamic dbUser = await API.postRequest(
+                                    'api/user/register', {
+                                  'mail': user.email.toString(),
+                                  'uid': user.uid.toString(),
+                                  'name': name
+                                });
+                                if (dbUser['status'] == true) {
+                                  SBBildirim.bilgi(mail +
+                                      ' mail adresinize aktivasyon kodu gönderilmiştir. Lüyfen kodunuzu aşağıdaki alana giriniz.');
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => VerifyScreen(
+                                                email: mail,
+                                                uid: user.uid.toString(),
+                                              )));
+                                }
+                              }
+                            }
+
+                            /* _authService
                                 .createPerson(
                                     _nameController.text,
                                     _emailController.text,
                                     _passwordController.text)
                                 .then((value) {
                               return;
-                            });
+                            });*/
                           },
                         ),
                       ),

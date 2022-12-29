@@ -81,19 +81,23 @@ class API {
     try {
       var response = await dio.post(url, data: bodyData);
       dynamic result = response.data;
-      switch (response.statusCode) {
-        case 200:
-          {
-            return {'status': true, 'data': result['data']};
-          }
-        case 201:
-          {
-            return {'status': true, 'data': result['data']};
-          }
-        case 202:
-          {
-            return {'status': true, 'data': result['data']};
-          }
+      if (result['status'] == true) {
+        switch (response.statusCode) {
+          case 200:
+            {
+              return {'status': true, 'data': result['data']};
+            }
+          case 201:
+            {
+              return {'status': true, 'data': result['data']};
+            }
+          case 202:
+            {
+              return {'status': true, 'data': result['data']};
+            }
+        }
+      } else {
+        return {'status': false, 'message': result['err']};
       }
     } on DioError catch (err) {
       Loading.close();
