@@ -1,41 +1,42 @@
 {
   "project_info": {
-    "project_number": "11724071212",
-    "project_id": "korte-7ba67",
-    "storage_bucket": "korte-7ba67.appspot.com"
+    "project_number": "619817136028",
+    "firebase_url": "https://gislayer-company.firebaseio.com",
+    "project_id": "gislayer-company",
+    "storage_bucket": "gislayer-company.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:11724071212:android:2aa7a7189515898b6f8c89",
+        "mobilesdk_app_id": "1:619817136028:android:8bcd52269e508af9f96259",
         "android_client_info": {
-          "package_name": "com.gislayer.korte"
+          "package_name": "com.gislayer.geohero"
         }
       },
       "oauth_client": [
         {
-          "client_id": "11724071212-g19idmjuu07t57v6bs6i6rcf7567lvp8.apps.googleusercontent.com",
+          "client_id": "619817136028-57dn392bmiisi29435a9bisdr1a6fa1u.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.gislayer.korte",
-            "certificate_hash": "781d74278feeccb5272f10ce41ffb87cef525589"
+            "package_name": "com.gislayer.geohero",
+            "certificate_hash": "9510dd0cd72d5e633d1d02835a954aba43d9ad15"
           }
         },
         {
-          "client_id": "11724071212-p7mg8io7mnve8uubrl8jpf17m8h7lvkg.apps.googleusercontent.com",
+          "client_id": "619817136028-02okkqkmqfi0734on9fbcg9jnnf0lu32.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCPkbkS63QMm_DnFJSBojZtl2oUXUKN2NY"
+          "current_key": "AIzaSyAQdDNuUDUtZLvzYPReh4wEiJS3IlH7eew"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "11724071212-p7mg8io7mnve8uubrl8jpf17m8h7lvkg.apps.googleusercontent.com",
+              "client_id": "619817136028-02okkqkmqfi0734on9fbcg9jnnf0lu32.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
@@ -44,35 +45,130 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:11724071212:android:a35ddbacddb048566f8c89",
+        "mobilesdk_app_id": "1:619817136028:android:478cc9b3d4e9f33cf96259",
         "android_client_info": {
-          "package_name": "com.gislayer.lokomedia.loko_media"
+          "package_name": "com.gislayer.korte"
         }
       },
       "oauth_client": [
         {
-          "client_id": "11724071212-j804v4vssjuhsrq292umsneg58e8e694.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.gislayer.lokomedia.loko_media",
-            "certificate_hash": "781d74278feeccb5272f10ce41ffb87cef525589"
-          }
-        },
-        {
-          "client_id": "11724071212-p7mg8io7mnve8uubrl8jpf17m8h7lvkg.apps.googleusercontent.com",
+          "client_id": "619817136028-02okkqkmqfi0734on9fbcg9jnnf0lu32.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCPkbkS63QMm_DnFJSBojZtl2oUXUKN2NY"
+          "current_key": "AIzaSyAQdDNuUDUtZLvzYPReh4wEiJS3IlH7eew"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "11724071212-p7mg8io7mnve8uubrl8jpf17m8h7lvkg.apps.googleusercontent.com",
+              "client_id": "619817136028-02okkqkmqfi0734on9fbcg9jnnf0lu32.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619817136028:android:a404f81080203d5df96259",
+        "android_client_info": {
+          "package_name": "com.gislayer.lokomedia.loko_media"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "619817136028-02okkqkmqfi0734on9fbcg9jnnf0lu32.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQdDNuUDUtZLvzYPReh4wEiJS3IlH7eew"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "619817136028-02okkqkmqfi0734on9fbcg9jnnf0lu32.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619817136028:android:7a09586a19a76130f96259",
+        "android_client_info": {
+          "package_name": "com.gislayer.photoloc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "619817136028-dh59baii8dn442ljbeddp3f7pgego692.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gislayer.photoloc",
+            "certificate_hash": "9510dd0cd72d5e633d1d02835a954aba43d9ad15"
+          }
+        },
+        {
+          "client_id": "619817136028-02okkqkmqfi0734on9fbcg9jnnf0lu32.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQdDNuUDUtZLvzYPReh4wEiJS3IlH7eew"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "619817136028-02okkqkmqfi0734on9fbcg9jnnf0lu32.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619817136028:android:814d10a1fc1ada74f96259",
+        "android_client_info": {
+          "package_name": "com.starterkit.starterkit.starterkit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "619817136028-2i667jj3t2batc7bqnhiicf1g4srvron.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.starterkit.starterkit.starterkit",
+            "certificate_hash": "9510dd0cd72d5e633d1d02835a954aba43d9ad15"
+          }
+        },
+        {
+          "client_id": "619817136028-02okkqkmqfi0734on9fbcg9jnnf0lu32.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQdDNuUDUtZLvzYPReh4wEiJS3IlH7eew"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "619817136028-02okkqkmqfi0734on9fbcg9jnnf0lu32.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

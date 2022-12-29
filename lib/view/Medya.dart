@@ -91,7 +91,7 @@ class MedyaState extends State<Medya> {
               child: Container(
                 color: Colors.black45,
                 child: Image.asset(
-                  'assets/images/audio_dark.png',
+                  'assets/images/txt_dark.png',
                   fit: BoxFit.cover,
                 ),
               ),
@@ -109,7 +109,7 @@ class MedyaState extends State<Medya> {
           child: Container(
             color: Colors.white,
             child: Image.asset(
-              'assets/images/audio_light.png',
+              'assets/images/txt_light.png',
               fit: BoxFit.cover,
             ),
           ),
@@ -347,7 +347,7 @@ class MedyaState extends State<Medya> {
                   labelBackgroundColor: Color(0xff26334d),
                 ),
                 SpeedDialChild(
-                  onTap: () async {
+                  onTap: ()  async{
                     Util.evetHayir(context, 'Toplu Medya Silme İşlemi',
                         '${selecteds.length} Adet medya öğesini silmek istediğinize emin misiniz?',
                         (cevap) async {

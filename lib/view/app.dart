@@ -28,6 +28,7 @@ import '../services/Loader.dart';
 import '../services/auth.dart';
 import '../view_model/folder_model.dart';
 import 'Harita.dart';
+import 'LoginPage.dart';
 import 'TextView.dart';
 
 class App extends StatefulWidget {
@@ -40,6 +41,7 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> with SingleTickerProviderStateMixin {
+  AuthService _authService = AuthService();
   late TabController controller;
   TextEditingController albumNameController = TextEditingController();
   TextEditingController searchController = TextEditingController();
@@ -187,8 +189,6 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldState = GlobalKey<ScaffoldState>();
 
   int currentIndex = 0;
-
-  AuthService _authService = AuthService();
 
   Card createCard(album, image, durum) {
     //xxx
@@ -475,6 +475,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     Album album = Album();
+
     return DefaultTabController(
       length: 3,
       initialIndex: 0,
@@ -548,12 +549,17 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                     children: [
                       Expanded(
                           child: ListTile(
-                              leading:
-                                  Icon(FontAwesomeIcons.arrowRightFromBracket),
-                              title: Text(
-                                'Çıkış',
-                                style: TextStyle(fontSize: 18),
-                              )))
+                        leading: Icon(FontAwesomeIcons.arrowRightFromBracket),
+                        title: Text(
+                          'Çıkış',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        onTap: () async {
+                          await _authService.signOut();
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => LoginPage()));
+                        },
+                      ))
                     ],
                   ),
                 )
@@ -618,7 +624,11 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
             children: [
               Column(
                 children: [
-                  APP_VM.getAramaKutusu(context, this, album),
+                  APP_VM.getAramaKutusu(
+                    context,
+                    this,
+                    album,
+                  ),
                   Expanded(
                     child: cardType == 'GFCard'
                         ? GridView(

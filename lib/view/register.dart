@@ -19,13 +19,11 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   final GlobalKey<FormState> _key = GlobalKey();
 
-  // bool _isVisible = false;
+  AuthService _authService = AuthService();
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  AuthService _authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -270,16 +268,16 @@ class _RegisterState extends State<Register> {
                           onPressed: () {
                             String userName = _nameController.text;
 
-                            if (_nameController.text == '') {
+                            if (userName == '') {
                               SBBildirim.uyari('Lütfen Ad Soyad giriniz');
                               return null;
                             }
 
-                            if (_emailController.text == '') {
+                            if (userName == '') {
                               SBBildirim.uyari('Lütfen E-mail giriniz');
                               return null;
                             }
-                            if (_passwordController.text == '') {
+                            if (userName == '') {
                               SBBildirim.uyari('Lütfen Şifre giriniz');
                               return null;
                             }
@@ -295,12 +293,7 @@ class _RegisterState extends State<Register> {
                                     _emailController.text,
                                     _passwordController.text)
                                 .then((value) {
-                              return /* Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          VerifyScreen(text: userName)))*/
-                                  ;
+                              return;
                             });
                           },
                         ),

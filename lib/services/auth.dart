@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:loko_media/services/MyLocal.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -8,7 +9,9 @@ class AuthService {
 
   // çıkış fonksiyonu
   signOut() async {
-    return await _auth.signOut();
+    await MyLocal.removeKey('token');
+    await MyLocal.removeKey('user');
+    return true;
   }
 
 // kayıt fonksiyonu

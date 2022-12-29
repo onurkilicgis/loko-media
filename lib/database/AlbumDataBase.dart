@@ -110,6 +110,24 @@ class AlbumDataBase {
     return liste;
   }
 
+  static getFilterAlbums(String fileType) async {
+    List<Album> liste = [];
+    Database db = await openDatabase(_albumDatabaseName,
+        version: _version, onCreate: (Database db, int version) async {});
+    //önce fileType'ı istediğimiz gibi olan mediasları çekiyoruz
+    // distinct ile birçok medias'ın ortak album numaralarını alıyoruz
+    // where id in(..) ile de bu album numaralarını select ile buluyoruz
+    String sql =
+        "select * from ${albumTableName} where id in (SELECT distinct album_id FROM ${mediaTableName} WHERE fileType='${fileType}')";
+    List<Map> albumMaps = await db.rawQuery(sql);
+
+    db.close();
+    if (albumMaps.length > 0) {
+      liste = albumMaps.map((e) => Album.fromJson(e)).toList();
+    }
+    return liste;
+  }
+
 // silindikten sonraki son albümü aktif etme
   static getLastAlbum() async {
     List<Album> liste = [];

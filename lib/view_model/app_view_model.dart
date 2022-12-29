@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/view_model/layout.dart';
 
 import '../models/Album.dart';
 import '../services/MyLocal.dart';
 
 class APP_VM {
-  static getAramaKutusu(BuildContext context, app, album) {
+  static getAramaKutusu(
+    BuildContext context,
+    app,
+    album,
+  ) {
     return Row(
       children: [
         Expanded(
@@ -78,7 +83,10 @@ class APP_VM {
                               child: IconButton(
                                   tooltip: 'Albüm Filtreleme',
                                   onPressed: () {
-                                    getFiltrelemeDialog(context, app);
+                                    getFiltrelemeDialog(
+                                      context,
+                                      app,
+                                    );
                                   },
                                   icon: Icon(
                                     Icons.filter_alt,
@@ -348,18 +356,46 @@ class APP_VM {
                     onTap: () {}),
                 ListTile(
                     title: Text('İçerisinde Resim Olan Albümleri Filtrele'),
-                    onTap: () {}),
+                    onTap: () async {
+                      List<Album> filterList = [];
+                      filterList = await AlbumDataBase.getFilterAlbums('image');
+                      app.setState(() {
+                        app.filteredAlbumList = filterList;
+                      });
+                      Navigator.pop(context);
+                    }),
                 ListTile(
                   title: Text('İçerisinde Video Olan Albümleri Filtrele'),
-                  onTap: () {},
+                  onTap: () async {
+                    List<Album> filterList = [];
+                    filterList = await AlbumDataBase.getFilterAlbums('video');
+                    app.setState(() {
+                      app.filteredAlbumList = filterList;
+                    });
+                    Navigator.pop(context);
+                  },
                 ),
                 ListTile(
                   title: Text('İçerisinde Ses Olan Albümleri Filtrele'),
-                  onTap: () {},
+                  onTap: () async {
+                    List<Album> filterList = [];
+                    filterList = await AlbumDataBase.getFilterAlbums('audio');
+                    app.setState(() {
+                      app.filteredAlbumList = filterList;
+                    });
+                    Navigator.pop(context);
+                  },
                 ),
                 ListTile(
-                  title: Text('İçerisinde Yaz Olan Albümleri Filtrele'),
-                  onTap: () {},
+                  title: Text('İçerisinde Yazı Olan Albümleri Filtrele'),
+                  onTap: () async {
+                    List<Album> filterList = [];
+                    filterList = await AlbumDataBase.getFilterAlbums('txt');
+                    app.setState(() {
+                      app.filteredAlbumList = filterList;
+                    });
+                    Navigator.pop(context);
+                  },
                 ),
                 ListTile(
                   title: Text('Boş Albümleri Filtrele'),
@@ -370,6 +406,7 @@ class APP_VM {
                     app.setState(() {
                       app.filteredAlbumList = filterListitem;
                     });
+                    Navigator.pop(context);
                   },
                 ),
               ],

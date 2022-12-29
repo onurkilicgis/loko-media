@@ -105,8 +105,8 @@ class Media_VM {
                             model.deleteMediasFromList(tekSilinen);
                           });
                         }
+                        Navigator.pop(context);
                       });
-                      Navigator.pop(context);
                     }),
               ],
             )

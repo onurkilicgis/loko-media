@@ -123,6 +123,8 @@ flutter:
     - assets/images/audio_dark.png
     - assets/images/audio_light.png
     - assets/harita/img/
+    - assets/images/txt_dark.png
+    - assets/images/txt_light.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
