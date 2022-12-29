@@ -48,26 +48,36 @@ class AuthService {
   }
   //google ile giriş
 
-  Future<UserCredential> signInWithGoogle() async {
+  signInWithGoogle() async {
     // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication? googleAuth =
+      await googleUser?.authentication;
 
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
 
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+      // Once signed in, return the UserCredential
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (err) {
+      errorHandling(err);
+    }
+
   }
 
   errorHandling(err) {
     switch (err.code) {
+      case 'sign_in_failed':{
+        SBBildirim.uyari(
+            'Giriş işlemi başarısız oldu. '+err.message.toString());
+        break;
+      }
       case 'email-already-in-use':
         {
           SBBildirim.uyari(

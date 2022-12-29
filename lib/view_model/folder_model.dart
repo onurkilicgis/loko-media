@@ -79,7 +79,7 @@ class FolderModel {
     // bunu yapmazsak harita kasılır.
     if (fileType == 'image') {
       Image? image = decodeImage(bytes);
-      Image thumbnail = copyResize(image!, width: 128);
+      Image thumbnail = copyResize(image!, width: 256);
 
       List<String> parcalar = miniFileName.split('.');
       String uzanti = parcalar[parcalar.length - 1];

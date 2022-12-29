@@ -81,6 +81,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "619817136028-sete852aqcg6rrpno3bkus77tgnjrfvv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gislayer.lokomedia.loko_media",
+            "certificate_hash": "9510dd0cd72d5e633d1d02835a954aba43d9ad15"
+          }
+        },
+        {
           "client_id": "619817136028-02okkqkmqfi0734on9fbcg9jnnf0lu32.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -133,6 +133,9 @@ class _LoginPageState extends State<LoginPage> {
     dynamic userApiControl = await API.postRequest(
         'api/user/login', {'mail': email.toString(), 'uid': uid.toString()});
     if (userApiControl['status'] == false) {
+      setState(() {
+        isEntry=false;
+      });
       switch (userApiControl['message']) {
         case 'err000003':
           {
@@ -165,6 +168,9 @@ class _LoginPageState extends State<LoginPage> {
           }
       }
     } else {
+      setState(() {
+        isEntry=false;
+      });
       dynamic data = userApiControl['data'];
       String user = json.encode(data);
       String token = data['token'];
@@ -498,10 +504,16 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       return null;
     }
-    UserCredential? user = await _authService.signInWithGoogle();
+    var user = await _authService.signInWithGoogle();
+    if(user!=null){
+      firebaseLogin(user.user!.email.toString(), user.user!.uid.toString(),
+          user.user!.displayName.toString());
+    }else{
+      setState(() {
+        isEntry=false;
+      });
+    }
 
-    firebaseLogin(user.user!.email.toString(), user.user!.uid.toString(),
-        user.user!.displayName.toString());
     /*_authService.signInWithGoogle().then((value) async {
       String? uid = value.user!.uid;
       String? email = value.user!.email;

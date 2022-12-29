@@ -890,7 +890,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                             dynamic user = json.decode(userString);
                             Album album = Album();
                             album.insertData(
-                                albumNameController.text, user['uid']);
+                                albumNameController.text, user['id']);
                             int lastId = await AlbumDataBase.insertAlbum(album);
                             album.id = lastId;
                             getAlbumList();
@@ -998,7 +998,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
           'albums/album-${aktifAlbumId}', bytes, filename, '', 'audio');
       Medias dbAudio = new Medias(
         album_id: aktifAlbumId,
-        name: filename,
+        name: fileName,
         miniName: '',
         path: newPath['file'],
         latitude: positions['latitude'],
