@@ -4,6 +4,7 @@ import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/view_model/layout.dart';
 
 import '../models/Album.dart';
+import '../services/FileDrive.dart';
 import '../services/MyLocal.dart';
 
 class APP_VM {
@@ -180,6 +181,14 @@ class APP_VM {
             actions: [
               Column(
                 children: [
+                  ListTile(
+                      leading: Icon(Icons.list_alt),
+                      title: Text('Test'),
+                      onTap: () async {
+                        FileDrive a = FileDrive();
+                        await a.ready();
+                        await a.uploadFile("/data/user/0/com.gislayer.lokomedia.loko_media/app_flutter/albums/album-1/pdf-1672436122382.pdf");
+                      }),
                   ListTile(
                     leading: Icon(Icons.check),
                     title: Text('Albümü Aktif Et'),
