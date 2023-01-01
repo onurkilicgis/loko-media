@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:loko_media/services/MyLocal.dart';
 import 'package:loko_media/view/app.dart';
@@ -87,6 +88,9 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 child: TextFormField(
                   obscureText: false,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp('[ ]')),
+                  ],
                   maxLength: 6,
                   validator: (veri) {
                     if (veri!.isEmpty) {

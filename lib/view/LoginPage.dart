@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -134,7 +135,7 @@ class _LoginPageState extends State<LoginPage> {
         'api/user/login', {'mail': email.toString(), 'uid': uid.toString()});
     if (userApiControl['status'] == false) {
       setState(() {
-        isEntry=false;
+        isEntry = false;
       });
       switch (userApiControl['message']) {
         case 'err000003':
@@ -169,7 +170,7 @@ class _LoginPageState extends State<LoginPage> {
       }
     } else {
       setState(() {
-        isEntry=false;
+        isEntry = false;
       });
       dynamic data = userApiControl['data'];
       String user = json.encode(data);
@@ -279,6 +280,9 @@ class _LoginPageState extends State<LoginPage> {
     return TextFormField(
       enabled: !isEntry,
       obscureText: false,
+      inputFormatters: [
+        FilteringTextInputFormatter.deny(RegExp('[ ]')),
+      ],
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: (email) =>
           email != null && !EmailValidator.validate(email) ? 'a17'.tr : null,
@@ -311,6 +315,9 @@ class _LoginPageState extends State<LoginPage> {
         enabled: !isEntry,
         cursorColor: const Color(0xff80C783),
         obscureText: visibleModel.isVisibleControl,
+        inputFormatters: [
+          FilteringTextInputFormatter.deny(RegExp('[ ]')),
+        ],
         autovalidateMode: AutovalidateMode.onUserInteraction,
         style: TextStyle(color: Color(0xff7C9099)),
         controller: _passwordController,
@@ -329,9 +336,9 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   visibleModel.visibleChanged();
                 },
-                icon: visibleModel.isVisibleControl
-                    ? const Icon(Icons.visibility_off, color: Colors.grey)
-                    : const Icon(Icons.visibility, color: Colors.white)),
+                icon: visibleModel.isVisibleControl == false
+                    ? const Icon(Icons.visibility, color: Colors.white)
+                    : const Icon(Icons.visibility_off, color: Colors.grey)),
             enabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Color(0xff7C9099)),
             ),
@@ -505,12 +512,12 @@ class _LoginPageState extends State<LoginPage> {
       return null;
     }
     var user = await _authService.signInWithGoogle();
-    if(user!=null){
+    if (user != null) {
       firebaseLogin(user.user!.email.toString(), user.user!.uid.toString(),
           user.user!.displayName.toString());
-    }else{
+    } else {
       setState(() {
-        isEntry=false;
+        isEntry = false;
       });
     }
 

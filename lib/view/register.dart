@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:loko_media/view/VerifyScreen.dart';
@@ -19,13 +20,18 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   final GlobalKey<FormState> _key = GlobalKey();
-
+  FocusNode node = new FocusNode();
   AuthService _authService = AuthService();
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool checkKosullar = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +69,10 @@ class _RegisterState extends State<Register> {
                         child: TextFormField(
                           cursorColor: Color(0xff80C783),
                           obscureText: false,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.deny(RegExp('[ ]')),
+                          ],
+                          focusNode: node,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           style: TextStyle(
                             color: Color(0xff7C9099),
@@ -102,6 +112,9 @@ class _RegisterState extends State<Register> {
                             return null;
                           },
                           obscureText: false,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.deny(RegExp('[ ]')),
+                          ],
                           keyboardType: TextInputType.emailAddress,
                           cursorColor: Color(0xff80C783),
                           style: TextStyle(
@@ -133,6 +146,9 @@ class _RegisterState extends State<Register> {
                             return TextFormField(
                               cursorColor: Color(0xff80C783),
                               obscureText: visibleModel.isVisibleControl,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.deny(RegExp('[ ]')),
+                              ],
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
                               style: TextStyle(color: Color(0xff7C9099)),

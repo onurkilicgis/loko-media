@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
+import 'package:loko_media/view/AlbumShare.dart';
 import 'package:loko_media/view_model/layout.dart';
 
 import '../models/Album.dart';
-import '../services/FileDrive.dart';
 import '../services/MyLocal.dart';
 
 class APP_VM {
@@ -216,12 +216,8 @@ class APP_VM {
                       title: Text('Albümü Paylaş'),
                       onTap: () {
                         Navigator.pop(context);
-                        getShareDialog(context);
+                        getShareDialog(context, album);
                       }),
-                  ListTile(
-                      leading: Icon(Icons.supervised_user_circle),
-                      title: Text('Paylaşılan Kişiler Listesi'),
-                      onTap: () {}),
                   ListTile(
                     leading: Icon(
                       Icons.delete,
@@ -240,7 +236,7 @@ class APP_VM {
         });
   }
 
-  static getShareDialog(BuildContext context) {
+  static getShareDialog(BuildContext context, Album album) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -254,6 +250,22 @@ class APP_VM {
           actions: [
             Column(
               children: [
+                ListTile(
+                  leading: Icon(Icons.person),
+                  title: Text('Kişiye Paylaş'),
+                  onTap: () async {
+                    List<Medias> listShare =
+                        await AlbumDataBase.getFiles(album.id!);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AlbumShare(
+                                  type: 'album',
+                                  info: {'id': album.id, 'name': album.name},
+                                  mediaList: listShare,
+                                )));
+                  },
+                ),
                 ListTile(
                   leading: Icon(
                     Icons.people,

@@ -195,12 +195,13 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
 
     return Card(
       child: ListTile(
-        onTap: () async {
-          await MyLocal.setIntData('tiklananAlbum', album.id);
+        onTap: () {
+          albumMedyalariniAc(album.id);
+          /*await MyLocal.setIntData('tiklananAlbum', album.id);
           setState(() {
             tiklananAlbum = album.id!;
             controller.index = 1;
-          });
+          });*/
         },
         leading: image,
         title: Text(album.name),
@@ -353,7 +354,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                         APP_VM.albumSilmeDialog(context, album, this, () {});
                       }),
                       cardBottomButton(Icons.share, () {
-                        APP_VM.getShareDialog(context);
+                        APP_VM.getShareDialog(context, album);
                       }),
                       cardBottomButton(Icons.map, () {
                         albumuHaritadaGoster(album);

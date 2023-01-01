@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class VisibleModel extends ChangeNotifier {
-  bool _visibleControl = false;
+  bool _visibleControl = true;
 
   bool get isVisibleControl => _visibleControl;
 
