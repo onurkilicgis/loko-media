@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../models/Album.dart';
+import '../services/API2.dart';
 
 class AlbumShare extends StatefulWidget {
   String? type;
@@ -19,9 +22,13 @@ class _AlbumShareState extends State<AlbumShare> {
   TextEditingController _kisiNameController = TextEditingController();
   int radioValueLocation = 0;
   int radioValueShare = 0;
+  int radioValueList = 0;
   bool isVisible = false;
+  bool checkList = false;
   int rangeMax = 60;
   int currentValue = 1;
+  late List<dynamic> data;
+  bool status = false;
   List<dynamic> selections = [
     {'name': 'Dakika', 'max': 60},
     {'name': 'Saat', 'max': 24},
@@ -60,10 +67,11 @@ class _AlbumShareState extends State<AlbumShare> {
               value = _albumNameController.text;
             },
             controller: _albumNameController,
+            textAlign: TextAlign.center,
             keyboardType: TextInputType.text,
             cursorColor: Colors.white,
             textCapitalization: TextCapitalization.words,
-            maxLines: 2,
+            maxLines: 1,
             decoration: InputDecoration(
               filled: true,
               fillColor: Color(0xff1e2c49),
@@ -93,7 +101,7 @@ class _AlbumShareState extends State<AlbumShare> {
             keyboardType: TextInputType.text,
             cursorColor: Colors.white,
             textCapitalization: TextCapitalization.words,
-            maxLines: 5,
+            maxLines: 4,
             decoration: InputDecoration(
               filled: true,
               fillColor: Color(0xff1e2c49),
@@ -226,7 +234,7 @@ class _AlbumShareState extends State<AlbumShare> {
                     dropdownColor: Color(0xffc2c9d6),
                     iconEnabledColor: Color(0xff0e91ce),
                     isDense: true,
-                    icon: const Icon(Icons.arrow_downward),
+                    icon: const Icon(Icons.arrow_drop_down),
                     elevation: 16,
                     style: const TextStyle(
                       color: Color(0xff0e91ce),
@@ -257,34 +265,136 @@ class _AlbumShareState extends State<AlbumShare> {
             ],
           ),
         ),
-        Text('Paylaşılan Kişiler'),
-        TextField(
-          onChanged: (value) {
-            value = _kisiNameController.text;
-          },
-          controller: _kisiNameController,
-          keyboardType: TextInputType.text,
-          cursorColor: Colors.white,
-          textCapitalization: TextCapitalization.words,
-          maxLines: 2,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Color(0xff1e2c49),
-            contentPadding: EdgeInsets.all(8),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(7),
-              borderSide: BorderSide(
-                color: Color(0xff017eba),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text('Paylaşılan Kişiler'),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            onChanged: (name) async {
+              name = _kisiNameController.text;
+              dynamic userName =
+                  await API.postRequest('api/lokomedia/searchFriends', {
+                'search': name,
+              });
+              if (userName['status'] == true) {
+                data = await userName['data'];
+
+                setState(() {
+                  status = true;
+                });
+              }
+            },
+            controller: _kisiNameController,
+            keyboardType: TextInputType.text,
+            cursorColor: Colors.white,
+            textCapitalization: TextCapitalization.words,
+            maxLines: 1,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Color(0xff1e2c49),
+              contentPadding: EdgeInsets.all(8),
+              hintText: 'Kişi Ara... ',
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(7),
+                borderSide: BorderSide(
+                  color: Color(0xff017eba),
+                ),
               ),
-            ),
-            focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Color(0xff017eba),
+              focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Color(0xff017eba),
+                ),
               ),
             ),
           ),
         ),
+        status == true
+            ? ListView.builder(
+                shrinkWrap: true,
+                itemCount: data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        child: Image.network('${data[index]['img']}'),
+                      ),
+                      title: Text('${data[index]['name']}'),
+                      trailing:
+                          TextButton(onPressed: () {}, child: Text('Ekle')),
+                    ),
+                  );
+                })
+            : Container()
+
+        /*FutureBuilder(builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Card(
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        child: Image.network('${data['img']}'),
+                      ),
+                      title: Text('${data['name']}'),
+                      trailing:
+                          TextButton(onPressed: () {}, child: Text('Ekle')),
+                    ),
+                  );
+                } else {
+                  return Container();
+                }
+              })*/
       ]),
+    );
+  }
+
+  /* Widget listNameShare(String url, String name) {
+    return ListTile(
+      leading: CircleAvatar(
+        child: Image.network(url),
+      ),
+      title: Text(name),
+      trailing: TextButton(onPressed: () {}, child: Text('Ekle')),
+    );
+  }*/
+
+  Widget listAlbumShare(Medias medias) {
+    return ListTile(
+      leading: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            child: Image.file(
+              File(
+                medias.path!,
+              ),
+              fit: BoxFit.cover,
+            ),
+          )),
+      title: RadioListTile(
+          tileColor: Color(0xff192132),
+          title: Text('Albüm Kapağı'),
+          activeColor: Colors.white,
+          value: 1,
+          groupValue: radioValueList,
+          onChanged: (int? veri) {
+            setState(() {
+              radioValueList = veri!;
+            });
+          }),
+      trailing: CheckboxListTile(
+        title: Text('Seç'),
+        value: checkList,
+        checkColor: Color(0xff80C783),
+        controlAffinity: ListTileControlAffinity.leading,
+        activeColor: Color(0xff273238),
+        onChanged: (
+          bool? data,
+        ) {
+          setState(() {
+            checkList = !checkList;
+          });
+        },
+      ),
     );
   }
 }

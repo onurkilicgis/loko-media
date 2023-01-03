@@ -70,6 +70,8 @@ class API {
     dio.options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
     dio.options.headers["token"] = token.toString();
     dio.options.headers["language"] = language;
+    bodyData['token'] = token.toString();
+    bodyData['language'] = language;
 
     String url = "";
     if (systemMode == 'development') {
