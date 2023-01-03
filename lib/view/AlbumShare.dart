@@ -315,48 +315,24 @@ class _AlbumShareState extends State<AlbumShare> {
                 shrinkWrap: true,
                 itemCount: data.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        child: Image.network('${data[index]['img']}'),
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          child: Image.network('${data[index]['img']}'),
+                        ),
+                        title: Text('${data[index]['name']}'),
+                        trailing:
+                            TextButton(onPressed: () {}, child: Text('Ekle')),
                       ),
-                      title: Text('${data[index]['name']}'),
-                      trailing:
-                          TextButton(onPressed: () {}, child: Text('Ekle')),
                     ),
                   );
                 })
             : Container()
-
-        /*FutureBuilder(builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Card(
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        child: Image.network('${data['img']}'),
-                      ),
-                      title: Text('${data['name']}'),
-                      trailing:
-                          TextButton(onPressed: () {}, child: Text('Ekle')),
-                    ),
-                  );
-                } else {
-                  return Container();
-                }
-              })*/
       ]),
     );
   }
-
-  /* Widget listNameShare(String url, String name) {
-    return ListTile(
-      leading: CircleAvatar(
-        child: Image.network(url),
-      ),
-      title: Text(name),
-      trailing: TextButton(onPressed: () {}, child: Text('Ekle')),
-    );
-  }*/
 
   Widget listAlbumShare(Medias medias) {
     return ListTile(
