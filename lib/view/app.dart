@@ -19,6 +19,7 @@ import 'package:loko_media/services/MyLocal.dart';
 import 'package:loko_media/services/utils.dart';
 import 'package:loko_media/view/AudioRecorder.dart';
 import 'package:loko_media/view/Medya.dart';
+import 'package:loko_media/view/Takipcilerim.dart';
 import 'package:loko_media/view_model/app_view_model.dart';
 import 'package:loko_media/view_model/layout.dart';
 import 'package:provider/provider.dart';
@@ -460,6 +461,19 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
     }
   }
 
+  openPage(String pagename){
+    switch(pagename){
+      case 'takipciler':{
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Takipcilerim()
+          ));
+        break;
+      }
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -511,6 +525,9 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                     arrowColor: Colors.black,*/
                 ),
                 listMenuItems(Icons.event_note, "Albüm Oluştur", getDialog),
+                listMenuItems(Icons.account_circle_rounded, "Takipçilerim", (){
+                  openPage('takipciler');
+                }),
 
                 // SizedBox(height: context.dynamicHeight(3)),
                 Container(
@@ -793,11 +810,10 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
 
   Widget listMenuItems(IconData icon, String title, Function callback) {
     return ListTile(
-        leading: Icon(icon, color: Colors.black),
+        leading: Icon(icon, color: Colors.lightGreen),
         title: Text(title,
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+              fontSize: 14,
             )),
         //trailing: Text(trailing),
         onTap: () {

@@ -287,7 +287,7 @@ class _AlbumShareState extends State<AlbumShare> {
                       child: Card(
                         child: ListTile(
                           leading: CircleAvatar(
-                            backgroundImage: NetworkImage(selectedUsers[index]['img']),
+                            backgroundImage: NetworkImage(selectedUsers[index]['img'],scale: 1),
                           ),
                           title: Text('${selectedUsers[index]['name']}'),
                           trailing:
@@ -362,7 +362,7 @@ class _AlbumShareState extends State<AlbumShare> {
                         child: Card(
                           child: ListTile(
                             leading: CircleAvatar(
-                              backgroundImage: NetworkImage(data[index]['img']),
+                              backgroundImage: NetworkImage(data[index]['img'],scale: 1),
                             ),
                             title: Text('${data[index]['name']}'),
                             trailing:
