@@ -22,11 +22,14 @@ class _AlbumShareState extends State<AlbumShare> {
   TextEditingController _kisiNameController = TextEditingController();
   int radioValueLocation = 0;
   int radioValueShare = 0;
+  final ScrollController _controller = ScrollController();
   int radioValueList = 0;
   bool isVisible = false;
   bool checkList = false;
   int rangeMax = 60;
   int currentValue = 1;
+  List<dynamic> selectedUsers = [];
+  List<String> selectedUsersId = [];
   late List<dynamic> data;
   bool status = false;
   List<dynamic> selections = [
@@ -55,10 +58,12 @@ class _AlbumShareState extends State<AlbumShare> {
       appBar: AppBar(
         title: Text('Albüm Paylaşma Paneli'),
       ),
-      body: ListView(children: [
+      body: ListView(
+        controller: _controller,
+          children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Albüm Adı Giriniz'),
+          padding: const EdgeInsets.only(top:20,bottom: 0,left: 8),
+          child: Text('Albüm Adı Giriniz',style: TextStyle(fontSize: 16)),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -67,7 +72,7 @@ class _AlbumShareState extends State<AlbumShare> {
               value = _albumNameController.text;
             },
             controller: _albumNameController,
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.left,
             keyboardType: TextInputType.text,
             cursorColor: Colors.white,
             textCapitalization: TextCapitalization.words,
@@ -91,8 +96,8 @@ class _AlbumShareState extends State<AlbumShare> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Albüm Açıklaması Giriniz'),
+          padding: const EdgeInsets.only(top:20,bottom: 0,left: 8),
+          child: Text('Albüm Açıklaması Giriniz',style: TextStyle(fontSize: 16)),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -121,15 +126,16 @@ class _AlbumShareState extends State<AlbumShare> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Konum Paylaşımı'),
+          padding: const EdgeInsets.only(top:20,bottom: 0,left: 8),
+          child: Text('Konum Paylaşımı',style: TextStyle(fontSize: 16)),
         ),
         Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Expanded(
               child: RadioListTile(
                   tileColor: Color(0xff192132),
-                  title: Text('Evet Paylaş'),
+                  title: Text('Evet Paylaş',style: TextStyle(fontSize: 13)),
                   activeColor: Color(0xff0e91ce),
                   value: 1,
                   groupValue: radioValueLocation,
@@ -142,7 +148,7 @@ class _AlbumShareState extends State<AlbumShare> {
             Expanded(
               child: RadioListTile(
                   tileColor: Color(0xff192132),
-                  title: Text('Hayır Paylaşma'),
+                  title: Text('Hayır Paylaşma',style: TextStyle(fontSize: 13)),
                   activeColor: Color(0xff0e91ce),
                   value: 2,
                   groupValue: radioValueLocation,
@@ -155,15 +161,15 @@ class _AlbumShareState extends State<AlbumShare> {
           ],
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Paylaşım Süresi'),
+          padding: const EdgeInsets.only(top:20,bottom: 0,left: 8),
+          child: Text('Paylaşım Süresi',style: TextStyle(fontSize: 16)),
         ),
         Row(
           children: [
             Expanded(
               child: RadioListTile(
                   tileColor: Color(0xff192132),
-                  title: Text('Süresiz Paylaş'),
+                  title: Text('Süresiz Paylaş',style: TextStyle(fontSize: 13)),
                   activeColor: Color(0xff0e91ce),
                   value: 1,
                   groupValue: radioValueShare,
@@ -177,7 +183,7 @@ class _AlbumShareState extends State<AlbumShare> {
             Expanded(
               child: RadioListTile(
                   tileColor: Color(0xff192132),
-                  title: Text('Süreli Paylaş'),
+                  title: Text('Süreli Paylaş',style: TextStyle(fontSize: 13)),
                   activeColor: Color(0xff0e91ce),
                   value: 2,
                   groupValue: radioValueShare,
@@ -266,9 +272,40 @@ class _AlbumShareState extends State<AlbumShare> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Paylaşılan Kişiler'),
+          padding: const EdgeInsets.only(top:20,bottom: 5,left: 8),
+          child: Text('Paylaşılan Kişiler : ${selectedUsersId.length} Kişi',style: TextStyle(fontSize: 16)),
         ),
+            selectedUsersId.length>0
+                ? Container(
+              margin: EdgeInsets.only(bottom: 0),
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: selectedUsersId.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
+                      child: Card(
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(selectedUsers[index]['img']),
+                          ),
+                          title: Text('${selectedUsers[index]['name']}'),
+                          trailing:
+                          TextButton(onPressed: () {
+                            setState(() {
+                              selectedUsersId.removeAt(index);
+                              selectedUsers.removeAt(index);
+                            });
+
+                          }, child: Text('Çıkart',style: TextStyle(color:Color(
+                              0xffffda15)),)),
+                        ),
+                      ),
+                    );
+
+                  }),
+            )
+                : Container(),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextField(
@@ -280,7 +317,9 @@ class _AlbumShareState extends State<AlbumShare> {
               });
               if (userName['status'] == true) {
                 data = await userName['data'];
-
+                if(data.length>0){
+                  _controller.jumpTo(_controller.position.maxScrollExtent);
+                }
                 setState(() {
                   status = true;
                 });
@@ -311,24 +350,40 @@ class _AlbumShareState extends State<AlbumShare> {
           ),
         ),
         status == true
-            ? ListView.builder(
-                shrinkWrap: true,
-                itemCount: data.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          child: Image.network('${data[index]['img']}'),
+            ? Container(
+              margin: EdgeInsets.only(bottom: 30),
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: data.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    if(selectedUsersId.indexOf(data[index]['id'])==-1){
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
+                        child: Card(
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(data[index]['img']),
+                            ),
+                            title: Text('${data[index]['name']}'),
+                            trailing:
+                            TextButton(onPressed: () {
+                              setState(() {
+                                if(selectedUsersId.indexOf(data[index]['id'])==-1){
+                                  selectedUsers.add(data[index]);
+                                  selectedUsersId.add(data[index]['id']);
+                                }
+                              });
+
+                            }, child: Text('Ekle',style: TextStyle(color:Color(0xff0e91ce)),)),
+                          ),
                         ),
-                        title: Text('${data[index]['name']}'),
-                        trailing:
-                            TextButton(onPressed: () {}, child: Text('Ekle')),
-                      ),
-                    ),
-                  );
-                })
+                      );
+                    }else{
+                      return Container(child: null,);
+                    }
+
+                  }),
+            )
             : Container()
       ]),
     );
