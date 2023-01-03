@@ -5,23 +5,23 @@ import '../models/Album.dart';
 import '../services/API2.dart';
 import '../services/utils.dart';
 
-class Takipcilerim extends StatefulWidget {
-  const Takipcilerim({Key? key}) : super(key: key);
+class Takipettiklerim extends StatefulWidget {
+  const Takipettiklerim({Key? key}) : super(key: key);
 
   @override
-  State<Takipcilerim> createState() => _TakipcilerimState();
+  State<Takipettiklerim> createState() => _TakipettiklerimState();
 }
 
-class _TakipcilerimState extends State<Takipcilerim> {
+class _TakipettiklerimState extends State<Takipettiklerim> {
 
   TextEditingController _kisiNameController = TextEditingController();
   late List<dynamic> takipciler = [];
   late List<dynamic> filtered = [];
 
-  getMyFriends()async{
+  getYouFriends()async{
     //
     dynamic cevap =
-    await API.postRequest('api/lokomedia/getMyFriends', {});
+    await API.postRequest('api/lokomedia/getYouFriends', {});
 
     setState(() {
       if(cevap['status']==true){
@@ -52,16 +52,16 @@ class _TakipcilerimState extends State<Takipcilerim> {
 
   cikart(dynamic user){
     Util.evetHayir(context, 'Kişi Takip Etme',
-        '${user['name']} adlı kişinin sizi takip etmesini istemiyor musunuz?',
+        '${user['name']} adlı kişiyi takibi bırakmak ister misiniz?',
             (cevap) async {
           if (cevap == true) {
             //
-            dynamic cevap = await API.postRequest('api/lokomedia/removeMe', {'uid':user['id'].toString()});
+            dynamic cevap = await API.postRequest('api/lokomedia/removeFriend', {'uid':user['id'].toString()});
             if(cevap['status']==true){
-              SBBildirim.bilgi("${user['name']} adlı kişi sizi artık takip edemez.");
-              await getMyFriends();
+              SBBildirim.bilgi("${user['name']} adlı kişiyi artık takip etmiyorsunuz.");
+              await getYouFriends();
             }else{
-              SBBildirim.uyari('${user['name']} adlı kişi sizi zaten takip etmiyor.');
+              SBBildirim.uyari('${user['name']} adlı kişiyi zaten takip etmiyorsunuz.');
             }
           }
         });
@@ -70,7 +70,7 @@ class _TakipcilerimState extends State<Takipcilerim> {
   @override
   void initState() {
     // TODO: implement initState
-    getMyFriends();
+    getYouFriends();
     super.initState();
   }
 
@@ -78,7 +78,7 @@ class _TakipcilerimState extends State<Takipcilerim> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Takipçi Listem: ${takipciler.length} Kişi'),
+        title: Text('Takip Ettiklerim : ${takipciler.length} Kişi'),
       ),
       body: Column(
         children: [
@@ -116,11 +116,11 @@ class _TakipcilerimState extends State<Takipcilerim> {
           Container(
             height: 500,
             child: ListView.builder(
-              shrinkWrap: true,
+                shrinkWrap: true,
                 itemCount: filtered.length,
                 itemBuilder: (BuildContext context, int index){
-                String img = filtered[index]['img'];
-                String name = filtered[index]['name'];
+                  String img = filtered[index]['img'];
+                  String name = filtered[index]['name'];
                   return Padding(
                     padding: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
                     child: Card(

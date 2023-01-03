@@ -20,6 +20,7 @@ import 'package:loko_media/services/utils.dart';
 import 'package:loko_media/view/AudioRecorder.dart';
 import 'package:loko_media/view/Medya.dart';
 import 'package:loko_media/view/Takipcilerim.dart';
+import 'package:loko_media/view/Kisiara.dart';
 import 'package:loko_media/view_model/app_view_model.dart';
 import 'package:loko_media/view_model/layout.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +31,7 @@ import '../services/auth.dart';
 import '../view_model/folder_model.dart';
 import 'Harita.dart';
 import 'LoginPage.dart';
+import 'Takipettiklerim.dart';
 import 'TextView.dart';
 
 class App extends StatefulWidget {
@@ -471,6 +473,22 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
           ));
         break;
       }
+      case 'takipettiklerim':{
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Takipettiklerim()
+            ));
+        break;
+      }
+      case 'kisiara':{
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Kisiara()
+            ));
+        break;
+      }
     }
   }
 
@@ -525,8 +543,14 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                     arrowColor: Colors.black,*/
                 ),
                 listMenuItems(Icons.event_note, "Albüm Oluştur", getDialog),
-                listMenuItems(Icons.account_circle_rounded, "Takipçilerim", (){
+                listMenuItems(Icons.search, "Kişi Ara", (){
+                  openPage('kisiara');
+                }),
+                listMenuItems(Icons.supervised_user_circle, "Takipçilerim", (){
                   openPage('takipciler');
+                }),
+                listMenuItems(Icons.supervisor_account_rounded, "Takip Ettiklerim", (){
+                  openPage('takipettiklerim');
                 }),
 
                 // SizedBox(height: context.dynamicHeight(3)),
