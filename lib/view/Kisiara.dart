@@ -31,7 +31,7 @@ class _KisiaraState extends State<Kisiara> {
   //
 
   cikart(dynamic user){
-    Util.evetHayir(context, 'Kişi Takip Etme',
+    Util.evetHayir(context, 'Takibi Bırakma',
         '${user['name']} adlı kişiyi takibi bırakmak ister misiniz?',
             (cevap) async {
           if (cevap == true) {
@@ -42,6 +42,23 @@ class _KisiaraState extends State<Kisiara> {
               searchUser(_kisiNameController.text);
             }else{
               SBBildirim.uyari('${user['name']} adlı kişiyi zaten takip etmiyorsunuz.');
+            }
+
+          }
+        });
+  }
+  iptal(dynamic user){
+    Util.evetHayir(context, 'Takip İsteği İptal Etme',
+        '${user['name']} adlı kişiye gönderdiğiniz takip isteğini iptal etmek ister misiniz?',
+            (cevap) async {
+          if (cevap == true) {
+            //
+            dynamic cevap = await API.postRequest('api/lokomedia/removeFriend', {'uid':user['id'].toString()});
+            if(cevap['status']==true){
+              SBBildirim.bilgi("${user['name']} adlı kişiye gönderilen takip isteği iptal edildi.");
+              searchUser(_kisiNameController.text);
+            }else{
+              SBBildirim.uyari('${user['name']} adlı kişiye gönderilen takip isteği iptal edilemedi.');
             }
 
           }
@@ -120,6 +137,7 @@ class _KisiaraState extends State<Kisiara> {
                   String img = kisiler[index]['img'];
                   String name = kisiler[index]['name'];
                   bool isMyFriend = kisiler[index]['isMyFriend'];
+                  bool isRequested = kisiler[index]['isRequested'];
                   TextButton button = TextButton(
                       onPressed: () {
                         takipEt(kisiler[index]);
@@ -133,6 +151,14 @@ class _KisiaraState extends State<Kisiara> {
                         },
                         child: Text('Çıkart',style: TextStyle(color:Color(
                             0xffffda15)),));
+                  }
+                  if(isRequested==true){
+                    button = TextButton(
+                        onPressed: () {
+                          iptal(kisiler[index]);
+                        },
+                        child: Text('İptal Et',style: TextStyle(color:Color(
+                            0xffff7373)),));
                   }
                   return Padding(
                     padding: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),

@@ -21,7 +21,7 @@ class _TakipcilerimState extends State<Takipcilerim> {
   getMyFriends()async{
     //
     dynamic cevap =
-    await API.postRequest('api/lokomedia/getMyFriends', {});
+    await API.postRequest('api/lokomedia/getYouFriends', {});
 
     setState(() {
       if(cevap['status']==true){
@@ -51,7 +51,7 @@ class _TakipcilerimState extends State<Takipcilerim> {
   }
 
   cikart(dynamic user){
-    Util.evetHayir(context, 'Kişi Takip Etme',
+    Util.evetHayir(context, 'Takipçini Çıkarma',
         '${user['name']} adlı kişinin sizi takip etmesini istemiyor musunuz?',
             (cevap) async {
           if (cevap == true) {

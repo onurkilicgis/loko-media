@@ -180,7 +180,7 @@ class Util {
                 Theme.of(context).bottomNavigationBarTheme.backgroundColor,
             title: Text(baslik),
             content: Text(soru,
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.left,
                 style: TextStyle(
                   fontSize: 14,
                 )),
