@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../models/Album.dart';
@@ -13,35 +12,33 @@ class Takipettiklerim extends StatefulWidget {
 }
 
 class _TakipettiklerimState extends State<Takipettiklerim> {
-
   TextEditingController _kisiNameController = TextEditingController();
   late List<dynamic> takipciler = [];
   late List<dynamic> filtered = [];
 
-  getYouFriends()async{
+  getYouFriends() async {
     //
-    dynamic cevap =
-    await API.postRequest('api/lokomedia/getMyFriends', {});
+    dynamic cevap = await API.postRequest('api/lokomedia/getMyFriends', {});
 
     setState(() {
-      if(cevap['status']==true){
+      if (cevap['status'] == true) {
         takipciler = cevap['data'];
         filtered = cevap['data'];
-      }else{
-        takipciler=[];
+      } else {
+        takipciler = [];
       }
     });
   }
 
-  searchInList(String search){
+  searchInList(String search) {
     List<dynamic> arr = [];
-    for(int i=0;i<takipciler.length;i++){
+    for (int i = 0; i < takipciler.length; i++) {
       String name = takipciler[i]['name'];
       String mail = takipciler[i]['mail'];
       String search2 = search.toLowerCase();
       name = name.toLowerCase();
       mail = mail.toLowerCase();
-      if(name.indexOf(search2)!=-1 || mail.indexOf(search2)!=-1){
+      if (name.indexOf(search2) != -1 || mail.indexOf(search2) != -1) {
         arr.add(takipciler[i]);
       }
     }
@@ -50,21 +47,24 @@ class _TakipettiklerimState extends State<Takipettiklerim> {
     });
   }
 
-  cikart(dynamic user){
+  cikart(dynamic user) {
     Util.evetHayir(context, 'Takibi Bırakma',
         '${user['name']} adlı kişiyi takip etmeyi bırakmak ister misiniz?',
-            (cevap) async {
-          if (cevap == true) {
-            //
-            dynamic cevap = await API.postRequest('api/lokomedia/removeFriend', {'uid':user['id'].toString()});
-            if(cevap['status']==true){
-              SBBildirim.bilgi("${user['name']} adlı kişiyi artık takip etmiyorsunuz.");
-              await getYouFriends();
-            }else{
-              SBBildirim.uyari('${user['name']} adlı kişiyi zaten takip etmiyorsunuz.');
-            }
-          }
-        });
+        (cevap) async {
+      if (cevap == true) {
+        //
+        dynamic cevap = await API.postRequest(
+            'api/lokomedia/removeFriend', {'uid': user['id'].toString()});
+        if (cevap['status'] == true) {
+          SBBildirim.bilgi(
+              "${user['name']} adlı kişiyi artık takip etmiyorsunuz.");
+          await getYouFriends();
+        } else {
+          SBBildirim.uyari(
+              '${user['name']} adlı kişiyi zaten takip etmiyorsunuz.');
+        }
+      }
+    });
   }
 
   @override
@@ -80,7 +80,7 @@ class _TakipettiklerimState extends State<Takipettiklerim> {
       appBar: AppBar(
         title: Text('Takip Ettiklerim : ${takipciler.length} Kişi'),
       ),
-      body: Column(
+      body: ListView(
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -118,28 +118,30 @@ class _TakipettiklerimState extends State<Takipettiklerim> {
             child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: filtered.length,
-                itemBuilder: (BuildContext context, int index){
+                itemBuilder: (BuildContext context, int index) {
                   String img = filtered[index]['img'];
                   String name = filtered[index]['name'];
                   return Padding(
-                    padding: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
+                    padding: const EdgeInsets.only(
+                        top: 0, left: 8, right: 8, bottom: 0),
                     child: Card(
                       child: ListTile(
                         leading: CircleAvatar(
-                          backgroundImage: NetworkImage(img,scale: 1),
+                          backgroundImage: NetworkImage(img, scale: 1),
                         ),
                         title: Text('${name}'),
-                        trailing:
-                        TextButton(onPressed: () {
-                          cikart(filtered[index]);
-
-                        }, child: Text('Çıkart',style: TextStyle(color:Color(
-                            0xffffda15)),)),
+                        trailing: TextButton(
+                            onPressed: () {
+                              cikart(filtered[index]);
+                            },
+                            child: Text(
+                              'Çıkart',
+                              style: TextStyle(color: Color(0xffffda15)),
+                            )),
                       ),
                     ),
                   );
-                }
-            ),
+                }),
           )
         ],
       ),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,7 +9,7 @@ import '../services/API2.dart';
 class AlbumShare extends StatefulWidget {
   String? type;
   dynamic info;
-  List<Medias?> mediaList;
+  List<Medias> mediaList;
 
   AlbumShare({required this.type, required this.info, required this.mediaList});
 
@@ -20,12 +21,15 @@ class _AlbumShareState extends State<AlbumShare> {
   late TextEditingController _albumNameController;
   TextEditingController _albumIcerikController = TextEditingController();
   TextEditingController _kisiNameController = TextEditingController();
-  int radioValueLocation = 0;
-  int radioValueShare = 0;
+  int? radioValueLocation;
+  int? radioValueShare;
   final ScrollController _controller = ScrollController();
-  int radioValueList = 0;
+  int? radioValueList;
+
+  bool isLoading = false;
+  double progress = 0.0;
   bool isVisible = false;
-  bool checkList = false;
+  List<int> selectedIndexes = [];
   int rangeMax = 60;
   int currentValue = 1;
   List<dynamic> selectedUsers = [];
@@ -58,12 +62,10 @@ class _AlbumShareState extends State<AlbumShare> {
       appBar: AppBar(
         title: Text('Albüm Paylaşma Paneli'),
       ),
-      body: ListView(
-        controller: _controller,
-          children: [
+      body: ListView(controller: _controller, children: [
         Padding(
-          padding: const EdgeInsets.only(top:20,bottom: 0,left: 8),
-          child: Text('Albüm Adı Giriniz',style: TextStyle(fontSize: 16)),
+          padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
+          child: Text('Albüm Adı Giriniz', style: TextStyle(fontSize: 16)),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -96,8 +98,9 @@ class _AlbumShareState extends State<AlbumShare> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top:20,bottom: 0,left: 8),
-          child: Text('Albüm Açıklaması Giriniz',style: TextStyle(fontSize: 16)),
+          padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
+          child:
+              Text('Albüm Açıklaması Giriniz', style: TextStyle(fontSize: 16)),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -126,8 +129,8 @@ class _AlbumShareState extends State<AlbumShare> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top:20,bottom: 0,left: 8),
-          child: Text('Konum Paylaşımı',style: TextStyle(fontSize: 16)),
+          padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
+          child: Text('Konum Paylaşımı', style: TextStyle(fontSize: 16)),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -135,7 +138,7 @@ class _AlbumShareState extends State<AlbumShare> {
             Expanded(
               child: RadioListTile(
                   tileColor: Color(0xff192132),
-                  title: Text('Evet Paylaş',style: TextStyle(fontSize: 13)),
+                  title: Text('Evet Paylaş', style: TextStyle(fontSize: 13)),
                   activeColor: Color(0xff0e91ce),
                   value: 1,
                   groupValue: radioValueLocation,
@@ -148,7 +151,7 @@ class _AlbumShareState extends State<AlbumShare> {
             Expanded(
               child: RadioListTile(
                   tileColor: Color(0xff192132),
-                  title: Text('Hayır Paylaşma',style: TextStyle(fontSize: 13)),
+                  title: Text('Hayır Paylaşma', style: TextStyle(fontSize: 13)),
                   activeColor: Color(0xff0e91ce),
                   value: 2,
                   groupValue: radioValueLocation,
@@ -161,15 +164,15 @@ class _AlbumShareState extends State<AlbumShare> {
           ],
         ),
         Padding(
-          padding: const EdgeInsets.only(top:20,bottom: 0,left: 8),
-          child: Text('Paylaşım Süresi',style: TextStyle(fontSize: 16)),
+          padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
+          child: Text('Paylaşım Süresi', style: TextStyle(fontSize: 16)),
         ),
         Row(
           children: [
             Expanded(
               child: RadioListTile(
                   tileColor: Color(0xff192132),
-                  title: Text('Süresiz Paylaş',style: TextStyle(fontSize: 13)),
+                  title: Text('Süresiz Paylaş', style: TextStyle(fontSize: 13)),
                   activeColor: Color(0xff0e91ce),
                   value: 1,
                   groupValue: radioValueShare,
@@ -183,7 +186,7 @@ class _AlbumShareState extends State<AlbumShare> {
             Expanded(
               child: RadioListTile(
                   tileColor: Color(0xff192132),
-                  title: Text('Süreli Paylaş',style: TextStyle(fontSize: 13)),
+                  title: Text('Süreli Paylaş', style: TextStyle(fontSize: 13)),
                   activeColor: Color(0xff0e91ce),
                   value: 2,
                   groupValue: radioValueShare,
@@ -272,40 +275,45 @@ class _AlbumShareState extends State<AlbumShare> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top:20,bottom: 5,left: 8),
-          child: Text('Paylaşılan Kişiler : ${selectedUsersId.length} Kişi',style: TextStyle(fontSize: 16)),
+          padding: const EdgeInsets.only(top: 20, bottom: 5, left: 8),
+          child: Text('Paylaşılan Kişiler : ${selectedUsersId.length} Kişi',
+              style: TextStyle(fontSize: 16)),
         ),
-            selectedUsersId.length>0
-                ? Container(
-              margin: EdgeInsets.only(bottom: 0),
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: selectedUsersId.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
-                      child: Card(
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(selectedUsers[index]['img'],scale: 1),
+        selectedUsersId.length > 0
+            ? Container(
+                margin: EdgeInsets.only(bottom: 0),
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: selectedUsersId.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                            top: 0, left: 8, right: 8, bottom: 0),
+                        child: Card(
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                  selectedUsers[index]['img'],
+                                  scale: 1),
+                            ),
+                            title: Text('${selectedUsers[index]['name']}'),
+                            trailing: TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    selectedUsersId.removeAt(index);
+                                    selectedUsers.removeAt(index);
+                                  });
+                                },
+                                child: Text(
+                                  'Çıkart',
+                                  style: TextStyle(color: Color(0xffffda15)),
+                                )),
                           ),
-                          title: Text('${selectedUsers[index]['name']}'),
-                          trailing:
-                          TextButton(onPressed: () {
-                            setState(() {
-                              selectedUsersId.removeAt(index);
-                              selectedUsers.removeAt(index);
-                            });
-
-                          }, child: Text('Çıkart',style: TextStyle(color:Color(
-                              0xffffda15)),)),
                         ),
-                      ),
-                    );
-
-                  }),
-            )
-                : Container(),
+                      );
+                    }),
+              )
+            : Container(),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextField(
@@ -317,7 +325,7 @@ class _AlbumShareState extends State<AlbumShare> {
               });
               if (userName['status'] == true) {
                 data = await userName['data'];
-                if(data.length>0){
+                if (data.length > 0) {
                   _controller.jumpTo(_controller.position.maxScrollExtent);
                 }
                 setState(() {
@@ -351,81 +359,156 @@ class _AlbumShareState extends State<AlbumShare> {
         ),
         status == true
             ? Container(
-              margin: EdgeInsets.only(bottom: 30),
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: data.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    if(selectedUsersId.indexOf(data[index]['id'])==-1){
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
-                        child: Card(
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(data[index]['img'],scale: 1),
+                margin: EdgeInsets.only(bottom: 30),
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      if (selectedUsersId.indexOf(data[index]['id']) == -1) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                              top: 0, left: 8, right: 8, bottom: 0),
+                          child: Card(
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundImage:
+                                    NetworkImage(data[index]['img'], scale: 1),
+                              ),
+                              title: Text('${data[index]['name']}'),
+                              trailing: TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      if (selectedUsersId
+                                              .indexOf(data[index]['id']) ==
+                                          -1) {
+                                        selectedUsers.add(data[index]);
+                                        selectedUsersId.add(data[index]['id']);
+                                      }
+                                    });
+                                  },
+                                  child: Text(
+                                    'Ekle',
+                                    style: TextStyle(color: Color(0xff0e91ce)),
+                                  )),
                             ),
-                            title: Text('${data[index]['name']}'),
-                            trailing:
-                            TextButton(onPressed: () {
-                              setState(() {
-                                if(selectedUsersId.indexOf(data[index]['id'])==-1){
-                                  selectedUsers.add(data[index]);
-                                  selectedUsersId.add(data[index]['id']);
-                                }
-                              });
-
-                            }, child: Text('Ekle',style: TextStyle(color:Color(0xff0e91ce)),)),
                           ),
-                        ),
-                      );
-                    }else{
-                      return Container(child: null,);
-                    }
-
-                  }),
-            )
-            : Container()
+                        );
+                      } else {
+                        return Container(
+                          child: null,
+                        );
+                      }
+                    }),
+              )
+            : Container(),
+        Padding(
+          padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
+          child: Text('Paylaşılacak Öğeler', style: TextStyle(fontSize: 16)),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton(
+                onPressed: () {},
+                child: Text('Tümünü İptal Et',
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.headline5?.color))),
+            TextButton(
+                onPressed: () {},
+                child: Text('Tümünü Seç',
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.headline5?.color))),
+          ],
+        ),
+        ListView.builder(
+            shrinkWrap: true,
+            itemCount: widget.mediaList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return mediasList(index);
+            })
       ]),
     );
   }
 
-  Widget listAlbumShare(Medias medias) {
-    return ListTile(
-      leading: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            child: Image.file(
-              File(
-                medias.path!,
-              ),
-              fit: BoxFit.cover,
+  Padding mediasList(int index) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
+        child: Column(
+          children: [
+            Container(
+              child: Row(children: [
+                Expanded(
+                  flex: 2,
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: Container(
+                        height: 50,
+                        width: 50,
+                        child: Image.file(
+                          File(widget.mediaList[index].path!),
+                          fit: BoxFit.cover,
+                        ),
+                      )),
+                ),
+                Expanded(
+                  flex: 5,
+                  child: RadioListTile(
+                      tileColor: Theme.of(context).listTileTheme.tileColor,
+                      title: Text('Albüm Kapağı'),
+                      activeColor: Theme.of(context)
+                          .bottomNavigationBarTheme
+                          .selectedItemColor,
+                      value: index,
+                      groupValue: radioValueList,
+                      onChanged: (int? veri) {
+                        setState(() {
+                          radioValueList = veri!;
+                        });
+                      }),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: CheckboxListTile(
+                      title: Text('Seç'),
+                      value: selectedIndexes.contains(index),
+                      checkColor: Color(0xff80C783),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      activeColor: Theme.of(context).listTileTheme.tileColor,
+                      onChanged: (isChecked) => _itemChange(index, isChecked!)),
+                ),
+              ]),
             ),
-          )),
-      title: RadioListTile(
-          tileColor: Color(0xff192132),
-          title: Text('Albüm Kapağı'),
-          activeColor: Colors.white,
-          value: 1,
-          groupValue: radioValueList,
-          onChanged: (int? veri) {
-            setState(() {
-              radioValueList = veri!;
-            });
-          }),
-      trailing: CheckboxListTile(
-        title: Text('Seç'),
-        value: checkList,
-        checkColor: Color(0xff80C783),
-        controlAffinity: ListTileControlAffinity.leading,
-        activeColor: Color(0xff273238),
-        onChanged: (
-          bool? data,
-        ) {
-          setState(() {
-            checkList = !checkList;
-          });
-        },
+            isLoading == true
+                ? LinearProgressIndicator(
+                    backgroundColor:
+                        Theme.of(context).textTheme.headline5?.color,
+                    value: progress)
+                : Container()
+          ],
+        ),
       ),
     );
+  }
+
+  void timeProgress() {
+    Timer.periodic(Duration(milliseconds: 100), (timer) {
+      setState(() {
+        progress = progress + 0.1;
+      });
+    });
+  }
+
+  void _itemChange(int index, bool isSelected) {
+    setState(() {
+      if (isSelected) {
+        selectedIndexes.add(index);
+        isLoading = true;
+        timeProgress();
+      } else {
+        selectedIndexes.remove(index);
+        isLoading = false;
+      }
+    });
   }
 }

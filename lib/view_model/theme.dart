@@ -24,7 +24,7 @@ class MyTheme {
 
   static ThemeData darkTheme = ThemeData(
       progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: Color(0xff017eba),
+        color: Color(0xff80C783),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: Color(0xff202b40),
@@ -40,7 +40,7 @@ class MyTheme {
       ),
       textTheme: TextTheme(
           headline5: TextStyle(
-        color: Color(0xffc2c9d6),
+        color: Color(0xffe1e4ee),
       )),
       primarySwatch: Colors.red,
       brightness: Brightness.dark,

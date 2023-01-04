@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../models/Album.dart';
@@ -16,71 +15,78 @@ class _KisiaraState extends State<Kisiara> {
   TextEditingController _kisiNameController = TextEditingController();
   late List<dynamic> kisiler = [];
 
-  searchUser(String search)async{
-    dynamic cevap =
-        await API.postRequest('api/lokomedia/searchUser', {'search':search.toString()});
+  searchUser(String search) async {
+    dynamic cevap = await API
+        .postRequest('api/lokomedia/searchUser', {'search': search.toString()});
 
     setState(() {
-      if(cevap['status']==true){
+      if (cevap['status'] == true) {
         kisiler = cevap['data'];
-      }else{
-        kisiler=[];
+      } else {
+        kisiler = [];
       }
     });
   }
   //
 
-  cikart(dynamic user){
+  cikart(dynamic user) {
     Util.evetHayir(context, 'Takibi Bırakma',
         '${user['name']} adlı kişiyi takibi bırakmak ister misiniz?',
-            (cevap) async {
-          if (cevap == true) {
-            //
-            dynamic cevap = await API.postRequest('api/lokomedia/removeFriend', {'uid':user['id'].toString()});
-            if(cevap['status']==true){
-              SBBildirim.bilgi("${user['name']} adlı kişiyi artık takip etmiyorsunuz.");
-              searchUser(_kisiNameController.text);
-            }else{
-              SBBildirim.uyari('${user['name']} adlı kişiyi zaten takip etmiyorsunuz.');
-            }
-
-          }
-        });
+        (cevap) async {
+      if (cevap == true) {
+        //
+        dynamic cevap = await API.postRequest(
+            'api/lokomedia/removeFriend', {'uid': user['id'].toString()});
+        if (cevap['status'] == true) {
+          SBBildirim.bilgi(
+              "${user['name']} adlı kişiyi artık takip etmiyorsunuz.");
+          searchUser(_kisiNameController.text);
+        } else {
+          SBBildirim.uyari(
+              '${user['name']} adlı kişiyi zaten takip etmiyorsunuz.');
+        }
+      }
+    });
   }
-  iptal(dynamic user){
+
+  iptal(dynamic user) {
     Util.evetHayir(context, 'Takip İsteği İptal Etme',
         '${user['name']} adlı kişiye gönderdiğiniz takip isteğini iptal etmek ister misiniz?',
-            (cevap) async {
-          if (cevap == true) {
-            //
-            dynamic cevap = await API.postRequest('api/lokomedia/removeFriend', {'uid':user['id'].toString()});
-            if(cevap['status']==true){
-              SBBildirim.bilgi("${user['name']} adlı kişiye gönderilen takip isteği iptal edildi.");
-              searchUser(_kisiNameController.text);
-            }else{
-              SBBildirim.uyari('${user['name']} adlı kişiye gönderilen takip isteği iptal edilemedi.');
-            }
-
-          }
-        });
+        (cevap) async {
+      if (cevap == true) {
+        //
+        dynamic cevap = await API.postRequest(
+            'api/lokomedia/removeFriend', {'uid': user['id'].toString()});
+        if (cevap['status'] == true) {
+          SBBildirim.bilgi(
+              "${user['name']} adlı kişiye gönderilen takip isteği iptal edildi.");
+          searchUser(_kisiNameController.text);
+        } else {
+          SBBildirim.uyari(
+              '${user['name']} adlı kişiye gönderilen takip isteği iptal edilemedi.');
+        }
+      }
+    });
   }
 
-  takipEt(dynamic user){
+  takipEt(dynamic user) {
     Util.evetHayir(context, 'Kişi Takip Etme',
         '${user['name']} adlı kişiyi takip etmek istediğinize emin misiniz?',
-            (cevap) async {
-          if (cevap == true) {
-            //
-            dynamic cevap = await API.postRequest('api/lokomedia/addFriend', {'uid':user['id'].toString()});
-            if(cevap['status']==true){
-              SBBildirim.bilgi("${user['name']} adlı kişiye takip isteği gönderilmiştir. Lütfen kabul etmesini bekleyiniz.");
-              searchUser(_kisiNameController.text);
-            }else{
-              SBBildirim.uyari('${user['name']} adlı kişiye daha önce istek göndermişsiniz. Lütfen kabul etmesini bekleyiniz.');
-            }
-
-          }
-        });
+        (cevap) async {
+      if (cevap == true) {
+        //
+        dynamic cevap = await API.postRequest(
+            'api/lokomedia/addFriend', {'uid': user['id'].toString()});
+        if (cevap['status'] == true) {
+          SBBildirim.bilgi(
+              "${user['name']} adlı kişiye takip isteği gönderilmiştir. Lütfen kabul etmesini bekleyiniz.");
+          searchUser(_kisiNameController.text);
+        } else {
+          SBBildirim.uyari(
+              '${user['name']} adlı kişiye daha önce istek göndermişsiniz. Lütfen kabul etmesini bekleyiniz.');
+        }
+      }
+    });
   }
 
   @override
@@ -95,7 +101,7 @@ class _KisiaraState extends State<Kisiara> {
       appBar: AppBar(
         title: Text('Kişi Arama'),
       ),
-      body: Column(
+      body: ListView(
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -133,7 +139,7 @@ class _KisiaraState extends State<Kisiara> {
             child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: kisiler.length,
-                itemBuilder: (BuildContext context, int index){
+                itemBuilder: (BuildContext context, int index) {
                   String img = kisiler[index]['img'];
                   String name = kisiler[index]['name'];
                   bool isMyFriend = kisiler[index]['isMyFriend'];
@@ -142,38 +148,44 @@ class _KisiaraState extends State<Kisiara> {
                       onPressed: () {
                         takipEt(kisiler[index]);
                       },
-                      child: Text('Takip Et',style: TextStyle(color:Color(
-                          0xff8bc34a)),));
-                  if(isMyFriend==true){
+                      child: Text(
+                        'Takip Et',
+                        style: TextStyle(color: Color(0xff8bc34a)),
+                      ));
+                  if (isMyFriend == true) {
                     button = TextButton(
                         onPressed: () {
                           cikart(kisiler[index]);
                         },
-                        child: Text('Çıkart',style: TextStyle(color:Color(
-                            0xffffda15)),));
+                        child: Text(
+                          'Çıkart',
+                          style: TextStyle(color: Color(0xffffda15)),
+                        ));
                   }
-                  if(isRequested==true){
+                  if (isRequested == true) {
                     button = TextButton(
                         onPressed: () {
                           iptal(kisiler[index]);
                         },
-                        child: Text('İptal Et',style: TextStyle(color:Color(
-                            0xffff7373)),));
+                        child: Text(
+                          'İptal Et',
+                          style: TextStyle(color: Color(0xffff7373)),
+                        ));
                   }
                   return Padding(
-                    padding: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
+                    padding: const EdgeInsets.only(
+                        top: 0, left: 8, right: 8, bottom: 0),
                     child: Card(
                       child: ListTile(
                         leading: CircleAvatar(
-                          backgroundImage: NetworkImage(img,scale: 1),
+                          backgroundImage: NetworkImage(img, scale: 1),
                         ),
                         title: Text('${name}'),
-                        trailing:button,
+                        trailing: button,
                       ),
                     ),
                   );
-                }
-            ),
+                }),
           )
         ],
       ),
