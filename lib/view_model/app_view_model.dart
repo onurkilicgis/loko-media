@@ -261,7 +261,11 @@ class APP_VM {
                         MaterialPageRoute(
                             builder: (context) => AlbumShare(
                                   type: 'album',
-                                  info: {'id': album.id, 'name': album.name},
+                                  info: {
+                                    'id': album.id,
+                                    'name': album.name,
+                                    'kimlere': 'kisi'
+                                  },
                                   mediaList: listShare,
                                 )));
                   },
@@ -271,7 +275,22 @@ class APP_VM {
                     Icons.people,
                   ),
                   title: Text('Herkesle Paylaş'),
-                  onTap: () {},
+                  onTap: () async {
+                    List<Medias> listShare =
+                        await AlbumDataBase.getFiles(album.id!);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AlbumShare(
+                                  type: 'album',
+                                  info: {
+                                    'id': album.id,
+                                    'name': album.name,
+                                    'kimlere': 'herkes'
+                                  },
+                                  mediaList: listShare,
+                                )));
+                  },
                 ),
                 ListTile(
                     leading: Icon(Icons.link),

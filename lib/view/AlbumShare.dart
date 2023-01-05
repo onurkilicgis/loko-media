@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 
 import '../models/Album.dart';
 import '../services/API2.dart';
+import '../services/FileDrive.dart';
+import '../services/MyLocal.dart';
 
 class AlbumShare extends StatefulWidget {
   String? type;
@@ -25,7 +27,7 @@ class _AlbumShareState extends State<AlbumShare> {
   int? radioValueShare;
   final ScrollController _controller = ScrollController();
   int? radioValueList;
-
+  List<dynamic> uploads = [];
   bool isLoading = false;
   double progress = 0.0;
   bool isVisible = false;
@@ -36,6 +38,7 @@ class _AlbumShareState extends State<AlbumShare> {
   List<String> selectedUsersId = [];
   late List<dynamic> data;
   bool status = false;
+  late Timer _timer;
   List<dynamic> selections = [
     {'name': 'Dakika', 'max': 60},
     {'name': 'Saat', 'max': 24},
@@ -49,10 +52,31 @@ class _AlbumShareState extends State<AlbumShare> {
 
   String dropdownValue = 'Dakika';
 
+  populateUploads() {
+    for (int i = 0; i < widget.mediaList.length; i++) {
+      dynamic data = {
+        'media': widget.mediaList[i],
+        'progressValue': 0.0,
+        'checked': true,
+        'isUploaded': false,
+        'uploadURL': ''
+      };
+      uploads.add(data);
+    }
+    setState(() {});
+  }
+
+  late String isDark = 'dark';
+  findTheme() async {
+    isDark = await MyLocal.getStringData('theme');
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     _albumNameController = TextEditingController(text: widget.info['name']);
+    populateUploads();
+    findTheme();
     super.initState();
   }
 
@@ -425,12 +449,179 @@ class _AlbumShareState extends State<AlbumShare> {
             itemCount: widget.mediaList.length,
             itemBuilder: (BuildContext context, int index) {
               return mediasList(index);
-            })
+            }),
+        Padding(
+          padding:
+              const EdgeInsets.only(top: 40, bottom: 10, right: 10, left: 10),
+          child: SizedBox(
+              height: 50,
+              child: ElevatedButton(
+                  onPressed: () {
+                    paylas();
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          Theme.of(context).listTileTheme.tileColor,
+                      foregroundColor:
+                          Theme.of(context).textTheme.headline5?.color,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10))),
+                  child: Text(
+                    'Paylaş',
+                    style: TextStyle(fontSize: 18),
+                  ))),
+        )
       ]),
     );
   }
 
+  medyaContainer(int index) {
+    Medias medya = uploads[index]['media'];
+    switch (medya.fileType) {
+      case 'image':
+        {
+          String? path = medya.path;
+          String newPath = path!.replaceAll(medya.name!, medya.miniName!);
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              width: 20,
+              height: 20,
+              child: Image.file(
+                File(newPath),
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        }
+      case 'video':
+        {
+          String? path = medya.path;
+          String newPath = path!.replaceAll(medya.name!, medya.miniName!);
+          return Stack(alignment: Alignment.center, children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                width: 20,
+                height: 20,
+                child: Image.file(
+                  File(newPath),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Icon(Icons.play_circle_fill, color: Colors.white)
+          ]);
+        }
+      case 'audio':
+        {
+          if (isDark == 'dark') {
+            return Stack(
+                fit: StackFit.expand,
+                alignment: Alignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      color: Colors.black45,
+                      child: Image.asset(
+                        'assets/images/audio_dark.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Icon(Icons.play_circle_fill, color: Colors.white),
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(medya.name!,
+                        style: TextStyle(fontSize: 7),
+                        textAlign: TextAlign.center),
+                  ),
+                ]);
+          } else {
+            return Stack(alignment: Alignment.center, children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  color: Colors.white,
+                  child: Image.asset(
+                    'assets/images/audio_light.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Icon(Icons.play_circle_fill, color: Colors.white),
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Text(medya.name!,
+                    style: TextStyle(fontSize: 7), textAlign: TextAlign.center),
+              ),
+            ]);
+          }
+        }
+
+      case 'txt':
+        {
+          if (isDark == 'dark') {
+            return Stack(
+                fit: StackFit.expand,
+                alignment: Alignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      color: Colors.black45,
+                      child: Image.asset(
+                        'assets/images/txt_dark.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(medya.name!,
+                        style: TextStyle(fontSize: 7),
+                        textAlign: TextAlign.center),
+                  ),
+                ]);
+          } else {
+            return Stack(alignment: Alignment.center, children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  color: Colors.white,
+                  child: Image.asset(
+                    'assets/images/txt_light.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Text(medya.name!,
+                    style: TextStyle(fontSize: 7), textAlign: TextAlign.center),
+              ),
+            ]);
+          }
+        }
+    }
+  }
+
   Padding mediasList(int index) {
+    //xxx
+
+    Medias medya = uploads[index]['media'];
+    double mediaProggresValue = uploads[index]['progressValue'];
+    bool medyaCheck = uploads[index]['checked'];
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
@@ -438,19 +629,7 @@ class _AlbumShareState extends State<AlbumShare> {
           children: [
             Container(
               child: Row(children: [
-                Expanded(
-                  flex: 2,
-                  child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: Container(
-                        height: 50,
-                        width: 50,
-                        child: Image.file(
-                          File(widget.mediaList[index].path!),
-                          fit: BoxFit.cover,
-                        ),
-                      )),
-                ),
+                Expanded(flex: 2, child: medyaContainer(index) ?? Container()),
                 Expanded(
                   flex: 5,
                   child: RadioListTile(
@@ -471,11 +650,12 @@ class _AlbumShareState extends State<AlbumShare> {
                   flex: 3,
                   child: CheckboxListTile(
                       title: Text('Seç'),
-                      value: selectedIndexes.contains(index),
+                      value: medyaCheck,
                       checkColor: Color(0xff80C783),
                       controlAffinity: ListTileControlAffinity.leading,
                       activeColor: Theme.of(context).listTileTheme.tileColor,
-                      onChanged: (isChecked) => _itemChange(index, isChecked!)),
+                      onChanged: (isChecked) =>
+                          itemCheckBox(index, isChecked!)),
                 ),
               ]),
             ),
@@ -483,7 +663,7 @@ class _AlbumShareState extends State<AlbumShare> {
                 ? LinearProgressIndicator(
                     backgroundColor:
                         Theme.of(context).textTheme.headline5?.color,
-                    value: progress)
+                    value: mediaProggresValue)
                 : Container()
           ],
         ),
@@ -499,16 +679,61 @@ class _AlbumShareState extends State<AlbumShare> {
     });
   }
 
-  void _itemChange(int index, bool isSelected) {
+  void itemCheckBox(int index, bool checkStatus) {
     setState(() {
-      if (isSelected) {
-        selectedIndexes.add(index);
-        isLoading = true;
-        timeProgress();
-      } else {
-        selectedIndexes.remove(index);
-        isLoading = false;
-      }
+      uploads[index]['checked'] = checkStatus;
     });
+  }
+
+  paylas() async {
+    FileDrive drive = FileDrive();
+    await drive.ready();
+    for (var i = 0; i < uploads.length; i++) {
+      dynamic upload = uploads[i];
+      if (upload['checked'] == true) {
+        Medias media = upload['media'];
+        if (media.url != "") {
+          String? path = media.path;
+          _timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
+            double total = upload['progressValue'] + 0.1;
+            if (total < 1) {
+              upload['progressValue'] = total;
+              setState(() {
+                uploads[i] = upload;
+              });
+            } else {
+              _timer.cancel();
+            }
+          });
+          String publicID = await drive.uploadFile(path!);
+          media.isPublic = widget.info['kimlere'] == 'kisi'
+              ? false
+              : widget.info['kimlere'] == 'herkes'
+                  ? true
+                  : false;
+          media.url = publicID;
+          // burada media'yı update edeceğiz
+          // AlbumDataBase de bir fonksiyon oluştur adı : updateMediaPublicURL
+          // Tek parametre "media" alsın
+          // dbde yer alan bu medyayı update etsin yani bilgilerini güncellesin.
+          if (publicID != false) {
+            _timer.cancel();
+            upload['progressValue'] = 1.0;
+            upload['isUploaded'] = true;
+            upload['uploadURL'] = publicID;
+            setState(() {
+              uploads[i] = upload;
+            });
+          }
+        } else {
+          upload['progressValue'] = 1.0;
+          upload['isUploaded'] = true;
+          upload['uploadURL'] = media.url;
+          setState(() {
+            uploads[i] = upload;
+          });
+        }
+      }
+    }
   }
 }
