@@ -80,6 +80,15 @@ class AlbumDataBase {
     return deger;
   }
 
+  static Future<int> updateMediaPublicURL(Medias media) async {
+    Database db = await openDatabase(_albumDatabaseName,
+        version: _version, onCreate: (Database db, int version) async {});
+    int deger = await db.update(mediaTableName, media.toJson(),
+        where: 'id = ?', whereArgs: [media.id]);
+    db.close();
+    return deger;
+  }
+
   static Future<List<Album>> getAlbums() async {
     List<Album> liste = [];
     Database db = await openDatabase(_albumDatabaseName,

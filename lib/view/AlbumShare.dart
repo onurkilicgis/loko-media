@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:loko_media/database/AlbumDataBase.dart';
 
 import '../models/Album.dart';
 import '../services/API2.dart';
@@ -433,12 +434,26 @@ class _AlbumShareState extends State<AlbumShare> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  for (var i = 0; i < uploads.length; i++) {
+                    dynamic check = uploads[i];
+
+                    check['checked'] = false;
+                  }
+                  setState(() {});
+                },
                 child: Text('Tümünü İptal Et',
                     style: TextStyle(
                         color: Theme.of(context).textTheme.headline5?.color))),
             TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  for (var i = 0; i < uploads.length; i++) {
+                    dynamic check = uploads[i];
+
+                    check['checked'] = true;
+                  }
+                  setState(() {});
+                },
                 child: Text('Tümünü Seç',
                     style: TextStyle(
                         color: Theme.of(context).textTheme.headline5?.color))),
@@ -452,7 +467,7 @@ class _AlbumShareState extends State<AlbumShare> {
             }),
         Padding(
           padding:
-              const EdgeInsets.only(top: 40, bottom: 10, right: 10, left: 10),
+              const EdgeInsets.only(top: 40, bottom: 20, right: 10, left: 10),
           child: SizedBox(
               height: 50,
               child: ElevatedButton(
@@ -477,39 +492,30 @@ class _AlbumShareState extends State<AlbumShare> {
 
   medyaContainer(int index) {
     Medias medya = uploads[index]['media'];
+    double mediaProggresValue = uploads[index]['progressValue'];
     switch (medya.fileType) {
       case 'image':
         {
           String? path = medya.path;
           String newPath = path!.replaceAll(medya.name!, medya.miniName!);
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Container(
-              width: 20,
-              height: 20,
-              child: Image.file(
+          return clipRRect(
+              mediaProggresValue,
+              Image.file(
                 File(newPath),
                 fit: BoxFit.cover,
-              ),
-            ),
-          );
+              ));
         }
       case 'video':
         {
           String? path = medya.path;
           String newPath = path!.replaceAll(medya.name!, medya.miniName!);
           return Stack(alignment: Alignment.center, children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                width: 20,
-                height: 20,
-                child: Image.file(
+            clipRRect(
+                mediaProggresValue,
+                Image.file(
                   File(newPath),
                   fit: BoxFit.cover,
-                ),
-              ),
-            ),
+                )),
             Icon(Icons.play_circle_fill, color: Colors.white)
           ]);
         }
@@ -517,19 +523,14 @@ class _AlbumShareState extends State<AlbumShare> {
         {
           if (isDark == 'dark') {
             return Stack(
-                fit: StackFit.expand,
+                // fit: StackFit.expand,
                 alignment: Alignment.center,
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      width: 20,
-                      height: 20,
-                      color: Colors.black45,
-                      child: Image.asset(
-                        'assets/images/audio_dark.png',
-                        fit: BoxFit.cover,
-                      ),
+                  clipRRect(
+                    mediaProggresValue,
+                    Image.asset(
+                      'assets/images/audio_dark.png',
+                      fit: BoxFit.cover,
                     ),
                   ),
                   Icon(Icons.play_circle_fill, color: Colors.white),
@@ -542,16 +543,11 @@ class _AlbumShareState extends State<AlbumShare> {
                 ]);
           } else {
             return Stack(alignment: Alignment.center, children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  color: Colors.white,
-                  child: Image.asset(
-                    'assets/images/audio_light.png',
-                    fit: BoxFit.cover,
-                  ),
+              clipRRect(
+                mediaProggresValue,
+                Image.asset(
+                  'assets/images/audio_light.png',
+                  fit: BoxFit.cover,
                 ),
               ),
               Icon(Icons.play_circle_fill, color: Colors.white),
@@ -568,19 +564,14 @@ class _AlbumShareState extends State<AlbumShare> {
         {
           if (isDark == 'dark') {
             return Stack(
-                fit: StackFit.expand,
-                alignment: Alignment.center,
+                // fit: StackFit.expand,
+                alignment: Alignment.topCenter,
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      width: 20,
-                      height: 20,
-                      color: Colors.black45,
-                      child: Image.asset(
-                        'assets/images/txt_dark.png',
-                        fit: BoxFit.cover,
-                      ),
+                  clipRRect(
+                    mediaProggresValue,
+                    Image.asset(
+                      'assets/images/txt_dark.png',
+                      fit: BoxFit.cover,
                     ),
                   ),
                   Padding(
@@ -592,16 +583,11 @@ class _AlbumShareState extends State<AlbumShare> {
                 ]);
           } else {
             return Stack(alignment: Alignment.center, children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  color: Colors.white,
-                  child: Image.asset(
-                    'assets/images/txt_light.png',
-                    fit: BoxFit.cover,
-                  ),
+              clipRRect(
+                mediaProggresValue,
+                Image.asset(
+                  'assets/images/txt_light.png',
+                  fit: BoxFit.cover,
                 ),
               ),
               Padding(
@@ -615,6 +601,20 @@ class _AlbumShareState extends State<AlbumShare> {
     }
   }
 
+  ClipRRect clipRRect(double mediaProggresValue, Image image) {
+    return ClipRRect(
+      //borderRadius: BorderRadius.circular(5),
+      child: Container(
+        color: mediaProggresValue == 1.0
+            ? Color(0xffa5d9a7)
+            : Theme.of(context).listTileTheme.tileColor,
+        width: 48,
+        height: 48,
+        child: image,
+      ),
+    );
+  }
+
   Padding mediasList(int index) {
     //xxx
 
@@ -625,6 +625,9 @@ class _AlbumShareState extends State<AlbumShare> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
+        color: mediaProggresValue == 1.0
+            ? Color(0xffafd5b0)
+            : Theme.of(context).listTileTheme.tileColor,
         child: Column(
           children: [
             Container(
@@ -633,7 +636,9 @@ class _AlbumShareState extends State<AlbumShare> {
                 Expanded(
                   flex: 5,
                   child: RadioListTile(
-                      tileColor: Theme.of(context).listTileTheme.tileColor,
+                      tileColor: mediaProggresValue == 1.0
+                          ? Color(0xffafd5b0)
+                          : Theme.of(context).listTileTheme.tileColor,
                       title: Text('Albüm Kapağı'),
                       activeColor: Theme.of(context)
                           .bottomNavigationBarTheme
@@ -651,15 +656,18 @@ class _AlbumShareState extends State<AlbumShare> {
                   child: CheckboxListTile(
                       title: Text('Seç'),
                       value: medyaCheck,
-                      checkColor: Color(0xff80C783),
+                      // checkColor: Color(0xff80C783),
                       controlAffinity: ListTileControlAffinity.leading,
-                      activeColor: Theme.of(context).listTileTheme.tileColor,
+                      activeColor: Color(0xff80C783),
+                      tileColor: mediaProggresValue == 1.0
+                          ? Color(0xffafd5b0)
+                          : Theme.of(context).listTileTheme.tileColor,
                       onChanged: (isChecked) =>
                           itemCheckBox(index, isChecked!)),
                 ),
               ]),
             ),
-            isLoading == true
+            medyaCheck == true
                 ? LinearProgressIndicator(
                     backgroundColor:
                         Theme.of(context).textTheme.headline5?.color,
@@ -669,14 +677,6 @@ class _AlbumShareState extends State<AlbumShare> {
         ),
       ),
     );
-  }
-
-  void timeProgress() {
-    Timer.periodic(Duration(milliseconds: 100), (timer) {
-      setState(() {
-        progress = progress + 0.1;
-      });
-    });
   }
 
   void itemCheckBox(int index, bool checkStatus) {
@@ -716,6 +716,7 @@ class _AlbumShareState extends State<AlbumShare> {
           // AlbumDataBase de bir fonksiyon oluştur adı : updateMediaPublicURL
           // Tek parametre "media" alsın
           // dbde yer alan bu medyayı update etsin yani bilgilerini güncellesin.
+          await AlbumDataBase.updateMediaPublicURL(media);
           if (publicID != false) {
             _timer.cancel();
             upload['progressValue'] = 1.0;
