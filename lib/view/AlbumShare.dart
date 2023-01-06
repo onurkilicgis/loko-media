@@ -29,7 +29,7 @@ class _AlbumShareState extends State<AlbumShare> {
   int? radioValueLocation;
   int? radioValueShare;
   final ScrollController _controller = ScrollController();
-  int? radioValueList;
+  late int? selectedKapak;
   List<dynamic> uploads = [];
   bool isLoading = false;
   double progress = 0.0;
@@ -78,6 +78,7 @@ class _AlbumShareState extends State<AlbumShare> {
   void initState() {
     // TODO: implement initState
     _albumNameController = TextEditingController(text: widget.info['name']);
+    selectedKapak = widget.mediaList[0].id!;
     populateUploads();
     findTheme();
     super.initState();
@@ -657,7 +658,7 @@ class _AlbumShareState extends State<AlbumShare> {
     Medias medya = uploads[index]['media'];
     double mediaProggresValue = uploads[index]['progressValue'];
     bool medyaCheck = uploads[index]['checked'];
-
+    int medyaid = int.parse(medya.id.toString());
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
@@ -672,18 +673,20 @@ class _AlbumShareState extends State<AlbumShare> {
                 Expanded(
                   flex: 6,
                   child: RadioListTile(
-                      tileColor: mediaProggresValue == 1.0
-                          ? Color(0xff5e995e)
-                          : Theme.of(context).listTileTheme.tileColor,
-                      title: Text('Albüm Kapağı'),
-                      activeColor: Theme.of(context).textTheme.headline5!.color,
-                      value: index,
-                      groupValue: radioValueList,
-                      onChanged: (int? veri) {
-                        setState(() {
-                          radioValueList = veri!;
-                        });
-                      }),
+                    tileColor: mediaProggresValue == 1.0
+                        ? Color(0xff5e995e)
+                        : Theme.of(context).listTileTheme.tileColor,
+                    value: medyaid,
+                    activeColor: Theme.of(context).textTheme.headline5!.color,
+                    groupValue: selectedKapak,
+                    title: Text('Albüm Kapağı'),
+                    onChanged: (int? value) {
+                      //biraz bekle
+                      setState(() {
+                        selectedKapak = value;
+                      });
+                    },
+                  ),
                 ),
                 Expanded(
                   flex: 2,
@@ -774,6 +777,7 @@ class _AlbumShareState extends State<AlbumShare> {
     dynamic apiData = {
       'type': widget.type,
       'info': widget.info,
+      'kapak': selectedKapak,
       'name': _albumNameController.text,
       'icerik': _albumIcerikController.text,
       'konum': radioValueLocation == 1 ? true : false,

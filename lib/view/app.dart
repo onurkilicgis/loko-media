@@ -266,7 +266,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
     setState(() {
       tiklananAlbum = album_id;
     });
-    tabChange(1);
+    tabChange(2);
   }
 
   albumuHaritadaGoster(album) {
@@ -274,7 +274,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
       setState(() {
         tiklananAlbum = album.id;
       });
-      tabChange(2);
+      tabChange(3);
     } else {
       SBBildirim.uyari('Haritada gösterilecek bir media öğesi bulunamadı');
     }
@@ -615,11 +615,11 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
               color: Color(0xff202b40),
               child: TabBar(
                 onTap: (tabindex) async {
-                  if (tabindex == 1) {
+                  if (tabindex == 2) {
                     controller.index = controller.previousIndex;
                     albumMedyalariniAc(aktifalbum);
                   }
-                  if (tabindex == 2) {
+                  if (tabindex == 3) {
                     controller.index = controller.previousIndex;
                     albumuHaritadaGoster(aktifAlbumItem);
                   }
