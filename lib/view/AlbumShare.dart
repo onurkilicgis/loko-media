@@ -29,7 +29,7 @@ class _AlbumShareState extends State<AlbumShare> {
   int? radioValueLocation;
   int? radioValueShare;
   final ScrollController _controller = ScrollController();
-  late int? selectedKapak;
+  late int selectedKapak;
   List<dynamic> uploads = [];
   bool isLoading = false;
   double progress = 0.0;
@@ -681,9 +681,8 @@ class _AlbumShareState extends State<AlbumShare> {
                     groupValue: selectedKapak,
                     title: Text('Albüm Kapağı'),
                     onChanged: (int? value) {
-                      //biraz bekle
                       setState(() {
-                        selectedKapak = value;
+                        selectedKapak = value!;
                       });
                     },
                   ),
