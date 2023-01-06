@@ -157,6 +157,26 @@ class Medias {
     return data;
   }
 
+  dynamic getDynamic() {
+    return {
+      'id': this.id,
+      'album_id': this.album_id,
+      'name': this.name,
+      'miniName': this.miniName,
+      'fileType': this.fileType,
+      'path': this.path,
+      'isPublic': this.isPublic,
+      'url': this.url,
+      'api_id': this.api_id,
+      'date': this.date,
+      'settings': this.settings,
+      'status': this.status,
+      'latitude': this.latitude,
+      'longitude': this.longitude,
+      'altitude': this.altitude,
+    };
+  }
+
   insertData(dynamic settings) {
     this.name = name;
     this.isPublic = false;

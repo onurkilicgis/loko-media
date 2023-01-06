@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
+import 'package:loko_media/view_model/layout.dart';
 
 import '../models/Album.dart';
 import '../services/API2.dart';
@@ -317,6 +319,7 @@ class _AlbumShareState extends State<AlbumShare> {
                 ),
                 selectedUsersId.length > 0
                     ? Container(
+                        height: context.dynamicHeight(2.7),
                         margin: EdgeInsets.only(bottom: 0),
                         child: ListView.builder(
                             shrinkWrap: true,
@@ -398,6 +401,7 @@ class _AlbumShareState extends State<AlbumShare> {
                 ),
                 status == true
                     ? Container(
+                        height: context.dynamicHeight(2.7),
                         margin: EdgeInsets.only(bottom: 30),
                         child: ListView.builder(
                             shrinkWrap: true,
@@ -635,16 +639,14 @@ class _AlbumShareState extends State<AlbumShare> {
     }
   }
 
-  ClipRRect clipRRect(double mediaProggresValue, Image image) {
-    return ClipRRect(
-      //borderRadius: BorderRadius.circular(5),
+  Padding clipRRect(double mediaProggresValue, Image image) {
+    return Padding(
+      padding: const EdgeInsets.all(6.0),
       child: Container(
-        color: mediaProggresValue == 1.0
-            ? Color(0xffa5d9a7)
-            : Theme.of(context).listTileTheme.tileColor,
-        width: 48,
-        height: 48,
-        child: image,
+        width: 50,
+        height: 50,
+        child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(5)), child: image),
       ),
     );
   }
@@ -660,7 +662,7 @@ class _AlbumShareState extends State<AlbumShare> {
       padding: const EdgeInsets.all(8.0),
       child: Card(
         color: mediaProggresValue == 1.0
-            ? Color(0xffafd5b0)
+            ? Color(0xff5e995e)
             : Theme.of(context).listTileTheme.tileColor,
         child: Column(
           children: [
@@ -671,12 +673,10 @@ class _AlbumShareState extends State<AlbumShare> {
                   flex: 6,
                   child: RadioListTile(
                       tileColor: mediaProggresValue == 1.0
-                          ? Color(0xffafd5b0)
+                          ? Color(0xff5e995e)
                           : Theme.of(context).listTileTheme.tileColor,
                       title: Text('Albüm Kapağı'),
-                      activeColor: Theme.of(context)
-                          .bottomNavigationBarTheme
-                          .selectedItemColor,
+                      activeColor: Theme.of(context).textTheme.headline5!.color,
                       value: index,
                       groupValue: radioValueList,
                       onChanged: (int? veri) {
@@ -694,7 +694,7 @@ class _AlbumShareState extends State<AlbumShare> {
                       controlAffinity: ListTileControlAffinity.leading,
                       activeColor: Color(0xff80C783),
                       tileColor: mediaProggresValue == 1.0
-                          ? Color(0xffafd5b0)
+                          ? Color(0xff5e995e)
                           : Theme.of(context).listTileTheme.tileColor,
                       onChanged: (isChecked) =>
                           itemCheckBox(index, isChecked!)),
@@ -703,8 +703,8 @@ class _AlbumShareState extends State<AlbumShare> {
             ),
             medyaCheck == true
                 ? LinearProgressIndicator(
-                    backgroundColor:
-                        Theme.of(context).textTheme.headline5?.color,
+                    color: Color(0xff2b792f),
+                    backgroundColor: Color(0xff405d79),
                     value: mediaProggresValue)
                 : Container()
           ],
@@ -720,13 +720,14 @@ class _AlbumShareState extends State<AlbumShare> {
   }
 
   paylas() async {
+    List<dynamic> fileList = [];
     FileDrive drive = FileDrive();
     await drive.ready();
     for (var i = 0; i < uploads.length; i++) {
       dynamic upload = uploads[i];
       if (upload['checked'] == true) {
         Medias media = upload['media'];
-        if (media.url != "") {
+        if (media.url == "") {
           String? path = media.path;
           _timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
             double total = upload['progressValue'] + 0.1;
@@ -746,13 +747,11 @@ class _AlbumShareState extends State<AlbumShare> {
                   ? true
                   : false;
           media.url = publicID;
-          // burada media'yı update edeceğiz
-          // AlbumDataBase de bir fonksiyon oluştur adı : updateMediaPublicURL
-          // Tek parametre "media" alsın
-          // dbde yer alan bu medyayı update etsin yani bilgilerini güncellesin.
           await AlbumDataBase.updateMediaPublicURL(media);
+          fileList.add(media.getDynamic());
           if (publicID != false) {
             _timer.cancel();
+            upload['media'] = media;
             upload['progressValue'] = 1.0;
             upload['isUploaded'] = true;
             upload['uploadURL'] = publicID;
@@ -761,6 +760,7 @@ class _AlbumShareState extends State<AlbumShare> {
             });
           }
         } else {
+          fileList.add(media.getDynamic());
           upload['progressValue'] = 1.0;
           upload['isUploaded'] = true;
           upload['uploadURL'] = media.url;
@@ -770,5 +770,20 @@ class _AlbumShareState extends State<AlbumShare> {
         }
       }
     }
+    //-------------------
+    dynamic apiData = {
+      'type': widget.type,
+      'info': widget.info,
+      'name': _albumNameController.text,
+      'icerik': _albumIcerikController.text,
+      'konum': radioValueLocation == 1 ? true : false,
+      'suresiz': radioValueShare == 1 ? true : false,
+      'sureType': dropdownValue,
+      'sure': currentValue,
+      'kisiler': selectedUsersId,
+      'medias': fileList
+    };
+    String apiDataString = json.encode(apiData);
+    print(apiDataString);
   }
 }

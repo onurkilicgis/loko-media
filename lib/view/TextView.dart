@@ -184,7 +184,7 @@ class _TextViewState extends State<TextView> {
 
       Loading.close();
       SBBildirim.bilgi('Notunuz Kaydedilmiştir');
-      if (widget.aktifTabIndex == 1) {
+      if (widget.aktifTabIndex == 2) {
         _mediaProvider.addMedia(dbText);
       }
     } on PlatformException catch (e) {

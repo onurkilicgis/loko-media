@@ -18,9 +18,10 @@ import 'package:loko_media/services/GPS.dart';
 import 'package:loko_media/services/MyLocal.dart';
 import 'package:loko_media/services/utils.dart';
 import 'package:loko_media/view/AudioRecorder.dart';
-import 'package:loko_media/view/Medya.dart';
-import 'package:loko_media/view/Takipcilerim.dart';
 import 'package:loko_media/view/Kisiara.dart';
+import 'package:loko_media/view/Medya.dart';
+import 'package:loko_media/view/Paylasimlar.dart';
+import 'package:loko_media/view/Takipcilerim.dart';
 import 'package:loko_media/view_model/app_view_model.dart';
 import 'package:loko_media/view_model/layout.dart';
 import 'package:provider/provider.dart';
@@ -110,7 +111,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         getAlbumList();
       });
       Loading.close();
-      if (aktifTabIndex == 1) {
+      if (aktifTabIndex == 2) {
         _mediaProvider.addMedia(dbImage);
       }
     } on PlatformException catch (e) {
@@ -166,7 +167,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         getAlbumList();
       });
       Loading.close();
-      if (aktifTabIndex == 1) {
+      if (aktifTabIndex == 2) {
         _mediaProvider.addMedia(dbImage);
       }
     } on PlatformException catch (e) {
@@ -428,7 +429,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
 
     getAlbumList();
 
-    controller = TabController(length: 3, vsync: this, initialIndex: 0);
+    controller = TabController(length: 4, vsync: this, initialIndex: 0);
 
     controller.addListener(() {
       setState(() {
@@ -463,32 +464,26 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
     }
   }
 
-  openPage(String pagename){
-    switch(pagename){
-      case 'takipciler':{
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Takipcilerim()
-          ));
-        break;
-      }
-      case 'takipettiklerim':{
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Takipettiklerim()
-            ));
-        break;
-      }
-      case 'kisiara':{
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Kisiara()
-            ));
-        break;
-      }
+  openPage(String pagename) {
+    switch (pagename) {
+      case 'takipciler':
+        {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Takipcilerim()));
+          break;
+        }
+      case 'takipettiklerim':
+        {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => Takipettiklerim()));
+          break;
+        }
+      case 'kisiara':
+        {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Kisiara()));
+          break;
+        }
     }
   }
 
@@ -543,13 +538,14 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                     arrowColor: Colors.black,*/
                 ),
                 listMenuItems(Icons.event_note, "Albüm Oluştur", getDialog),
-                listMenuItems(Icons.search, "Kişi Ara", (){
+                listMenuItems(Icons.search, "Kişi Ara", () {
                   openPage('kisiara');
                 }),
-                listMenuItems(Icons.supervised_user_circle, "Takipçilerim", (){
+                listMenuItems(Icons.supervised_user_circle, "Takipçilerim", () {
                   openPage('takipciler');
                 }),
-                listMenuItems(Icons.supervisor_account_rounded, "Takip Ettiklerim", (){
+                listMenuItems(
+                    Icons.supervisor_account_rounded, "Takip Ettiklerim", () {
                   openPage('takipettiklerim');
                 }),
 
@@ -637,6 +633,12 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                 tabs: [
                   Tab(
                     child: Text(
+                      'Paylaşımlar',
+                    ),
+                    //icon: Icon(Icons.list_alt),
+                  ),
+                  Tab(
+                    child: Text(
                       'Albümler',
                     ),
                     //icon: Icon(Icons.list_alt),
@@ -660,10 +662,11 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         ),
         body: TabBarView(
             controller: controller,
-            physics: aktifTabIndex != 2
+            physics: aktifTabIndex != 3
                 ? BouncingScrollPhysics()
                 : NeverScrollableScrollPhysics(),
             children: [
+              Paylasimlar(id: tiklananAlbum),
               Column(
                 children: [
                   APP_VM.getAramaKutusu(
@@ -951,7 +954,28 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
   }
 
   getAppController() {
-    if (controller.index == 0) {
+    switch (controller.index) {
+      case 0:
+        {
+          return Text('Medya Paylaşımları', style: TextStyle());
+        }
+
+      case 1:
+        {
+          return Text('Oluşturulmuş Albümler', style: TextStyle());
+        }
+
+      case 2:
+        {
+          return Text('Albümün Medyaları', style: TextStyle());
+        }
+
+      case 3:
+        {
+          return Text('Albümün Haritası', style: TextStyle());
+        }
+    }
+    /*if (controller.index == 0) {
       return Text('Oluşturulmuş Albümler', style: TextStyle());
     } else {
       if (controller.index == 1) {
@@ -959,7 +983,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
       } else {
         return Text('Albümün Haritası', style: TextStyle());
       }
-    }
+    }*/
   }
 
   // aktif olan albümü silme
@@ -1058,7 +1082,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
       });
 
       Loading.close();
-      if (aktifTabIndex == 1) {
+      if (aktifTabIndex == 2) {
         _mediaProvider.addMedia(dbAudio);
       }
     } else {
@@ -1120,7 +1144,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
 
       Loading.close();
       SBBildirim.bilgi('Mevcut Dosyanız Yüklendi');
-      if (aktifTabIndex == 1) {
+      if (aktifTabIndex == 2) {
         _mediaProvider.addMedia(dbText);
       }
     } else {

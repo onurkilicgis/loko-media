@@ -425,7 +425,7 @@ class AudioRecorderState extends State<AudioRecorder> {
         widget.model.getAlbumList();
       });
       Loading.close();
-      if (widget.aktifTabIndex == 1) {
+      if (widget.aktifTabIndex == 2) {
         _mediaProvider.addMedia(dbAudio);
       }
     } on PlatformException catch (e) {
