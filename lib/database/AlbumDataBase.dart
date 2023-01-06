@@ -194,8 +194,8 @@ class AlbumDataBase {
           "url",
           "api_id",
           "date",
-          "latitude"
-              "longitude",
+          "latitude",
+          "longitude",
           "altitude",
           "status"
         ],

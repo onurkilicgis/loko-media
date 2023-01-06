@@ -85,13 +85,17 @@ class _AlbumShareState extends State<AlbumShare> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Albüm Paylaşma Paneli'),
-      ),
+          title: widget.type == 'album'
+              ? Text('Albüm Paylaşma Paneli')
+              : Text('Medya Paylaşma Paneli')),
       body: ListView(controller: _controller, children: [
         Padding(
-          padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
-          child: Text('Albüm Adı Giriniz', style: TextStyle(fontSize: 16)),
-        ),
+            padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
+            child: widget.type == 'album'
+                ? Text('Albüm Adı Giriniz', style: TextStyle(fontSize: 16))
+                : widget.type == 'medya'
+                    ? Text('Medya Adı Giriniz', style: TextStyle(fontSize: 16))
+                    : Text('Başlık Giriniz')),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextField(
@@ -123,10 +127,14 @@ class _AlbumShareState extends State<AlbumShare> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
-          child:
-              Text('Albüm Açıklaması Giriniz', style: TextStyle(fontSize: 16)),
-        ),
+            padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
+            child: widget.type == 'album'
+                ? Text('Albüm Açıklaması Giriniz',
+                    style: TextStyle(fontSize: 16))
+                : widget.type == 'medya'
+                    ? Text('Medya Açıklaması Giriniz',
+                        style: TextStyle(fontSize: 16))
+                    : Text('Açıklama Giriniz')),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextField(
@@ -299,172 +307,198 @@ class _AlbumShareState extends State<AlbumShare> {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 20, bottom: 5, left: 8),
-          child: Text('Paylaşılan Kişiler : ${selectedUsersId.length} Kişi',
-              style: TextStyle(fontSize: 16)),
-        ),
-        selectedUsersId.length > 0
-            ? Container(
-                margin: EdgeInsets.only(bottom: 0),
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: selectedUsersId.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                            top: 0, left: 8, right: 8, bottom: 0),
-                        child: Card(
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  selectedUsers[index]['img'],
-                                  scale: 1),
-                            ),
-                            title: Text('${selectedUsers[index]['name']}'),
-                            trailing: TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    selectedUsersId.removeAt(index);
-                                    selectedUsers.removeAt(index);
-                                  });
-                                },
-                                child: Text(
-                                  'Çıkart',
-                                  style: TextStyle(color: Color(0xffffda15)),
-                                )),
-                          ),
-                        ),
-                      );
-                    }),
-              )
-            : Container(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            onChanged: (name) async {
-              name = _kisiNameController.text;
-              dynamic userName =
-                  await API.postRequest('api/lokomedia/searchFriends', {
-                'search': name,
-              });
-              if (userName['status'] == true) {
-                data = await userName['data'];
-                if (data.length > 0) {
-                  _controller.jumpTo(_controller.position.maxScrollExtent);
-                }
-                setState(() {
-                  status = true;
-                });
-              }
-            },
-            controller: _kisiNameController,
-            keyboardType: TextInputType.text,
-            cursorColor: Colors.white,
-            textCapitalization: TextCapitalization.words,
-            maxLines: 1,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Color(0xff1e2c49),
-              contentPadding: EdgeInsets.all(8),
-              hintText: 'Kişi Ara... ',
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(7),
-                borderSide: BorderSide(
-                  color: Color(0xff017eba),
+        widget.info['kimlere'] == 'kisi'
+            ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 20, bottom: 5, left: 8),
+                  child: Text(
+                      'Paylaşılan Kişiler : ${selectedUsersId.length} Kişi',
+                      style: TextStyle(fontSize: 16)),
                 ),
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Color(0xff017eba),
-                ),
-              ),
-            ),
-          ),
-        ),
-        status == true
-            ? Container(
-                margin: EdgeInsets.only(bottom: 30),
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: data.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (selectedUsersId.indexOf(data[index]['id']) == -1) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              top: 0, left: 8, right: 8, bottom: 0),
-                          child: Card(
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(data[index]['img'], scale: 1),
-                              ),
-                              title: Text('${data[index]['name']}'),
-                              trailing: TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      if (selectedUsersId
-                                              .indexOf(data[index]['id']) ==
-                                          -1) {
-                                        selectedUsers.add(data[index]);
-                                        selectedUsersId.add(data[index]['id']);
-                                      }
-                                    });
-                                  },
-                                  child: Text(
-                                    'Ekle',
-                                    style: TextStyle(color: Color(0xff0e91ce)),
-                                  )),
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Container(
-                          child: null,
-                        );
+                selectedUsersId.length > 0
+                    ? Container(
+                        margin: EdgeInsets.only(bottom: 0),
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: selectedUsersId.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 0, left: 8, right: 8, bottom: 0),
+                                child: Card(
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          selectedUsers[index]['img'],
+                                          scale: 1),
+                                    ),
+                                    title:
+                                        Text('${selectedUsers[index]['name']}'),
+                                    trailing: TextButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            selectedUsersId.removeAt(index);
+                                            selectedUsers.removeAt(index);
+                                          });
+                                        },
+                                        child: Text(
+                                          'Çıkart',
+                                          style: TextStyle(
+                                              color: Color(0xffffda15)),
+                                        )),
+                                  ),
+                                ),
+                              );
+                            }),
+                      )
+                    : Container(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    onChanged: (name) async {
+                      name = _kisiNameController.text;
+                      dynamic userName =
+                          await API.postRequest('api/lokomedia/searchFriends', {
+                        'search': name,
+                      });
+                      if (userName['status'] == true) {
+                        data = await userName['data'];
+                        if (data.length > 0) {
+                          _controller
+                              .jumpTo(_controller.position.maxScrollExtent);
+                        }
+                        setState(() {
+                          status = true;
+                        });
                       }
-                    }),
+                    },
+                    controller: _kisiNameController,
+                    keyboardType: TextInputType.text,
+                    cursorColor: Colors.white,
+                    textCapitalization: TextCapitalization.words,
+                    maxLines: 1,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Color(0xff1e2c49),
+                      contentPadding: EdgeInsets.all(8),
+                      hintText: 'Kişi Ara... ',
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(7),
+                        borderSide: BorderSide(
+                          color: Color(0xff017eba),
+                        ),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xff017eba),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                status == true
+                    ? Container(
+                        margin: EdgeInsets.only(bottom: 30),
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: data.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              if (selectedUsersId.indexOf(data[index]['id']) ==
+                                  -1) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 0, left: 8, right: 8, bottom: 0),
+                                  child: Card(
+                                    child: ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                            data[index]['img'],
+                                            scale: 1),
+                                      ),
+                                      title: Text('${data[index]['name']}'),
+                                      trailing: TextButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              if (selectedUsersId.indexOf(
+                                                      data[index]['id']) ==
+                                                  -1) {
+                                                selectedUsers.add(data[index]);
+                                                selectedUsersId
+                                                    .add(data[index]['id']);
+                                              }
+                                            });
+                                          },
+                                          child: Text(
+                                            'Ekle',
+                                            style: TextStyle(
+                                                color: Color(0xff0e91ce)),
+                                          )),
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                return Container(
+                                  child: null,
+                                );
+                              }
+                            }),
+                      )
+                    : Container(),
+              ])
+            : Container(),
+        widget.type == 'album'
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
+                    child: Text('Paylaşılacak Öğeler',
+                        style: TextStyle(fontSize: 16)),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                          onPressed: () {
+                            for (var i = 0; i < uploads.length; i++) {
+                              dynamic check = uploads[i];
+
+                              check['checked'] = false;
+                            }
+                            setState(() {});
+                          },
+                          child: Text('Tümünü İptal Et',
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .headline5
+                                      ?.color))),
+                      TextButton(
+                          onPressed: () {
+                            for (var i = 0; i < uploads.length; i++) {
+                              dynamic check = uploads[i];
+
+                              check['checked'] = true;
+                            }
+                            setState(() {});
+                          },
+                          child: Text('Tümünü Seç',
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .headline5
+                                      ?.color))),
+                    ],
+                  ),
+                  ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: widget.mediaList.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return mediasList(index);
+                      }),
+                ],
               )
             : Container(),
-        Padding(
-          padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
-          child: Text('Paylaşılacak Öğeler', style: TextStyle(fontSize: 16)),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            TextButton(
-                onPressed: () {
-                  for (var i = 0; i < uploads.length; i++) {
-                    dynamic check = uploads[i];
-
-                    check['checked'] = false;
-                  }
-                  setState(() {});
-                },
-                child: Text('Tümünü İptal Et',
-                    style: TextStyle(
-                        color: Theme.of(context).textTheme.headline5?.color))),
-            TextButton(
-                onPressed: () {
-                  for (var i = 0; i < uploads.length; i++) {
-                    dynamic check = uploads[i];
-
-                    check['checked'] = true;
-                  }
-                  setState(() {});
-                },
-                child: Text('Tümünü Seç',
-                    style: TextStyle(
-                        color: Theme.of(context).textTheme.headline5?.color))),
-          ],
-        ),
-        ListView.builder(
-            shrinkWrap: true,
-            itemCount: widget.mediaList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return mediasList(index);
-            }),
         Padding(
           padding:
               const EdgeInsets.only(top: 40, bottom: 20, right: 10, left: 10),
@@ -634,7 +668,7 @@ class _AlbumShareState extends State<AlbumShare> {
               child: Row(children: [
                 Expanded(flex: 2, child: medyaContainer(index) ?? Container()),
                 Expanded(
-                  flex: 5,
+                  flex: 6,
                   child: RadioListTile(
                       tileColor: mediaProggresValue == 1.0
                           ? Color(0xffafd5b0)
@@ -652,9 +686,9 @@ class _AlbumShareState extends State<AlbumShare> {
                       }),
                 ),
                 Expanded(
-                  flex: 3,
+                  flex: 2,
                   child: CheckboxListTile(
-                      title: Text('Seç'),
+                      // title: Text('Seç'),
                       value: medyaCheck,
                       // checkColor: Color(0xff80C783),
                       controlAffinity: ListTileControlAffinity.leading,

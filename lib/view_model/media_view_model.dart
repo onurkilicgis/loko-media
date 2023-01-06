@@ -6,6 +6,7 @@ import 'package:loko_media/services/utils.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../models/Album.dart';
+import '../view/AlbumShare.dart';
 import '../view/AudioView.dart';
 import '../view/PdfView.dart';
 import '../view/TxtView.dart';
@@ -80,7 +81,39 @@ class Media_VM {
                           }
                       }
                     }),
-                ListTile(title: Text('Herkesle Paylaş'), onTap: () {}),
+                ListTile(
+                    title: Text('Kişiye Paylaş'),
+                    onTap: () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AlbumShare(
+                                      type: 'medya',
+                                      info: {
+                                        'id': media.id,
+                                        'name': media.name,
+                                        'kimlere': 'kisi'
+                                      },
+                                      mediaList: [
+                                        media
+                                      ])));
+                    }),
+                ListTile(
+                    title: Text('Herkesle Paylaş'),
+                    onTap: () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AlbumShare(
+                                    type: 'medya',
+                                    info: {
+                                      'id': media.id,
+                                      'name': media.name,
+                                      'kimlere': 'herkes'
+                                    },
+                                    mediaList: [media],
+                                  )));
+                    }),
                 ListTile(
                     title: Text('Sosyal Medyada Paylaş'),
                     onTap: () async {
@@ -133,8 +166,35 @@ class Media_VM {
                   leading: Icon(
                     Icons.people,
                   ),
+                  title: Text('Kişiye Paylaş'),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AlbumShare(
+                                type: 'medyalar',
+                                info: {'id': 1, 'name': '', 'kimlere': 'kisi'},
+                                mediaList: seciliMedias)));
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    Icons.people,
+                  ),
                   title: Text('Herkesle Paylaş'),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AlbumShare(
+                                type: 'medyalar',
+                                info: {
+                                  'id': 1,
+                                  'name': '',
+                                  'kimlere': 'herkes'
+                                },
+                                mediaList: seciliMedias)));
+                  },
                 ),
                 ListTile(
                     leading: Icon(Icons.link),
