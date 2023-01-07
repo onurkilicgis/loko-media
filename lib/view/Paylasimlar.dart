@@ -17,7 +17,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
 
   getSharesMedya() async {
     dynamic medya =
-        await API.postRequest("api/lokomedia/getShares", {'offset': 0});
+        await API.postRequest("api/lokomedia/getShares", {'offset':"0"});
     if (medya['status'] == true) {
       item = medya['data'];
     }
