@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
+import 'package:loko_media/services/utils.dart';
 import 'package:loko_media/view_model/layout.dart';
 
 import '../models/Album.dart';
@@ -74,11 +75,33 @@ class _AlbumShareState extends State<AlbumShare> {
     isDark = await MyLocal.getStringData('theme');
   }
 
+  getCardHeight(int itemCount, double max){
+    if(itemCount>3){itemCount=3;}
+    double maxHeight = itemCount*65;
+    if(maxHeight>max){
+      return max;
+    }else{
+      return maxHeight;
+    }
+  }
+
+  getCardHeight2(List<dynamic> datalar, double max){
+    List<dynamic> kalan = [];
+    for(int i=0;i<datalar.length;i++){
+      if(selectedUsersId.indexOf(datalar[i]['id'])==-1){
+        kalan.add(datalar[i]);
+      }
+    }
+    return getCardHeight(kalan.length,max);
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     _albumNameController = TextEditingController(text: widget.info['name']);
     selectedKapak = widget.mediaList[0].id!;
+    radioValueLocation=1;
+    radioValueShare=1;
     populateUploads();
     findTheme();
     super.initState();
@@ -208,7 +231,7 @@ class _AlbumShareState extends State<AlbumShare> {
             Expanded(
               child: RadioListTile(
                   tileColor: Color(0xff192132),
-                  title: Text('Süresiz Paylaş', style: TextStyle(fontSize: 13)),
+                  title: Text('Süresiz', style: TextStyle(fontSize: 13)),
                   activeColor: Color(0xff0e91ce),
                   value: 1,
                   groupValue: radioValueShare,
@@ -222,7 +245,7 @@ class _AlbumShareState extends State<AlbumShare> {
             Expanded(
               child: RadioListTile(
                   tileColor: Color(0xff192132),
-                  title: Text('Süreli Paylaş', style: TextStyle(fontSize: 13)),
+                  title: Text('Süreli', style: TextStyle(fontSize: 13)),
                   activeColor: Color(0xff0e91ce),
                   value: 2,
                   groupValue: radioValueShare,
@@ -249,7 +272,7 @@ class _AlbumShareState extends State<AlbumShare> {
                     ),
                   ),
                   Container(
-                    width: 300,
+                    width: 250,
                     child: Slider(
                       activeColor: Color(0xff0e91ce),
                       inactiveColor: Color(0xBEFFFFFF),
@@ -320,7 +343,7 @@ class _AlbumShareState extends State<AlbumShare> {
                 ),
                 selectedUsersId.length > 0
                     ? Container(
-                        height: context.dynamicHeight(2.7),
+                        height: getCardHeight(selectedUsersId.length,300),
                         margin: EdgeInsets.only(bottom: 0),
                         child: ListView.builder(
                             shrinkWrap: true,
@@ -361,20 +384,27 @@ class _AlbumShareState extends State<AlbumShare> {
                   child: TextField(
                     onChanged: (name) async {
                       name = _kisiNameController.text;
-                      dynamic userName =
-                          await API.postRequest('api/lokomedia/searchFriends', {
-                        'search': name,
-                      });
-                      if (userName['status'] == true) {
-                        data = await userName['data'];
-                        if (data.length > 0) {
-                          _controller
-                              .jumpTo(_controller.position.maxScrollExtent);
+                      if(name!=""){
+                        dynamic userName =
+                        await API.postRequest('api/lokomedia/searchFriends', {
+                          'search': name,
+                        });
+                        if (userName['status'] == true) {
+                          data = await userName['data'];
+                          if (data.length > 0) {
+                            _controller
+                                .jumpTo(_controller.position.maxScrollExtent);
+                          }
+                          setState(() {
+                            status = true;
+                          });
                         }
+                      }else{
                         setState(() {
-                          status = true;
+                          data=[];
                         });
                       }
+
                     },
                     controller: _kisiNameController,
                     keyboardType: TextInputType.text,
@@ -402,7 +432,7 @@ class _AlbumShareState extends State<AlbumShare> {
                 ),
                 status == true
                     ? Container(
-                        height: context.dynamicHeight(2.7),
+                        height: getCardHeight2(data,300),
                         margin: EdgeInsets.only(bottom: 30),
                         child: ListView.builder(
                             shrinkWrap: true,
@@ -421,6 +451,7 @@ class _AlbumShareState extends State<AlbumShare> {
                                             scale: 1),
                                       ),
                                       title: Text('${data[index]['name']}'),
+                                      //subtitle: Text('${data[index]['mail']}'),
                                       trailing: TextButton(
                                           onPressed: () {
                                             setState(() {
@@ -456,7 +487,7 @@ class _AlbumShareState extends State<AlbumShare> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
+                    padding: const EdgeInsets.only(top: 0, bottom: 0, left: 8),
                     child: Text('Paylaşılacak Öğeler',
                         style: TextStyle(fontSize: 16)),
                   ),
@@ -495,18 +526,21 @@ class _AlbumShareState extends State<AlbumShare> {
                                       ?.color))),
                     ],
                   ),
-                  ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: widget.mediaList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return mediasList(index);
-                      }),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: widget.mediaList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return mediasList(index);
+                        }),
+                  ),
                 ],
               )
             : Container(),
         Padding(
           padding:
-              const EdgeInsets.only(top: 40, bottom: 20, right: 10, left: 10),
+              const EdgeInsets.only(top: 20, bottom: 20, right: 10, left: 10),
           child: SizedBox(
               height: 50,
               child: ElevatedButton(
@@ -660,55 +694,58 @@ class _AlbumShareState extends State<AlbumShare> {
     bool medyaCheck = uploads[index]['checked'];
     int medyaid = int.parse(medya.id.toString());
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.only(left:8.0,right: 8.0,bottom: 2),
       child: Card(
         color: mediaProggresValue == 1.0
             ? Color(0xff5e995e)
             : Theme.of(context).listTileTheme.tileColor,
         child: Column(
           children: [
-            Container(
-              child: Row(children: [
-                Expanded(flex: 2, child: medyaContainer(index) ?? Container()),
-                Expanded(
-                  flex: 6,
-                  child: RadioListTile(
-                    tileColor: mediaProggresValue == 1.0
-                        ? Color(0xff5e995e)
-                        : Theme.of(context).listTileTheme.tileColor,
-                    value: medyaid,
-                    activeColor: Theme.of(context).textTheme.headline5!.color,
-                    groupValue: selectedKapak,
-                    title: Text('Albüm Kapağı'),
-                    onChanged: (int? value) {
-                      setState(() {
-                        selectedKapak = value!;
-                      });
-                    },
-                  ),
+            Padding(
+              padding: const EdgeInsets.only(left: 0, right: 4),
+              child: Container(
+                height: 50,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        child: Row(
+                          children: [
+                            medyaContainer(index),
+                            Radio(
+                              value:medyaid,
+                              groupValue: selectedKapak,
+                              activeColor: Color(0xff0e91ce),
+                              onChanged: (int? value){
+                                setState(() {
+                                  selectedKapak = value!;
+                                });
+                              },
+                            ),
+                            selectedKapak==medyaid?Text('Albüm Kapağı'):Container()
+                          ],
+                        ),
+                      ),
+                      Container(
+                        //color: Colors.lightBlue,
+                        width: 40,
+                        child: Checkbox(
+                          value: medyaCheck,
+                          activeColor:Color(0xff0e91ce),
+                          onChanged: (bool? value) {
+                            itemCheckBox(index, value!);
+                          },
+                        ),),
+
+                    ]
                 ),
-                Expanded(
-                  flex: 2,
-                  child: CheckboxListTile(
-                      // title: Text('Seç'),
-                      value: medyaCheck,
-                      // checkColor: Color(0xff80C783),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      activeColor: Color(0xff80C783),
-                      tileColor: mediaProggresValue == 1.0
-                          ? Color(0xff5e995e)
-                          : Theme.of(context).listTileTheme.tileColor,
-                      onChanged: (isChecked) =>
-                          itemCheckBox(index, isChecked!)),
-                ),
-              ]),
+              ),
             ),
-            medyaCheck == true
-                ? LinearProgressIndicator(
+            LinearProgressIndicator(
                     color: Color(0xff2b792f),
                     backgroundColor: Color(0xff405d79),
                     value: mediaProggresValue)
-                : Container()
+
           ],
         ),
       ),
@@ -788,5 +825,14 @@ class _AlbumShareState extends State<AlbumShare> {
     };
     String apiDataString = json.encode(apiData);
     print(apiDataString);
+    dynamic islem =
+    await API.postRequest('api/lokomedia/addShare', {
+      'data': apiDataString,
+    });
+    if (islem['status'] == true) {
+      SBBildirim.onay('Başarılı bir şekilde paylaşıldı');
+    }else{
+      SBBildirim.hata('Maalesef paylaşma işlemi başarısız oldu');
+    }
   }
 }
