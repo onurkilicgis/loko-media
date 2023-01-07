@@ -68,9 +68,9 @@ class API {
 
     dio.options.headers['Accept'] = 'application/json; charset=utf-8';
     dio.options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-    dio.options.headers["token"] = token.toString();
+    dio.options.headers["token"] = token;
     dio.options.headers["language"] = language;
-    bodyData['token'] = token.toString();
+    bodyData['token'] = token;
     bodyData['language'] = language;
 
     String url = "";

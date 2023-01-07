@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/services/utils.dart';
-import 'package:loko_media/view_model/layout.dart';
 
 import '../models/Album.dart';
 import '../services/API2.dart';
@@ -75,24 +74,26 @@ class _AlbumShareState extends State<AlbumShare> {
     isDark = await MyLocal.getStringData('theme');
   }
 
-  getCardHeight(int itemCount, double max){
-    if(itemCount>3){itemCount=3;}
-    double maxHeight = itemCount*65;
-    if(maxHeight>max){
+  getCardHeight(int itemCount, double max) {
+    if (itemCount > 3) {
+      itemCount = 3;
+    }
+    double maxHeight = itemCount * 65;
+    if (maxHeight > max) {
       return max;
-    }else{
+    } else {
       return maxHeight;
     }
   }
 
-  getCardHeight2(List<dynamic> datalar, double max){
+  getCardHeight2(List<dynamic> datalar, double max) {
     List<dynamic> kalan = [];
-    for(int i=0;i<datalar.length;i++){
-      if(selectedUsersId.indexOf(datalar[i]['id'])==-1){
+    for (int i = 0; i < datalar.length; i++) {
+      if (selectedUsersId.indexOf(datalar[i]['id']) == -1) {
         kalan.add(datalar[i]);
       }
     }
-    return getCardHeight(kalan.length,max);
+    return getCardHeight(kalan.length, max);
   }
 
   @override
@@ -100,8 +101,8 @@ class _AlbumShareState extends State<AlbumShare> {
     // TODO: implement initState
     _albumNameController = TextEditingController(text: widget.info['name']);
     selectedKapak = widget.mediaList[0].id!;
-    radioValueLocation=1;
-    radioValueShare=1;
+    radioValueLocation = 1;
+    radioValueShare = 1;
     populateUploads();
     findTheme();
     super.initState();
@@ -343,7 +344,7 @@ class _AlbumShareState extends State<AlbumShare> {
                 ),
                 selectedUsersId.length > 0
                     ? Container(
-                        height: getCardHeight(selectedUsersId.length,300),
+                        height: getCardHeight(selectedUsersId.length, 300),
                         margin: EdgeInsets.only(bottom: 0),
                         child: ListView.builder(
                             shrinkWrap: true,
@@ -384,9 +385,9 @@ class _AlbumShareState extends State<AlbumShare> {
                   child: TextField(
                     onChanged: (name) async {
                       name = _kisiNameController.text;
-                      if(name!=""){
-                        dynamic userName =
-                        await API.postRequest('api/lokomedia/searchFriends', {
+                      if (name != "") {
+                        dynamic userName = await API
+                            .postRequest('api/lokomedia/searchFriends', {
                           'search': name,
                         });
                         if (userName['status'] == true) {
@@ -399,12 +400,11 @@ class _AlbumShareState extends State<AlbumShare> {
                             status = true;
                           });
                         }
-                      }else{
+                      } else {
                         setState(() {
-                          data=[];
+                          data = [];
                         });
                       }
-
                     },
                     controller: _kisiNameController,
                     keyboardType: TextInputType.text,
@@ -432,7 +432,7 @@ class _AlbumShareState extends State<AlbumShare> {
                 ),
                 status == true
                     ? Container(
-                        height: getCardHeight2(data,300),
+                        height: getCardHeight2(data, 300),
                         margin: EdgeInsets.only(bottom: 30),
                         child: ListView.builder(
                             shrinkWrap: true,
@@ -694,7 +694,7 @@ class _AlbumShareState extends State<AlbumShare> {
     bool medyaCheck = uploads[index]['checked'];
     int medyaid = int.parse(medya.id.toString());
     return Padding(
-      padding: const EdgeInsets.only(left:8.0,right: 8.0,bottom: 2),
+      padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 2),
       child: Card(
         color: mediaProggresValue == 1.0
             ? Color(0xff5e995e)
@@ -706,23 +706,25 @@ class _AlbumShareState extends State<AlbumShare> {
               child: Container(
                 height: 50,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
                         child: Row(
                           children: [
                             medyaContainer(index),
                             Radio(
-                              value:medyaid,
+                              value: medyaid,
                               groupValue: selectedKapak,
                               activeColor: Color(0xff0e91ce),
-                              onChanged: (int? value){
+                              onChanged: (int? value) {
                                 setState(() {
                                   selectedKapak = value!;
                                 });
                               },
                             ),
-                            selectedKapak==medyaid?Text('Albüm Kapağı'):Container()
+                            selectedKapak == medyaid
+                                ? Text('Albüm Kapağı')
+                                : Container()
                           ],
                         ),
                       ),
@@ -731,21 +733,19 @@ class _AlbumShareState extends State<AlbumShare> {
                         width: 40,
                         child: Checkbox(
                           value: medyaCheck,
-                          activeColor:Color(0xff0e91ce),
+                          activeColor: Color(0xff0e91ce),
                           onChanged: (bool? value) {
                             itemCheckBox(index, value!);
                           },
-                        ),),
-
-                    ]
-                ),
+                        ),
+                      ),
+                    ]),
               ),
             ),
             LinearProgressIndicator(
-                    color: Color(0xff2b792f),
-                    backgroundColor: Color(0xff405d79),
-                    value: mediaProggresValue)
-
+                color: Color(0xff2b792f),
+                backgroundColor: Color(0xff405d79),
+                value: mediaProggresValue)
           ],
         ),
       ),
@@ -825,13 +825,13 @@ class _AlbumShareState extends State<AlbumShare> {
     };
     String apiDataString = json.encode(apiData);
     print(apiDataString);
-    dynamic islem =
-    await API.postRequest('api/lokomedia/addShare', {
+    dynamic islem = await API.postRequest('api/lokomedia/addShare', {
       'data': apiDataString,
     });
     if (islem['status'] == true) {
       SBBildirim.onay('Başarılı bir şekilde paylaşıldı');
-    }else{
+      Navigator.pop(context);
+    } else {
       SBBildirim.hata('Maalesef paylaşma işlemi başarısız oldu');
     }
   }
