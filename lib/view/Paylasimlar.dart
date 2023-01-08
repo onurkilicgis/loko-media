@@ -15,16 +15,7 @@ class Paylasimlar extends StatefulWidget {
 
 class _PaylasimlarState extends State<Paylasimlar> {
   List<dynamic> items = [];
-  late dynamic user;
-  late dynamic kapak;
-  late String medyaName;
-  String? icerik;
-  late String medyaType;
-  late List<dynamic> medias;
-  late String yorum;
-  late int begeni;
   getSharesMedya() async {
-    //https://drive.google.com/uc?id=
     dynamic medya =
         await API.postRequest("api/lokomedia/getShares", {'offset': "0"});
     if (medya['status'] == true) {
@@ -147,16 +138,18 @@ class _PaylasimlarState extends State<Paylasimlar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: ListView(
-      children: [
-        ListView.builder(
-            itemCount: items.length,
-            shrinkWrap: true,
-            itemBuilder: (BuildContext context, int index) {
-              return createItem(items[index]);
-            })
-      ],
-    ));
+    return Scaffold(body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      return ListView(
+        children: [
+          ListView.builder(
+              itemCount: items.length,
+              shrinkWrap: true,
+              itemBuilder: (BuildContext context, int index) {
+                return createItem(items[index]);
+              })
+        ],
+      );
+    }));
   }
 }
