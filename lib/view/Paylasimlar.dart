@@ -46,91 +46,193 @@ class _PaylasimlarState extends State<Paylasimlar> {
         }
       }
       dynamic medias = item['medias'];
-      return CarouselSlider.builder(
-          itemCount: medyaSayisi,
-          options: CarouselOptions(
-            pageSnapping: true,
-            aspectRatio: 0.9,
-            initialPage: kapakIndex,
-            //viewportFraction: 0.8,
-            enlargeCenterPage: true,
-            enlargeStrategy: CenterPageEnlargeStrategy.height,
-            autoPlay: false,
-          ),
-          itemBuilder: (BuildContext context, index, int pageViewIndex) {
-            dynamic media = medias[index];
-            String mediaURL = 'https://drive.google.com/uc?id=${media['url']}';
-            String mediaType = media['type'];
-            switch (mediaType) {
-              case 'image':
-                {
-                  return Container(
-                      child: FadeInImage(
-                    image: NetworkImage(mediaURL),
-                    placeholder: AssetImage('assets/images/album_dark.png'),
-                  ));
-                }
-              default:
-                {
-                  return Container();
-                }
-            }
-          });
+      return Container(
+        child: CarouselSlider.builder(
+            itemCount: medyaSayisi,
+            options: CarouselOptions(
+              pageSnapping: true,
+              aspectRatio: 0.9,
+              initialPage: kapakIndex,
+              //viewportFraction: 0.8,
+              enlargeCenterPage: true,
+              enlargeStrategy: CenterPageEnlargeStrategy.height,
+              autoPlay: false,
+            ),
+            itemBuilder: (BuildContext context, index, int pageViewIndex) {
+              dynamic media = medias[index];
+              String mediaURL = 'https://drive.google.com/uc?id=${media['url']}';
+              String mediaType = media['type'];
+              switch (mediaType) {
+                case 'image':
+                  {
+                    return Container(
+                      height: 250,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          border: Border.all(
+                            color: Colors.black,
+                            width: 1,
+                          ),
+                          image:DecorationImage(
+                            image: NetworkImage(mediaURL),
+                            fit: BoxFit.cover,
+                          ),
+                        color: Colors.black54
+                      ),
+                    );
+                  }
+                default:
+                  {
+                    return Container();
+                  }
+              }
+            }),
+      );
     } else {}
+  }
+
+  getUserInfo(dynamic item){
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 10,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(40),
+                child: Image(
+                  image: NetworkImage(item['user']['img']),
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(item['user']['name']),
+            ],
+          ),
+          IconButton(
+            icon: Icon(Icons.more_horiz),
+            onPressed: () {},
+          )
+        ],
+      ),
+    );
+  }
+
+
+  getIcons(dynamic item){
+    List<Widget> iconlar = [];
+    iconlar.add(
+        IconButton(
+          //padding:EdgeInsets.only(top:0,bottom: 0),
+          onPressed: () {},
+          icon: Icon(Icons.favorite_border),
+        )
+    );
+    iconlar.add(
+        IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.mode_comment_outlined),
+        )
+    );
+    if(item['point']!=null){
+      iconlar.add(
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.map),
+          )
+      );
+      iconlar.add(
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.navigation_outlined),
+          )
+      );
+    }
+    iconlar.add(
+        IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.share),
+        )
+    );
+    return Container(
+     // color: Colors.lightBlue,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Row(
+            children: iconlar,
+          ),
+          InkWell(
+
+            child: IconButton(
+              padding:EdgeInsets.only(top:0,bottom: 0),
+              onPressed: () {},
+              icon: Icon(Icons.delete),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  getLikesAndComments(dynamic item){
+    List<TextSpan> ekler = [];
+    List<dynamic> yorumlar = [];
+    int likes = item['like'];
+    if(likes==0){
+      ekler.add(
+          TextSpan(
+            text: "Beğeni Yok",
+            style: TextStyle(color: Colors.white,fontSize: 12),
+          )
+      );
+    }
+    ekler.add(TextSpan(text: ', '));
+    ekler.add(TextSpan(
+      text: item['name'],
+      style: TextStyle(color: Colors.white,fontSize: 13,fontWeight: FontWeight.bold),
+    ));
+    ekler.add(TextSpan(text: ' - '));
+    ekler.add(TextSpan(
+      text: item['content'],
+      style: TextStyle(color: Colors.white,fontSize: 12),
+    ));
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        //color: Colors.lightGreen,
+        margin: EdgeInsets.symmetric(
+          horizontal: 14,
+        ),
+        padding: EdgeInsets.only(bottom: 10),
+        child: RichText(
+          softWrap: true,
+          overflow: TextOverflow.visible,
+          text: TextSpan(
+            children:ekler
+          ),
+        ),
+    );
   }
 
   createItem(dynamic item) {
     return Container(
+      width: MediaQuery.of(context).size.width,
       color: Theme.of(context).cardColor,
+      margin: EdgeInsets.only(bottom: 5),
       child: Column(
         children: [
-          Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CircleAvatar(
-                          backgroundImage: NetworkImage(item['user']['img'])),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(item['user']['name']),
-                    )
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(item['name']),
-                ),
-              ],
-            ),
-          ),
+          getUserInfo(item),
           getKapak(item),
-          Row(
-            children: [
-              IconButton(onPressed: () {}, icon: Icon(FontAwesomeIcons.heart)),
-              IconButton(onPressed: () {}, icon: Icon(FontAwesomeIcons.comment))
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Align(
-                alignment: Alignment.bottomLeft,
-                child: item['like'] == 0
-                    ? Text('Beğeni Yok')
-                    : Text('${item['like']} beğenme')),
-          ),
-          item['content'].toString().isNotEmpty == true
-              ? Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Text(item['content'])),
-                )
-              : Text('')
+          getIcons(item),
+          getLikesAndComments(item),
         ],
       ),
     );
@@ -138,18 +240,20 @@ class _PaylasimlarState extends State<Paylasimlar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-      return ListView(
-        children: [
+    return Scaffold(body: Container(
+      color: Colors.black54,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
           ListView.builder(
-              itemCount: items.length,
-              shrinkWrap: true,
-              itemBuilder: (BuildContext context, int index) {
-                return createItem(items[index]);
-              })
-        ],
-      );
-    }));
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: items.length,
+            itemBuilder: (ctx, i) {
+              return createItem(items[i]);
+           })
+          ],
+        ),) ,
+    ));
   }
 }
