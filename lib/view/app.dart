@@ -633,7 +633,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                 tabs: [
                   Tab(
                     child: Text(
-                      'Paylaşımlar',
+                      'Ahali',
                     ),
                     //icon: Icon(Icons.list_alt),
                   ),

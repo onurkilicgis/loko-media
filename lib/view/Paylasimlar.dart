@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
 import '../services/API2.dart';
+import '../services/FileDrive.dart';
 
 class Paylasimlar extends StatefulWidget {
   int? id;
@@ -14,6 +15,8 @@ class Paylasimlar extends StatefulWidget {
 
 class _PaylasimlarState extends State<Paylasimlar> {
   List<dynamic> items = [];
+  FileDrive drive = FileDrive();
+
   getSharesMedya() async {
     dynamic medya =
     await API.postRequest("api/lokomedia/getShares", {'offset': "0"});
@@ -27,6 +30,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
 
   @override
   void initState() {
+    drive.ready();
     getSharesMedya();
     super.initState();
   }
@@ -61,10 +65,14 @@ class _PaylasimlarState extends State<Paylasimlar> {
               dynamic media = medias[index];
               String mediaURL =
                   'https://drive.google.com/uc?id=${media['url']}';
+              //String tokenkey = drive.token;
+              String mediaURL2 =
+                  'https://www.googleapis.com/drive/v3/files/${media['url']}?alt=media&key=AIzaSyDW0o3i8wFnlzW8oCRlrmoyeWNfeYwRBa8';
               String mediaType = media['type'];
               switch (mediaType) {
                 case 'image':
                   {
+                    //drive.getAFile(media['url']);
                     return Container(
                       height: 250,
                       decoration: BoxDecoration(
@@ -74,7 +82,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
                             width: 1,
                           ),
                           image: DecorationImage(
-                            image: NetworkImage(mediaURL),
+                            image: NetworkImage(mediaURL2),
                             fit: BoxFit.cover,
                           ),
                           color: Colors.black54),

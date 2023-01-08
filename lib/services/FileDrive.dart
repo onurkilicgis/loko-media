@@ -1,5 +1,6 @@
 import 'dart:io' as ioo;
 
+import 'package:flutter/cupertino.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import "package:googleapis_auth/auth_io.dart";
 import 'package:http/http.dart' as http;
@@ -29,7 +30,7 @@ Future<AccessCredentials> obtainCredentials() async {
     "client_x509_cert_url":
         "https://www.googleapis.com/robot/v1/metadata/x509/gislayergoogledrive%40gislayer-161420.iam.gserviceaccount.com"
   });
-  var scopes = ['https://www.googleapis.com/auth/drive'];
+  var scopes = ['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/drive.readonly', 'https://www.googleapis.com/auth/drive.file'];
   var client = http.Client();
   AccessCredentials credentials =
       await obtainAccessCredentialsViaServiceAccount(
@@ -40,10 +41,12 @@ Future<AccessCredentials> obtainCredentials() async {
 
 class FileDrive {
   late final driveApi;
+  late String token;
   FileDrive() {}
 
   ready() async {
     AccessCredentials cre = await obtainCredentials();
+    token = cre.accessToken.data;
     final authenticateClient = GoogleAuthClient({
       "Authorization": "Bearer ${cre.accessToken.data}",
       "X-Goog-AuthUser": "0"
@@ -126,6 +129,23 @@ class FileDrive {
     } catch (error) {
       print(error);
       return false;
+    }
+  }
+
+  getAImage(String id) async {
+    ioo.File file = await driveApi.files.get(id);
+    if(file!=null){
+      FileImage imageFile = FileImage(file);
+      if(imageFile.file != null){
+        DecorationImage image = DecorationImage(
+          image: FileImage(file),
+        );
+        return image;
+      }
+    }else{
+      DecorationImage image = DecorationImage(
+        image: NetworkImage('https://media.licdn.com/dms/image/C4E03AQEC4rr4JABRDA/profile-displayphoto-shrink_400_400/0/1586246399901?e=1678924800&v=beta&t=D-oIi6tz29J09p0WLmMko--3UmbprIMU60dujbpxdIs'),
+      );
     }
   }
 }

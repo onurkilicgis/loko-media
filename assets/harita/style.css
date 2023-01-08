@@ -61,18 +61,32 @@ body { margin: 0; padding: 0; }
   background-color: #FFF;
   margin-right: 5px;
   border-radius: 5px;
+  width:100px;
+  height: 100px;
+  display:flex;
+  justify-items: center;
+  justify-content: center;
+  align-items: center;
+  border:2px solid #444;
 }
 .imageCardSelected{
   padding: 5px;
   background-color: rgb(19, 180, 255);
   margin-right: 5px;
   border-radius: 5px;
+  width:100px;
+  height: 100px;
+  display:flex;
+  justify-items: center;
+  justify-content: center;
+  align-items: center;
+  border:2px solid rgb(19, 180, 255);
 }
 
 .slideImage{
-  height: 100px;
   display: flex;
   border-radius: 5px;
+  height: 100px;
 }
 
 .bradius5{

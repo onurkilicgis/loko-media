@@ -13,7 +13,7 @@ Vue.component('medialist', {
         items:[
           /*{
             id:1,
-            mini_image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
+            mini_image_url:'https://intelliagri.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
             fileType:'audio',
             latitude:0,
             longitude:0,
@@ -21,22 +21,22 @@ Vue.component('medialist', {
           },
           {
             id:2,
-            mini_image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
+            mini_image_url:'https://intelliagri.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
             fileType:'image',
           },
           {
             id:3,
-            mini_image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
+            mini_image_url:'https://intelliagri.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
             fileType:'image',
           },
           {
             id:4,
-            mini_image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
+            mini_image_url:'https://intelliagri.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
             fileType:'image',
           },
           {
             id:5,
-            mini_image_url:'https://baklanyeni.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
+            mini_image_url:'https://intelliagri.baklanmeyvecilik.com/api/v1/public/files/images/upload-1668070262012.jpg',
             fileType:'image',
           },*/
         ],
@@ -209,8 +209,8 @@ Vue.component('medialist', {
             </div>
           </div>
 
-          <div v-if="media.fileType=='image'" :class="media.id==selected?'imageCardSelected':'imageCard'">
-            <img class="slideImage" :src="media.mini_image_url">
+          <div v-if="media.fileType=='image'" :class="media.id==selected?'imageCardSelected':'imageCard'" :style="{backgroundPosition:'center',backgroundSize:'cover',backgroundImage: 'url(' + media.mini_image_url + ')'}">
+            
           </div>
 
           <div v-if="media.fileType=='video'" :class="media.id==selected?'imageCardSelected cc':'imageCard cc'">
@@ -232,3 +232,4 @@ Vue.component('medialist', {
 var medialist = new Vue({
   el: '#bottomMediaList'
 });
+//<img class="slideImage" :src="media.mini_image_url">
