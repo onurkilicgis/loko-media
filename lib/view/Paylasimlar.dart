@@ -14,7 +14,7 @@ class Paylasimlar extends StatefulWidget {
 }
 
 class _PaylasimlarState extends State<Paylasimlar> {
-  List<dynamic> item = [];
+  List<dynamic> items = [];
   late dynamic user;
   late dynamic kapak;
   late String medyaName;
@@ -28,18 +28,11 @@ class _PaylasimlarState extends State<Paylasimlar> {
     dynamic medya =
         await API.postRequest("api/lokomedia/getShares", {'offset': "0"});
     if (medya['status'] == true) {
-      item = medya['data'];
-      for (int i = 0; i < item.length; i++) {
-        user = item[i]['user'];
-        kapak = item[i]['kapak'];
-        medyaName = item[i]['name'];
-        icerik = item[i]['content'];
-        medyaType = item[i]['type'];
-        medias = item[i]['medias'];
-        //yorum = item[i]['comment'];
-        begeni = item[i]['like'];
-      }
+      items = medya['data'];
+    } else {
+      items = [];
     }
+    setState(() {});
   }
 
   @override
@@ -48,131 +41,120 @@ class _PaylasimlarState extends State<Paylasimlar> {
     super.initState();
   }
 
+  getKapak(dynamic item) {
+    String type = item['type'];
+    if (type == 'album') {
+      String kapakUrl = item['kapak']['url'];
+      int kapakIndex = 0;
+      int medyaSayisi = item['medias'].length;
+      for (int i = 0; i < medyaSayisi; i++) {
+        dynamic media = item['medias'][i];
+        if (media['url'] == kapakUrl) {
+          kapakIndex = i;
+          break;
+        }
+      }
+      dynamic medias = item['medias'];
+      return CarouselSlider.builder(
+          itemCount: medyaSayisi,
+          options: CarouselOptions(
+            pageSnapping: true,
+            aspectRatio: 0.9,
+            initialPage: kapakIndex,
+            //viewportFraction: 0.8,
+            enlargeCenterPage: true,
+            enlargeStrategy: CenterPageEnlargeStrategy.height,
+            autoPlay: false,
+          ),
+          itemBuilder: (BuildContext context, index, int pageViewIndex) {
+            dynamic media = medias[index];
+            String mediaURL = 'https://drive.google.com/uc?id=${media['url']}';
+            String mediaType = media['type'];
+            switch (mediaType) {
+              case 'image':
+                {
+                  return Container(
+                      child: FadeInImage(
+                    image: NetworkImage(mediaURL),
+                    placeholder: AssetImage('assets/images/album_dark.png'),
+                  ));
+                }
+              default:
+                {
+                  return Container();
+                }
+            }
+          });
+    } else {}
+  }
+
+  createItem(dynamic item) {
+    return Container(
+      color: Theme.of(context).cardColor,
+      child: Column(
+        children: [
+          Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                          backgroundImage: NetworkImage(item['user']['img'])),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(item['user']['name']),
+                    )
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(item['name']),
+                ),
+              ],
+            ),
+          ),
+          getKapak(item),
+          Row(
+            children: [
+              IconButton(onPressed: () {}, icon: Icon(FontAwesomeIcons.heart)),
+              IconButton(onPressed: () {}, icon: Icon(FontAwesomeIcons.comment))
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Align(
+                alignment: Alignment.bottomLeft,
+                child: item['like'] == 0
+                    ? Text('Beğeni Yok')
+                    : Text('${item['like']} beğenme')),
+          ),
+          item['content'].toString().isNotEmpty == true
+              ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Text(item['content'])),
+                )
+              : Text('')
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: ListView(
       children: [
         ListView.builder(
-            itemCount: item.length,
+            itemCount: items.length,
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) {
-              return Container(
-                color: Theme.of(context).cardColor,
-                child: Column(
-                  children: [
-                    Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: CircleAvatar(
-                                    backgroundImage: NetworkImage(user['img'])),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(user['name']),
-                              )
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text('Albüm Adı:${medyaName}'),
-                          ),
-                        ],
-                      ),
-                    ),
-                    CarouselSlider.builder(
-                        itemCount: item.length,
-                        options: CarouselOptions(
-                          pageSnapping: true,
-                          aspectRatio: 0.9,
-
-                          //viewportFraction: 0.8,
-                          enlargeCenterPage: true,
-                          enlargeStrategy: CenterPageEnlargeStrategy.height,
-                          autoPlay: false,
-                        ),
-                        itemBuilder:
-                            (BuildContext context, index, int pageViewIndex) {
-                          switch (medyaType[index]) {
-                            case 'image':
-                              {
-                                return Container(
-                                    child: FadeInImage(
-                                  image: NetworkImage(
-                                      'https://drive.google.com/uc?id=' +
-                                          '${medias[index]['url']}'),
-                                  placeholder: AssetImage(
-                                      'assets/images/album_dark.png'),
-                                ));
-                              }
-                            case 'video':
-                              {
-                                return Container(
-                                    child: FadeInImage(
-                                  image: NetworkImage(
-                                      'https://drive.google.com/uc?id=' +
-                                          '${medias[index]['url']}'),
-                                  placeholder: AssetImage(''),
-                                ));
-                              }
-                            case 'audio':
-                              {
-                                return Container(
-                                    child: FadeInImage(
-                                  image: NetworkImage(
-                                      'https://drive.google.com/uc?id=' +
-                                          '${medias[index]['url']}'),
-                                  placeholder: AssetImage(''),
-                                ));
-                              }
-                            case 'txt':
-                              {
-                                return Container(
-                                    child: FadeInImage(
-                                  image: NetworkImage(
-                                      'https://drive.google.com/uc?id=' +
-                                          '${medias[index]['url']}'),
-                                  placeholder: AssetImage(''),
-                                ));
-                              }
-                            default:
-                              {
-                                return Container();
-                              }
-                          }
-                        }),
-                    Row(
-                      children: [
-                        IconButton(
-                            onPressed: () {},
-                            icon: Icon(FontAwesomeIcons.heart)),
-                        IconButton(
-                            onPressed: () {},
-                            icon: Icon(FontAwesomeIcons.comment))
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Text('${begeni} beğenme')),
-                    ),
-                    icerik != null
-                        ? Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Align(
-                                alignment: Alignment.bottomLeft,
-                                child: Text('Albüm İçeriği:${icerik!}')),
-                          )
-                        : Text('')
-                  ],
-                ),
-              );
+              return createItem(items[index]);
             })
       ],
     ));
