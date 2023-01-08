@@ -1,6 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../services/API2.dart';
 
@@ -17,7 +16,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
   List<dynamic> items = [];
   getSharesMedya() async {
     dynamic medya =
-        await API.postRequest("api/lokomedia/getShares", {'offset': "0"});
+    await API.postRequest("api/lokomedia/getShares", {'offset': "0"});
     if (medya['status'] == true) {
       items = medya['data'];
     } else {
@@ -60,7 +59,8 @@ class _PaylasimlarState extends State<Paylasimlar> {
             ),
             itemBuilder: (BuildContext context, index, int pageViewIndex) {
               dynamic media = medias[index];
-              String mediaURL = 'https://drive.google.com/uc?id=${media['url']}';
+              String mediaURL =
+                  'https://drive.google.com/uc?id=${media['url']}';
               String mediaType = media['type'];
               switch (mediaType) {
                 case 'image':
@@ -73,12 +73,11 @@ class _PaylasimlarState extends State<Paylasimlar> {
                             color: Colors.black,
                             width: 1,
                           ),
-                          image:DecorationImage(
+                          image: DecorationImage(
                             image: NetworkImage(mediaURL),
                             fit: BoxFit.cover,
                           ),
-                        color: Colors.black54
-                      ),
+                          color: Colors.black54),
                     );
                   }
                 default:
@@ -91,7 +90,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
     } else {}
   }
 
-  getUserInfo(dynamic item){
+  getUserInfo(dynamic item) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 10,
@@ -126,44 +125,33 @@ class _PaylasimlarState extends State<Paylasimlar> {
     );
   }
 
-
-  getIcons(dynamic item){
+  getIcons(dynamic item) {
     List<Widget> iconlar = [];
-    iconlar.add(
-        IconButton(
-          //padding:EdgeInsets.only(top:0,bottom: 0),
-          onPressed: () {},
-          icon: Icon(Icons.favorite_border),
-        )
-    );
-    iconlar.add(
-        IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.mode_comment_outlined),
-        )
-    );
-    if(item['point']!=null){
-      iconlar.add(
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.map),
-          )
-      );
-      iconlar.add(
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.navigation_outlined),
-          )
-      );
+    iconlar.add(IconButton(
+      //padding:EdgeInsets.only(top:0,bottom: 0),
+      onPressed: () {},
+      icon: Icon(Icons.favorite_border),
+    ));
+    iconlar.add(IconButton(
+      onPressed: () {},
+      icon: Icon(Icons.mode_comment_outlined),
+    ));
+    if (item['point'] != null) {
+      iconlar.add(IconButton(
+        onPressed: () {},
+        icon: Icon(Icons.map),
+      ));
+      iconlar.add(IconButton(
+        onPressed: () {},
+        icon: Icon(Icons.navigation_outlined),
+      ));
     }
-    iconlar.add(
-        IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.share),
-        )
-    );
+    iconlar.add(IconButton(
+      onPressed: () {},
+      icon: Icon(Icons.share),
+    ));
     return Container(
-     // color: Colors.lightBlue,
+      // color: Colors.lightBlue,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -171,9 +159,8 @@ class _PaylasimlarState extends State<Paylasimlar> {
             children: iconlar,
           ),
           InkWell(
-
             child: IconButton(
-              padding:EdgeInsets.only(top:0,bottom: 0),
+              padding: EdgeInsets.only(top: 0, bottom: 0),
               onPressed: () {},
               icon: Icon(Icons.delete),
             ),
@@ -183,42 +170,55 @@ class _PaylasimlarState extends State<Paylasimlar> {
     );
   }
 
-  getLikesAndComments(dynamic item){
+  getTitleAndComment(dynamic item) {
     List<TextSpan> ekler = [];
-    List<dynamic> yorumlar = [];
-    int likes = item['like'];
-    if(likes==0){
-      ekler.add(
-          TextSpan(
-            text: "Beğeni Yok",
-            style: TextStyle(color: Colors.white,fontSize: 12),
-          )
-      );
-    }
-    ekler.add(TextSpan(text: ', '));
     ekler.add(TextSpan(
       text: item['name'],
-      style: TextStyle(color: Colors.white,fontSize: 13,fontWeight: FontWeight.bold),
+      style: TextStyle(
+          color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
     ));
     ekler.add(TextSpan(text: ' - '));
     ekler.add(TextSpan(
       text: item['content'],
-      style: TextStyle(color: Colors.white,fontSize: 12),
+      style: TextStyle(color: Colors.white, fontSize: 12),
     ));
     return Container(
-        width: MediaQuery.of(context).size.width,
-        //color: Colors.lightGreen,
-        margin: EdgeInsets.symmetric(
-          horizontal: 14,
-        ),
-        padding: EdgeInsets.only(bottom: 10),
-        child: RichText(
-          softWrap: true,
-          overflow: TextOverflow.visible,
-          text: TextSpan(
-            children:ekler
-          ),
-        ),
+      width: MediaQuery.of(context).size.width,
+      //color: Colors.lightGreen,
+      margin: EdgeInsets.symmetric(
+        horizontal: 14,
+      ),
+      padding: EdgeInsets.only(bottom: 10),
+      child: RichText(
+        softWrap: true,
+        overflow: TextOverflow.visible,
+        text: TextSpan(children: ekler),
+      ),
+    );
+  }
+
+  getLikesAndComments(dynamic item) {
+    List<TextSpan> ekler = [];
+    List<dynamic> yorumlar = [];
+    int likes = item['like'];
+    if (likes == 0) {
+      ekler.add(TextSpan(
+        text: "Beğeni Yok",
+        style: TextStyle(color: Colors.white, fontSize: 12),
+      ));
+    }
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      //color: Colors.lightGreen,
+      margin: EdgeInsets.symmetric(
+        horizontal: 14,
+      ),
+      padding: EdgeInsets.only(bottom: 10),
+      child: RichText(
+        softWrap: true,
+        overflow: TextOverflow.visible,
+        text: TextSpan(children: ekler),
+      ),
     );
   }
 
@@ -232,6 +232,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
           getUserInfo(item),
           getKapak(item),
           getIcons(item),
+          getTitleAndComment(item),
           getLikesAndComments(item),
         ],
       ),
@@ -240,20 +241,22 @@ class _PaylasimlarState extends State<Paylasimlar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Container(
-      color: Colors.black54,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: items.length,
-            itemBuilder: (ctx, i) {
-              return createItem(items[i]);
-           })
-          ],
-        ),) ,
-    ));
+    return Scaffold(
+        body: Container(
+          color: Colors.black54,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: items.length,
+                    itemBuilder: (ctx, i) {
+                      return createItem(items[i]);
+                    })
+              ],
+            ),
+          ),
+        ));
   }
 }
