@@ -64,9 +64,6 @@ class _PaylasimlarState extends State<Paylasimlar> {
             itemBuilder: (BuildContext context, index, int pageViewIndex) {
               dynamic media = medias[index];
               String mediaURL =
-                  'https://drive.google.com/uc?id=${media['url']}';
-              //String tokenkey = drive.token;
-              String mediaURL2 =
                   'https://www.googleapis.com/drive/v3/files/${media['url']}?alt=media&key=AIzaSyDW0o3i8wFnlzW8oCRlrmoyeWNfeYwRBa8';
               String mediaType = media['type'];
               switch (mediaType) {
@@ -82,7 +79,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
                             width: 1,
                           ),
                           image: DecorationImage(
-                            image: NetworkImage(mediaURL2),
+                            image: NetworkImage(mediaURL),
                             fit: BoxFit.cover,
                           ),
                           color: Colors.black54),
