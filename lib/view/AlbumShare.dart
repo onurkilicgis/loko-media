@@ -762,9 +762,12 @@ class _AlbumShareState extends State<AlbumShare> {
     List<dynamic> fileList = [];
     Bulut2 cloud = Bulut2();
     await cloud.ready();
+    int yuklenmesiGerekenSayi = 0;
+    int yuklenenGerekenSayi = 0;
     for (var i = 0; i < uploads.length; i++) {
       dynamic upload = uploads[i];
       if (upload['checked'] == true) {
+        yuklenmesiGerekenSayi++;
         Medias media = upload['media'];
         if (media.url == "") {
           String? path = media.path;
@@ -781,6 +784,7 @@ class _AlbumShareState extends State<AlbumShare> {
           });
           dynamic uploadResponse = await API.fileUpload(media.path.toString(), {'type':media.fileType});
           if(uploadResponse['status']==true){
+            yuklenenGerekenSayi++;
             String publicID = uploadResponse['data'].toString();
             media.isPublic = widget.info['kimlere'] == 'kisi'
                 ? false
@@ -805,6 +809,7 @@ class _AlbumShareState extends State<AlbumShare> {
           }
 
         } else {
+          yuklenenGerekenSayi++;
           fileList.add(media.getDynamic());
           upload['progressValue'] = 1.0;
           upload['isUploaded'] = true;
@@ -816,29 +821,34 @@ class _AlbumShareState extends State<AlbumShare> {
       }
     }
     //-------------------
-    dynamic apiData = {
-      'type': widget.type,
-      'info': widget.info,
-      'kapak': selectedKapak,
-      'name': _albumNameController.text,
-      'icerik': _albumIcerikController.text,
-      'konum': radioValueLocation == 1 ? true : false,
-      'suresiz': radioValueShare == 1 ? true : false,
-      'sureType': dropdownValue,
-      'sure': currentValue,
-      'kisiler': selectedUsersId,
-      'medias': fileList
-    };
-    String apiDataString = json.encode(apiData);
-    print(apiDataString);
-    dynamic islem = await API.postRequest('api/lokomedia/addShare', {
-      'data': apiDataString,
-    });
-    if (islem['status'] == true) {
-      SBBildirim.onay('Başarılı bir şekilde paylaşıldı');
-      Navigator.pop(context);
-    } else {
-      SBBildirim.hata('Maalesef paylaşma işlemi başarısız oldu');
+    if(yuklenenGerekenSayi==yuklenmesiGerekenSayi){
+      dynamic apiData = {
+        'type': widget.type,
+        'info': widget.info,
+        'kapak': selectedKapak,
+        'name': _albumNameController.text,
+        'icerik': _albumIcerikController.text,
+        'konum': radioValueLocation == 1 ? true : false,
+        'suresiz': radioValueShare == 1 ? true : false,
+        'sureType': dropdownValue,
+        'sure': currentValue,
+        'kisiler': selectedUsersId,
+        'medias': fileList
+      };
+      String apiDataString = json.encode(apiData);
+      print(apiDataString);
+      dynamic islem = await API.postRequest('api/lokomedia/addShare', {
+        'data': apiDataString,
+      });
+      if (islem['status'] == true) {
+        SBBildirim.onay('Başarılı bir şekilde paylaşıldı');
+        Navigator.pop(context);
+      } else {
+        SBBildirim.hata('Maalesef paylaşma işlemi başarısız oldu');
+      }
+    }else{
+      SBBildirim.uyari('Yüklenmesi gereken öğeler yüklenemedi');
     }
+
   }
 }
