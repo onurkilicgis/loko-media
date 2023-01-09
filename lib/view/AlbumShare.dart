@@ -760,8 +760,8 @@ class _AlbumShareState extends State<AlbumShare> {
 
   paylas() async {
     List<dynamic> fileList = [];
-    FileDrive drive = FileDrive();
-    await drive.ready();
+    Bulut2 cloud = Bulut2();
+    await cloud.ready();
     for (var i = 0; i < uploads.length; i++) {
       dynamic upload = uploads[i];
       if (upload['checked'] == true) {
@@ -779,25 +779,31 @@ class _AlbumShareState extends State<AlbumShare> {
               _timer.cancel();
             }
           });
-          String publicID = await drive.uploadFile(path!);
-          media.isPublic = widget.info['kimlere'] == 'kisi'
-              ? false
-              : widget.info['kimlere'] == 'herkes'
-                  ? true
-                  : false;
-          media.url = publicID;
-          await AlbumDataBase.updateMediaPublicURL(media);
-          fileList.add(media.getDynamic());
-          if (publicID != false) {
-            _timer.cancel();
-            upload['media'] = media;
-            upload['progressValue'] = 1.0;
-            upload['isUploaded'] = true;
-            upload['uploadURL'] = publicID;
-            setState(() {
-              uploads[i] = upload;
-            });
+          dynamic uploadResponse = await API.fileUpload(media.path.toString(), {'type':media.fileType});
+          if(uploadResponse['status']==true){
+            String publicID = uploadResponse['data'].toString();
+            media.isPublic = widget.info['kimlere'] == 'kisi'
+                ? false
+                : widget.info['kimlere'] == 'herkes'
+                ? true
+                : false;
+            media.url = publicID;
+            await AlbumDataBase.updateMediaPublicURL(media);
+            fileList.add(media.getDynamic());
+            if (publicID != false) {
+              _timer.cancel();
+              upload['media'] = media;
+              upload['progressValue'] = 1.0;
+              upload['isUploaded'] = true;
+              upload['uploadURL'] = publicID;
+              setState(() {
+                uploads[i] = upload;
+              });
+            }
+          }else{
+
           }
+
         } else {
           fileList.add(media.getDynamic());
           upload['progressValue'] = 1.0;

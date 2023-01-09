@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:loko_media/services/MyLocal.dart';
 
 import '../services/API2.dart';
 import '../services/FileDrive.dart';
@@ -15,8 +16,7 @@ class Paylasimlar extends StatefulWidget {
 
 class _PaylasimlarState extends State<Paylasimlar> {
   List<dynamic> items = [];
-  FileDrive drive = FileDrive();
-
+  String token='';
   getSharesMedya() async {
     dynamic medya =
     await API.postRequest("api/lokomedia/getShares", {'offset': "0"});
@@ -28,9 +28,16 @@ class _PaylasimlarState extends State<Paylasimlar> {
     setState(() {});
   }
 
+  getToken()async{
+    token = await MyLocal.getStringData('token');
+    setState(() {
+
+    });
+  }
+
   @override
   void initState() {
-    drive.ready();
+    getToken();
     getSharesMedya();
     super.initState();
   }
@@ -63,8 +70,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
             ),
             itemBuilder: (BuildContext context, index, int pageViewIndex) {
               dynamic media = medias[index];
-              String mediaURL =
-                  'https://www.googleapis.com/drive/v3/files/${media['url']}?alt=media&key=AIzaSyDW0o3i8wFnlzW8oCRlrmoyeWNfeYwRBa8';
+              String mediaURL = API.generateStorageFileUrl(token,media['fid'].toString());
               String mediaType = media['type'];
               switch (mediaType) {
                 case 'image':
@@ -247,7 +253,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
+        body: token==''?Container():Container(
           color: Colors.black54,
           child: SingleChildScrollView(
             child: Column(
