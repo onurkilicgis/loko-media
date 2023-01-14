@@ -115,331 +115,244 @@ class _AlbumShareState extends State<AlbumShare> {
           title: widget.type == 'album'
               ? Text('Albüm Paylaşma Paneli')
               : Text('Medya Paylaşma Paneli')),
-      body: ListView(controller: _controller, children: [
-        Padding(
-            padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
-            child: widget.type == 'album'
-                ? Text('Albüm Adı Giriniz', style: TextStyle(fontSize: 16))
-                : widget.type == 'medya'
-                    ? Text('Medya Adı Giriniz', style: TextStyle(fontSize: 16))
-                    : Text('Başlık Giriniz')),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            onChanged: (value) {
-              value = _albumNameController.text;
-            },
-            controller: _albumNameController,
-            textAlign: TextAlign.left,
-            keyboardType: TextInputType.text,
-            cursorColor: Colors.white,
-            textCapitalization: TextCapitalization.words,
-            maxLines: 1,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Color(0xff1e2c49),
-              contentPadding: EdgeInsets.all(8),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(7),
-                borderSide: BorderSide(
-                  color: Color(0xff017eba),
+      body: SafeArea(
+        child: ListView(controller: _controller, children: [
+          Padding(
+              padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
+              child: widget.type == 'album'
+                  ? Text('Albüm Adı Giriniz', style: TextStyle(fontSize: 16))
+                  : widget.type == 'medya'
+                      ? Text('Medya Adı Giriniz',
+                          style: TextStyle(fontSize: 16))
+                      : Text('Başlık Giriniz')),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              onChanged: (value) {
+                value = _albumNameController.text;
+              },
+              controller: _albumNameController,
+              textAlign: TextAlign.left,
+              keyboardType: TextInputType.text,
+              cursorColor: Colors.white,
+              textCapitalization: TextCapitalization.words,
+              maxLines: 1,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Color(0xff1e2c49),
+                contentPadding: EdgeInsets.all(8),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(7),
+                  borderSide: BorderSide(
+                    color: Color(0xff017eba),
+                  ),
                 ),
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Color(0xff017eba),
-                ),
-              ),
-            ),
-          ),
-        ),
-        Padding(
-            padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
-            child: widget.type == 'album'
-                ? Text('Albüm Açıklaması Giriniz',
-                    style: TextStyle(fontSize: 16))
-                : widget.type == 'medya'
-                    ? Text('Medya Açıklaması Giriniz',
-                        style: TextStyle(fontSize: 16))
-                    : Text('Açıklama Giriniz')),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            controller: _albumIcerikController,
-            keyboardType: TextInputType.text,
-            cursorColor: Colors.white,
-            textCapitalization: TextCapitalization.words,
-            maxLines: 4,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Color(0xff1e2c49),
-              contentPadding: EdgeInsets.all(8),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(7),
-                borderSide: BorderSide(
-                  color: Color(0xff017eba),
-                ),
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Color(0xff017eba),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color(0xff017eba),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
-          child: Text('Konum Paylaşımı', style: TextStyle(fontSize: 16)),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Expanded(
-              child: RadioListTile(
-                  tileColor: Color(0xff192132),
-                  title: Text('Evet Paylaş', style: TextStyle(fontSize: 13)),
-                  activeColor: Color(0xff0e91ce),
-                  value: 1,
-                  groupValue: radioValueLocation,
-                  onChanged: (int? veri) {
-                    setState(() {
-                      radioValueLocation = veri!;
-                    });
-                  }),
+          Padding(
+              padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
+              child: widget.type == 'album'
+                  ? Text('Albüm Açıklaması Giriniz',
+                      style: TextStyle(fontSize: 16))
+                  : widget.type == 'medya'
+                      ? Text('Medya Açıklaması Giriniz',
+                          style: TextStyle(fontSize: 16))
+                      : Text('Açıklama Giriniz')),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _albumIcerikController,
+              keyboardType: TextInputType.text,
+              cursorColor: Colors.white,
+              textCapitalization: TextCapitalization.words,
+              maxLines: 4,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Color(0xff1e2c49),
+                contentPadding: EdgeInsets.all(8),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(7),
+                  borderSide: BorderSide(
+                    color: Color(0xff017eba),
+                  ),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color(0xff017eba),
+                  ),
+                ),
+              ),
             ),
-            Expanded(
-              child: RadioListTile(
-                  tileColor: Color(0xff192132),
-                  title: Text('Hayır Paylaşma', style: TextStyle(fontSize: 13)),
-                  activeColor: Color(0xff0e91ce),
-                  value: 2,
-                  groupValue: radioValueLocation,
-                  onChanged: (int? veri) {
-                    setState(() {
-                      radioValueLocation = veri!;
-                    });
-                  }),
-            )
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
-          child: Text('Paylaşım Süresi', style: TextStyle(fontSize: 16)),
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: RadioListTile(
-                  tileColor: Color(0xff192132),
-                  title: Text('Süresiz', style: TextStyle(fontSize: 13)),
-                  activeColor: Color(0xff0e91ce),
-                  value: 1,
-                  groupValue: radioValueShare,
-                  onChanged: (int? veri) {
-                    setState(() {
-                      radioValueShare = veri!;
-                      isVisible = false;
-                    });
-                  }),
-            ),
-            Expanded(
-              child: RadioListTile(
-                  tileColor: Color(0xff192132),
-                  title: Text('Süreli', style: TextStyle(fontSize: 13)),
-                  activeColor: Color(0xff0e91ce),
-                  value: 2,
-                  groupValue: radioValueShare,
-                  onChanged: (int? veri) {
-                    setState(() {
-                      radioValueShare = veri!;
-                      isVisible = true;
-                    });
-                  }),
-            )
-          ],
-        ),
-        Visibility(
-          visible: isVisible,
-          child: Row(
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
+            child: Text('Konum Paylaşımı', style: TextStyle(fontSize: 16)),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15),
-                    child: Text(
-                      '${currentValue.toInt()}' + ' ' + '${dropdownValue}',
-                    ),
-                  ),
-                  Container(
-                    width: 250,
-                    child: Slider(
-                      activeColor: Color(0xff0e91ce),
-                      inactiveColor: Color(0xBEFFFFFF),
-                      min: 1,
-                      max: rangeMax.toDouble(),
-                      value: currentValue.toDouble(),
-                      onChanged: (value) async {
-                        setState(() {
-                          currentValue = value.toInt();
-                        });
-                      },
-                    ),
-                  ),
-                ],
+              Expanded(
+                child: RadioListTile(
+                    tileColor: Color(0xff192132),
+                    title: Text('Evet Paylaş', style: TextStyle(fontSize: 13)),
+                    activeColor: Color(0xff0e91ce),
+                    value: 1,
+                    groupValue: radioValueLocation,
+                    onChanged: (int? veri) {
+                      setState(() {
+                        radioValueLocation = veri!;
+                      });
+                    }),
               ),
               Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(right: 12),
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    color: Color(0xff26334d),
-                  ),
-                  child: DropdownButtonFormField<String>(
-                    decoration: InputDecoration.collapsed(hintText: ''),
-                    value: dropdownValue,
-                    dropdownColor: Color(0xffc2c9d6),
-                    iconEnabledColor: Color(0xff0e91ce),
-                    isDense: true,
-                    icon: const Icon(Icons.arrow_drop_down),
-                    elevation: 16,
-                    style: const TextStyle(
-                      color: Color(0xff0e91ce),
-                    ),
-                    onChanged: (String? value) {
-                      for (int i = 0; i < selections.length; i++) {
-                        if (value == selections[i]['name']) {
-                          if (currentValue > selections[i]['max']) {
-                            currentValue = selections[i]['max'];
-                          }
-                          setState(() {
-                            rangeMax = selections[i]['max'];
-                            dropdownValue = value!;
-                          });
-                          break;
-                        }
-                      }
-                    },
-                    items: list.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ),
+                child: RadioListTile(
+                    tileColor: Color(0xff192132),
+                    title:
+                        Text('Hayır Paylaşma', style: TextStyle(fontSize: 13)),
+                    activeColor: Color(0xff0e91ce),
+                    value: 2,
+                    groupValue: radioValueLocation,
+                    onChanged: (int? veri) {
+                      setState(() {
+                        radioValueLocation = veri!;
+                      });
+                    }),
               )
             ],
           ),
-        ),
-        widget.info['kimlere'] == 'kisi'
-            ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 20, bottom: 5, left: 8),
-                  child: Text(
-                      'Paylaşılan Kişiler : ${selectedUsersId.length} Kişi',
-                      style: TextStyle(fontSize: 16)),
-                ),
-                selectedUsersId.length > 0
-                    ? Container(
-                        height: getCardHeight(selectedUsersId.length, 300),
-                        margin: EdgeInsets.only(bottom: 0),
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: selectedUsersId.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 0, left: 8, right: 8, bottom: 0),
-                                child: Card(
-                                  child: ListTile(
-                                    leading: CircleAvatar(
-                                      backgroundImage: NetworkImage(
-                                          selectedUsers[index]['img'],
-                                          scale: 1),
-                                    ),
-                                    title:
-                                        Text('${selectedUsers[index]['name']}'),
-                                    trailing: TextButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            selectedUsersId.removeAt(index);
-                                            selectedUsers.removeAt(index);
-                                          });
-                                        },
-                                        child: Text(
-                                          'Çıkart',
-                                          style: TextStyle(
-                                              color: Color(0xffffda15)),
-                                        )),
-                                  ),
-                                ),
-                              );
-                            }),
-                      )
-                    : Container(),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    onChanged: (name) async {
-                      name = _kisiNameController.text;
-                      if (name != "") {
-                        dynamic userName = await API
-                            .postRequest('api/lokomedia/searchFriends', {
-                          'search': name,
-                        });
-                        if (userName['status'] == true) {
-                          data = await userName['data'];
-                          if (data.length > 0) {
-                            _controller
-                                .jumpTo(_controller.position.maxScrollExtent);
-                          }
-                          setState(() {
-                            status = true;
-                          });
-                        }
-                      } else {
-                        setState(() {
-                          data = [];
-                        });
-                      }
-                    },
-                    controller: _kisiNameController,
-                    keyboardType: TextInputType.text,
-                    cursorColor: Colors.white,
-                    textCapitalization: TextCapitalization.words,
-                    maxLines: 1,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Color(0xff1e2c49),
-                      contentPadding: EdgeInsets.all(8),
-                      hintText: 'Kişi Ara... ',
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(7),
-                        borderSide: BorderSide(
-                          color: Color(0xff017eba),
-                        ),
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color(0xff017eba),
-                        ),
+          Padding(
+            padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
+            child: Text('Paylaşım Süresi', style: TextStyle(fontSize: 16)),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: RadioListTile(
+                    tileColor: Color(0xff192132),
+                    title: Text('Süresiz', style: TextStyle(fontSize: 13)),
+                    activeColor: Color(0xff0e91ce),
+                    value: 1,
+                    groupValue: radioValueShare,
+                    onChanged: (int? veri) {
+                      setState(() {
+                        radioValueShare = veri!;
+                        isVisible = false;
+                      });
+                    }),
+              ),
+              Expanded(
+                child: RadioListTile(
+                    tileColor: Color(0xff192132),
+                    title: Text('Süreli', style: TextStyle(fontSize: 13)),
+                    activeColor: Color(0xff0e91ce),
+                    value: 2,
+                    groupValue: radioValueShare,
+                    onChanged: (int? veri) {
+                      setState(() {
+                        radioValueShare = veri!;
+                        isVisible = true;
+                      });
+                    }),
+              )
+            ],
+          ),
+          Visibility(
+            visible: isVisible,
+            child: Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15),
+                      child: Text(
+                        '${currentValue.toInt()}' + ' ' + '${dropdownValue}',
                       ),
                     ),
-                  ),
+                    Container(
+                      width: 250,
+                      child: Slider(
+                        activeColor: Color(0xff0e91ce),
+                        inactiveColor: Color(0xBEFFFFFF),
+                        min: 1,
+                        max: rangeMax.toDouble(),
+                        value: currentValue.toDouble(),
+                        onChanged: (value) async {
+                          setState(() {
+                            currentValue = value.toInt();
+                          });
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                status == true
-                    ? Container(
-                        height: getCardHeight2(data, 300),
-                        margin: EdgeInsets.only(bottom: 30),
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: data.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              if (selectedUsersId.indexOf(data[index]['id']) ==
-                                  -1) {
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.only(right: 12),
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      color: Color(0xff26334d),
+                    ),
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration.collapsed(hintText: ''),
+                      value: dropdownValue,
+                      dropdownColor: Color(0xffc2c9d6),
+                      iconEnabledColor: Color(0xff0e91ce),
+                      isDense: true,
+                      icon: const Icon(Icons.arrow_drop_down),
+                      elevation: 16,
+                      style: const TextStyle(
+                        color: Color(0xff0e91ce),
+                      ),
+                      onChanged: (String? value) {
+                        for (int i = 0; i < selections.length; i++) {
+                          if (value == selections[i]['name']) {
+                            if (currentValue > selections[i]['max']) {
+                              currentValue = selections[i]['max'];
+                            }
+                            setState(() {
+                              rangeMax = selections[i]['max'];
+                              dropdownValue = value!;
+                            });
+                            break;
+                          }
+                        }
+                      },
+                      items: list.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          widget.info['kimlere'] == 'kisi'
+              ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20, bottom: 5, left: 8),
+                    child: Text(
+                        'Paylaşılan Kişiler : ${selectedUsersId.length} Kişi',
+                        style: TextStyle(fontSize: 16)),
+                  ),
+                  selectedUsersId.length > 0
+                      ? Container(
+                          height: getCardHeight(selectedUsersId.length, 300),
+                          margin: EdgeInsets.only(bottom: 0),
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: selectedUsersId.length,
+                              itemBuilder: (BuildContext context, int index) {
                                 return Padding(
                                   padding: const EdgeInsets.only(
                                       top: 0, left: 8, right: 8, bottom: 0),
@@ -447,119 +360,213 @@ class _AlbumShareState extends State<AlbumShare> {
                                     child: ListTile(
                                       leading: CircleAvatar(
                                         backgroundImage: NetworkImage(
-                                            data[index]['img'],
+                                            selectedUsers[index]['img'],
                                             scale: 1),
                                       ),
-                                      title: Text('${data[index]['name']}'),
-                                      //subtitle: Text('${data[index]['mail']}'),
+                                      title: Text(
+                                          '${selectedUsers[index]['name']}'),
                                       trailing: TextButton(
                                           onPressed: () {
                                             setState(() {
-                                              if (selectedUsersId.indexOf(
-                                                      data[index]['id']) ==
-                                                  -1) {
-                                                selectedUsers.add(data[index]);
-                                                selectedUsersId
-                                                    .add(data[index]['id']);
-                                              }
+                                              selectedUsersId.removeAt(index);
+                                              selectedUsers.removeAt(index);
                                             });
                                           },
                                           child: Text(
-                                            'Ekle',
+                                            'Çıkart',
                                             style: TextStyle(
-                                                color: Color(0xff0e91ce)),
+                                                color: Color(0xffffda15)),
                                           )),
                                     ),
                                   ),
                                 );
-                              } else {
-                                return Container(
-                                  child: null,
-                                );
+                              }),
+                        )
+                      : Container(),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      onChanged: (name) async {
+                        name = _kisiNameController.text;
+                        if (name != "") {
+                          dynamic userName = await API
+                              .postRequest('api/lokomedia/searchFriends', {
+                            'search': name,
+                          });
+                          if (userName['status'] == true) {
+                            data = await userName['data'];
+                            if (data.length > 0) {
+                              _controller
+                                  .jumpTo(_controller.position.maxScrollExtent);
+                            }
+                            setState(() {
+                              status = true;
+                            });
+                          }
+                        } else {
+                          setState(() {
+                            data = [];
+                          });
+                        }
+                      },
+                      controller: _kisiNameController,
+                      keyboardType: TextInputType.text,
+                      cursorColor: Colors.white,
+                      textCapitalization: TextCapitalization.words,
+                      maxLines: 1,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Color(0xff1e2c49),
+                        contentPadding: EdgeInsets.all(8),
+                        hintText: 'Kişi Ara... ',
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(7),
+                          borderSide: BorderSide(
+                            color: Color(0xff017eba),
+                          ),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0xff017eba),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  status == true
+                      ? Container(
+                          height: getCardHeight2(data, 300),
+                          margin: EdgeInsets.only(bottom: 30),
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: data.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                if (selectedUsersId
+                                        .indexOf(data[index]['id']) ==
+                                    -1) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 0, left: 8, right: 8, bottom: 0),
+                                    child: Card(
+                                      child: ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundImage: NetworkImage(
+                                              data[index]['img'],
+                                              scale: 1),
+                                        ),
+                                        title: Text('${data[index]['name']}'),
+                                        //subtitle: Text('${data[index]['mail']}'),
+                                        trailing: TextButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                if (selectedUsersId.indexOf(
+                                                        data[index]['id']) ==
+                                                    -1) {
+                                                  selectedUsers
+                                                      .add(data[index]);
+                                                  selectedUsersId
+                                                      .add(data[index]['id']);
+                                                }
+                                              });
+                                            },
+                                            child: Text(
+                                              'Ekle',
+                                              style: TextStyle(
+                                                  color: Color(0xff0e91ce)),
+                                            )),
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  return Container(
+                                    child: null,
+                                  );
+                                }
+                              }),
+                        )
+                      : Container(),
+                ])
+              : Container(),
+          widget.type == 'album'
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 0, bottom: 0, left: 8),
+                      child: Text('Paylaşılacak Öğeler',
+                          style: TextStyle(fontSize: 16)),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                            onPressed: () {
+                              for (var i = 0; i < uploads.length; i++) {
+                                dynamic check = uploads[i];
+
+                                check['checked'] = false;
                               }
-                            }),
-                      )
-                    : Container(),
-              ])
-            : Container(),
-        widget.type == 'album'
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 0, bottom: 0, left: 8),
-                    child: Text('Paylaşılacak Öğeler',
-                        style: TextStyle(fontSize: 16)),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                          onPressed: () {
-                            for (var i = 0; i < uploads.length; i++) {
-                              dynamic check = uploads[i];
+                              setState(() {});
+                            },
+                            child: Text('Tümünü İptal Et',
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .headline5
+                                        ?.color))),
+                        TextButton(
+                            onPressed: () {
+                              for (var i = 0; i < uploads.length; i++) {
+                                dynamic check = uploads[i];
 
-                              check['checked'] = false;
-                            }
-                            setState(() {});
-                          },
-                          child: Text('Tümünü İptal Et',
-                              style: TextStyle(
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .headline5
-                                      ?.color))),
-                      TextButton(
-                          onPressed: () {
-                            for (var i = 0; i < uploads.length; i++) {
-                              dynamic check = uploads[i];
-
-                              check['checked'] = true;
-                            }
-                            setState(() {});
-                          },
-                          child: Text('Tümünü Seç',
-                              style: TextStyle(
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .headline5
-                                      ?.color))),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: widget.mediaList.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return mediasList(index);
-                        }),
-                  ),
-                ],
-              )
-            : Container(),
-        Padding(
-          padding:
-              const EdgeInsets.only(top: 20, bottom: 20, right: 10, left: 10),
-          child: SizedBox(
-              height: 50,
-              child: ElevatedButton(
-                  onPressed: () {
-                    paylas();
-                  },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Theme.of(context).listTileTheme.tileColor,
-                      foregroundColor:
-                          Theme.of(context).textTheme.headline5?.color,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10))),
-                  child: Text(
-                    'Paylaş',
-                    style: TextStyle(fontSize: 18),
-                  ))),
-        )
-      ]),
+                                check['checked'] = true;
+                              }
+                              setState(() {});
+                            },
+                            child: Text('Tümünü Seç',
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .headline5
+                                        ?.color))),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: widget.mediaList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return mediasList(index);
+                          }),
+                    ),
+                  ],
+                )
+              : Container(),
+          Padding(
+            padding:
+                const EdgeInsets.only(top: 20, bottom: 20, right: 10, left: 10),
+            child: SizedBox(
+                height: 50,
+                child: ElevatedButton(
+                    onPressed: () {
+                      paylas();
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).listTileTheme.tileColor,
+                        foregroundColor:
+                            Theme.of(context).textTheme.headline5?.color,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                    child: Text(
+                      'Paylaş',
+                      style: TextStyle(fontSize: 18),
+                    ))),
+          )
+        ]),
+      ),
     );
   }
 
@@ -782,15 +789,16 @@ class _AlbumShareState extends State<AlbumShare> {
               _timer.cancel();
             }
           });
-          dynamic uploadResponse = await API.fileUpload(media.path.toString(), {'type':media.fileType});
-          if(uploadResponse['status']==true){
+          dynamic uploadResponse = await API
+              .fileUpload(media.path.toString(), {'type': media.fileType});
+          if (uploadResponse['status'] == true) {
             yuklenenGerekenSayi++;
             String publicID = uploadResponse['data'].toString();
             media.isPublic = widget.info['kimlere'] == 'kisi'
                 ? false
                 : widget.info['kimlere'] == 'herkes'
-                ? true
-                : false;
+                    ? true
+                    : false;
             media.url = publicID;
             await AlbumDataBase.updateMediaPublicURL(media);
             fileList.add(media.getDynamic());
@@ -804,10 +812,7 @@ class _AlbumShareState extends State<AlbumShare> {
                 uploads[i] = upload;
               });
             }
-          }else{
-
-          }
-
+          } else {}
         } else {
           yuklenenGerekenSayi++;
           fileList.add(media.getDynamic());
@@ -821,7 +826,7 @@ class _AlbumShareState extends State<AlbumShare> {
       }
     }
     //-------------------
-    if(yuklenenGerekenSayi==yuklenmesiGerekenSayi){
+    if (yuklenenGerekenSayi == yuklenmesiGerekenSayi) {
       dynamic apiData = {
         'type': widget.type,
         'info': widget.info,
@@ -846,9 +851,8 @@ class _AlbumShareState extends State<AlbumShare> {
       } else {
         SBBildirim.hata('Maalesef paylaşma işlemi başarısız oldu');
       }
-    }else{
+    } else {
       SBBildirim.uyari('Yüklenmesi gereken öğeler yüklenemedi');
     }
-
   }
 }

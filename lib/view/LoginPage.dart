@@ -202,72 +202,74 @@ class _LoginPageState extends State<LoginPage> {
         final double ekranYuksekligi = ekranBilgisi.size.height;
         final double ekranGenisligi = ekranBilgisi.size.width;
         return Scaffold(
-          body: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: ekranYuksekligi / 50),
-                    child: SizedBox(
-                        width: ekranGenisligi,
-                        height: ekranYuksekligi / 4,
-                        child: Image.asset('images/korte_logo.png')),
-                  ),
-                  SizedBox(
-                    height: ekranYuksekligi / 20,
-                  ),
-                  Container(
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: buildMailTextFormField(),
+          body: SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: ekranYuksekligi / 50),
+                      child: SizedBox(
+                          width: ekranGenisligi,
+                          height: ekranYuksekligi / 4,
+                          child: Image.asset('images/korte_logo.png')),
                     ),
-                  ),
-                  Container(
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: buildPasswordTextFormField(),
+                    SizedBox(
+                      height: ekranYuksekligi / 20,
                     ),
-                  ),
-                  buildPasswordGestureDetector(context, ekranGenisligi),
-                  SizedBox(
-                    height: ekranYuksekligi / 25,
-                  ),
-                  Container(
-                    child: SizedBox(
+                    Container(
+                      child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: buildMailTextFormField(),
+                      ),
+                    ),
+                    Container(
+                      child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: buildPasswordTextFormField(),
+                      ),
+                    ),
+                    buildPasswordGestureDetector(context, ekranGenisligi),
+                    SizedBox(
+                      height: ekranYuksekligi / 25,
+                    ),
+                    Container(
+                      child: SizedBox(
+                        width: ekranGenisligi / 1.2,
+                        height: ekranYuksekligi / 18,
+                        child: buildEntryElevatedButton(),
+                      ),
+                    ),
+                    SizedBox(height: ekranYuksekligi / 30),
+                    SizedBox(
                       width: ekranGenisligi / 1.2,
                       height: ekranYuksekligi / 18,
-                      child: buildEntryElevatedButton(),
+                      child: buildGoogleElevatedButton(),
                     ),
-                  ),
-                  SizedBox(height: ekranYuksekligi / 30),
-                  SizedBox(
-                    width: ekranGenisligi / 1.2,
-                    height: ekranYuksekligi / 18,
-                    child: buildGoogleElevatedButton(),
-                  ),
-                  SizedBox(
-                    height: ekranYuksekligi / 30,
-                  ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: ekranGenisligi / 5),
-                        child: Container(
-                          child: Text(
-                            'a6'.tr,
-                            style: TextStyle(
-                                color: Color(0xff7C9099),
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
+                    SizedBox(
+                      height: ekranYuksekligi / 30,
+                    ),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: ekranGenisligi / 5),
+                          child: Container(
+                            child: Text(
+                              'a6'.tr,
+                              style: TextStyle(
+                                  color: Color(0xff7C9099),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(width: ekranGenisligi / 37),
-                      buildSignGestureDetector(context),
-                    ],
-                  ),
-                ],
+                        SizedBox(width: ekranGenisligi / 37),
+                        buildSignGestureDetector(context),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -380,85 +382,6 @@ class _LoginPageState extends State<LoginPage> {
         User? user = await _authService.signInPerson(
             _emailController.text, _passwordController.text);
         firebaseLogin(user!.email.toString(), user.uid.toString(), 'Unnamed');
-        /* .then((value) async {
-          String? uid = value?.uid;
-          String? email = value?.email;
-          dynamic result = await API
-              .postRequest('api/v1/user/login', {'email': email, 'uid': uid});
-          if (result['status'] == false) {
-            setState(() {
-              isEntry = false;
-            });
-            if (result['errCode'] == 'err9') {
-              SBBildirim.bilgi(result['message']);
-              if (email != null) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            VerifyScreen(email: email, uid: uid.toString())));
-              }
-            }
-            if (result['errCode'] == 'err12') {
-              SBBildirim.hata(result['message']);
-              await MyLocal.removeKey('token');
-              await MyLocal.removeKey('user');
-              setState(() {
-                Loading.close();
-                tokenControl = true;
-                loginControl = false;
-              });
-            }
-          } else {
-            dynamic usr = result['data'];
-            await saveUserInfo(
-                usr['id'], usr['uid'], usr['mail'], usr['name'], usr['token']);
-            SBBildirim.onay('Hoşgeldiniz sayın ${usr['name']}.');
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => App()));
-          }
-          print(result);
-        }).catchError((onError) {
-          setState(() {
-            isEntry = false;
-          });
-          if (onError.message != '') {
-            SBBildirim.hata(
-              onError.message,
-            );
-          } else {
-            switch (onError.code.toString()) {
-              case 'unknown':
-                {
-                  SBBildirim.uyari(
-                    'Lütfen Giriş Bilgilerinizi Kontrol Ediniz',
-                  );
-                  break;
-                }
-              case 'too-many-requests':
-                {
-                  SBBildirim.uyari(
-                    'Çok Fazla Hatalı İstek Gönderdiniz. Lütfen Bir Süre Bekleyiniz',
-                  );
-                  break;
-                }
-              case 'wrong-password':
-                {
-                  SBBildirim.uyari(
-                    'Girdiğiniz Parola Hatalıdır. Lütfen Şifrenizi Sıfırlayınız',
-                  );
-                  break;
-                }
-              case 'user-not-found':
-                {
-                  SBBildirim.uyari(_emailController.text +
-                      ' Mail adresine ait bir kullanıcı bulunamadı. Lütfen Kayıt Olunuz');
-                  break;
-                }
-            }
-            print(onError);
-          }
-        });*/
       },
     );
   }
@@ -520,80 +443,6 @@ class _LoginPageState extends State<LoginPage> {
         isEntry = false;
       });
     }
-
-    /*_authService.signInWithGoogle().then((value) async {
-      String? uid = value.user!.uid;
-      String? email = value.user!.email;
-      dynamic result = await API
-          .postRequest('api/v1/user/login', {'email': email, 'uid': uid});
-      if (result['status'] == false) {
-        setState(() {
-          isEntry = false;
-        });
-        if (result['errCode'] == 'err9') {
-          if (email != null) {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => VerifyScreen(
-                          email: email,
-                          uid: uid,
-                        )));
-          }
-        }
-      } else {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        UserRegistration loginModel =
-            UserRegistration.fromJson(jsonDecode(result['data'].toString()));
-        prefs.setString("user", result['data'].toString());
-        prefs.setString("token", loginModel.token.toString());
-
-        SBBildirim.onay('Hoşgeldiniz sayın ${loginModel.name}.');
-
-        Navigator.push(context, MaterialPageRoute(builder: (context) => App()));
-      }
-      print(result);
-    }).catchError((onError) {
-      setState(() {
-        isEntry = false;
-      });
-      if (onError.message != '') {
-        SBBildirim.hata(
-          onError.message,
-        );
-      } else {
-        switch (onError.code.toString()) {
-          case 'unknown':
-            {
-              SBBildirim.uyari(
-                'Lütfen Giriş Bilgilerinizi Kontrol Ediniz',
-              );
-              break;
-            }
-          case 'too-many-requests':
-            {
-              SBBildirim.uyari(
-                'Çok Fazla Hatalı İstek Gönderdiniz. Lütfen Bir Süre Bekleyiniz',
-              );
-              break;
-            }
-          case 'wrong-password':
-            {
-              SBBildirim.uyari(
-                'Girdiğiniz Parola Hatalıdır. Lütfen Şifrenizi Sıfırlayınız',
-              );
-              break;
-            }
-          case 'user-not-found':
-            {
-              SBBildirim.uyari(_emailController.text +
-                  ' Mail adresine ait bir kullanıcı bulunamadı. Lütfen Kayıt Olunuz');
-              break;
-            }
-        }
-        print(onError);
-      }
-    });*/
   }
 
   GestureDetector buildSignGestureDetector(BuildContext context) {

@@ -253,7 +253,7 @@ class AlbumDataBase {
     List<Album> list = await getAlbums();
     if (list.length == 0) {
       Album album = Album();
-      album.insertData(albumName, user['uid']);
+      album.insertData(albumName, user['uid'].toString());
       await insertAlbum(album);
     }
   }
@@ -261,18 +261,27 @@ class AlbumDataBase {
   // media listesi olarak verilmiş olan kayıtları hem fiziksel hem de veritabanından siler.
   static mediaMultiDelete(List<int> selecteds) async {
     List<Medias> liste = [];
-    Database db = await openDatabase(_albumDatabaseName,
-        version: _version, onCreate: (Database db, int version) async {});
+    Database db = await openDatabase(_albumDatabaseName, version: _version);
     List<Map> list = await db.query(mediaTableName,
         where: 'id IN (${List.filled(selecteds.length, '?').join(',')})',
         whereArgs: selecteds);
     liste = list.map((e) => Medias.fromJson(e)).toList();
+
+    Medias media = liste[0];
+    Album? album = await getAAlbum(media.album_id!);
+
     for (int i = 0; i < liste.length; i++) {
       ioo.File(liste[i].path!).delete();
     }
-    int silinenDosyaSayisi = await db.delete(mediaTableName,
+    Database db2 = await openDatabase(_albumDatabaseName, version: _version);
+    int silinenDosyaSayisi = await db2.delete(mediaTableName,
         where: 'id IN (${List.filled(selecteds.length, '?').join(',')})',
         whereArgs: selecteds);
+
+    List<Medias> files = await getFiles(album!.id!);
+    album.itemCount = files.length;
+    await updateAAlbum(album);
+
     db.close();
     return silinenDosyaSayisi;
   }

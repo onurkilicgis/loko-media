@@ -3,7 +3,6 @@ import 'dart:io' as ioo;
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:loko_media/view/AudioRecorder.dart';
 import 'package:loko_media/view/Medya.dart';
 import 'package:loko_media/view/TxtView.dart';
 import 'package:provider/provider.dart';
@@ -39,64 +38,64 @@ class _PlayMedyaState extends State<PlayMedya> {
 
     return Scaffold(
         appBar: AppBar(title: Text('Albümün İçindekiler')),
-        body: Center(
-          child: Container(
-              padding: EdgeInsets.all(0),
-              child: CarouselSlider.builder(
-                  itemCount: myfileList.length,
-                  options: CarouselOptions(
-                    pageSnapping: true,
-                    initialPage: widget.index,
-                    aspectRatio: 0.9,
-                    //viewportFraction: 0.8,
-                    enlargeCenterPage: true,
-                    enlargeStrategy: CenterPageEnlargeStrategy.height,
-                    autoPlay: false,
-                  ),
-                  itemBuilder:
-                      (BuildContext context, index, int pageViewIndex) {
-                    Medias mymedia = myfileList[index];
-                    switch (mymedia.fileType) {
-                      case 'image':
-                        {
-                          return Container(
-                              child: Image.file(ioo.File(mymedia.path!)));
-                        }
-                      case 'video':
-                        {
-                          return Container(
-                            child: widget.model.openVideo(mymedia, false),
-                          );
-                        }
-                      case 'audio':
-                        {
-                          AudioRecorderState recorder = AudioRecorderState();
-                          return Container(
-                            child:
-                                AudioView(medias: mymedia, appbarstatus: false),
-                          );
-                        }
-                      case 'txt':
-                        {
-                          dynamic tip = json.decode(mymedia.settings!);
-                          if (tip['type'] == 'txt') {
+        body: SafeArea(
+          child: Center(
+            child: Container(
+                padding: EdgeInsets.all(0),
+                child: CarouselSlider.builder(
+                    itemCount: myfileList.length,
+                    options: CarouselOptions(
+                      pageSnapping: true,
+                      initialPage: widget.index,
+                      aspectRatio: 0.9,
+                      //viewportFraction: 0.8,
+                      enlargeCenterPage: true,
+                      enlargeStrategy: CenterPageEnlargeStrategy.height,
+                      autoPlay: false,
+                    ),
+                    itemBuilder:
+                        (BuildContext context, index, int pageViewIndex) {
+                      Medias mymedia = myfileList[index];
+                      switch (mymedia.fileType) {
+                        case 'image':
+                          {
                             return Container(
-                              child:
-                                  TxtView(medias: mymedia, appbarstatus: false),
-                            );
-                          } else {
+                                child: Image.file(ioo.File(mymedia.path!)));
+                          }
+                        case 'video':
+                          {
+                            return widget.model.openVideo(mymedia, false);
+                          }
+                        case 'audio':
+                          {
+                            // AudioRecorderState recorder = AudioRecorderState();
                             return Container(
-                              child:
-                                  PdfView(medias: mymedia, appbarstatus: false),
+                              child: AudioView(
+                                  medias: mymedia, appbarstatus: false),
                             );
                           }
-                        }
-                      default:
-                        {
-                          return Container();
-                        }
-                    }
-                  })),
+                        case 'txt':
+                          {
+                            dynamic tip = json.decode(mymedia.settings!);
+                            if (tip['type'] == 'txt') {
+                              return Container(
+                                child: TxtView(
+                                    medias: mymedia, appbarstatus: false),
+                              );
+                            } else {
+                              return Container(
+                                child: PdfView(
+                                    medias: mymedia, appbarstatus: false),
+                              );
+                            }
+                          }
+                        default:
+                          {
+                            return Container();
+                          }
+                      }
+                    })),
+          ),
         ));
   }
 }

@@ -12,7 +12,6 @@ class PhotoViewer extends StatefulWidget {
 }
 
 class _PhotoViewer extends State<PhotoViewer> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,17 +19,19 @@ class _PhotoViewer extends State<PhotoViewer> {
       appBar: AppBar(
         title: Text(widget.name),
       ),
-      body: Center(
-        child: Container(
-          height: 200,
-          color: Color(0xff202b40),
-          width: 350,
-          child: PhotoView(
-            backgroundDecoration: BoxDecoration(color: Color(0xff202b40)),
-            enableRotation: true,
-            //disableGestures: true,
-            //tightMode: true,
-            imageProvider: FileImage(File(widget.imagePath.toString())),
+      body: SafeArea(
+        child: Center(
+          child: Container(
+            height: 200,
+            color: Color(0xff202b40),
+            width: 350,
+            child: PhotoView(
+              backgroundDecoration: BoxDecoration(color: Color(0xff202b40)),
+              enableRotation: true,
+              //disableGestures: true,
+              //tightMode: true,
+              imageProvider: FileImage(File(widget.imagePath.toString())),
+            ),
           ),
         ),
       ),

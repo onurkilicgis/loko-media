@@ -27,12 +27,14 @@ class _PdfViewState extends State<PdfView> {
               title: Text('Pdf Dosya İçeriği'),
             )
           : null,
-      body: PDFView(
-        filePath: widget.medias.path,
-        enableSwipe: true,
-        swipeHorizontal: false,
-        autoSpacing: false,
-        pageFling: false,
+      body: SafeArea(
+        child: PDFView(
+          filePath: widget.medias.path,
+          enableSwipe: true,
+          swipeHorizontal: false,
+          autoSpacing: false,
+          pageFling: false,
+        ),
       ),
     );
   }

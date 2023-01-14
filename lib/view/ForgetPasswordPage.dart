@@ -34,122 +34,125 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
     late final emailcontroller = TextEditingController(text: widget.email);
     return Scaffold(
         backgroundColor: Color(0xff273238),
-        body: Form(
-            key: formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                    width: ekranGenisligi,
-                    height: ekranYuksekligi / 4,
-                    child: Image.asset('images/korte_logo.png')),
-                SizedBox(height: ekranYuksekligi / 15),
-                Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    'a16'.tr,
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Color(0xff7C9099),
-                      fontWeight: FontWeight.bold,
+        body: SafeArea(
+          child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                      width: ekranGenisligi,
+                      height: ekranYuksekligi / 4,
+                      child: Image.asset('images/korte_logo.png')),
+                  SizedBox(height: ekranYuksekligi / 15),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'a16'.tr,
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Color(0xff7C9099),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: ekranYuksekligi / 20),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: emailcontroller,
-                    cursorColor: Color(0xff7C9099),
-                    style: TextStyle(
-                      color: Color(0xff7C9099),
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.done,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.mail_outline,
+                  SizedBox(height: ekranYuksekligi / 20),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: emailcontroller,
+                      cursorColor: Color(0xff7C9099),
+                      style: TextStyle(
                         color: Color(0xff7C9099),
                       ),
-                      hintText: 'a1'.tr,
-                      hintStyle: TextStyle(color: Color(0xff7C9099)),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xff7C9099)),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xff7C9099)),
-                      ),
-                    ),
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (email) =>
-                        email != null && !EmailValidator.validate(email)
-                            ? 'a17'.tr
-                            : null,
-                  ),
-                ),
-                SizedBox(
-                  height: ekranYuksekligi / 25,
-                ),
-                Container(
-                  child: SizedBox(
-                    width: ekranGenisligi / 1.2,
-                    height: ekranYuksekligi / 18,
-                    child: ElevatedButton.icon(
-                        onPressed: () {
-                          if (emailcontroller.text == '') {
-                            SBBildirim.uyari('Lütfen Mail Adresinizi Giriniz');
-                            return null;
-                          }
-
-                          _authService
-                              .signInPerson(emailcontroller.text,
-                                  'aşkdsjşaldbfKŞJQWBKJABDVKBqhuew')
-                              .then((value) => null)
-                              .catchError((onError) {
-                            switch (onError.code.toString()) {
-                              case 'wrong-password':
-                                {
-                                  _authService
-                                      .sendPasswordResetEmail(
-                                          emailcontroller.text)
-                                      .then((a) => {
-                                            SBBildirim.uyari(
-                                              'Girdiğiniz ' +
-                                                  emailcontroller.text +
-                                                  ' Mail Adresine Bir Mail Gönderdik Lütfen Kontrol Ediniz',
-                                            ),
-                                            Navigator.of(context).pop()
-                                          });
-
-                                  break;
-                                }
-                              case 'user-not-found':
-                                {
-                                  SBBildirim.uyari(emailcontroller.text +
-                                      ' Mail adresine ait bir kullanıcı bulunamadı. Lütfen Kayıt Olunuz');
-                                  break;
-                                }
-                            }
-                          });
-
-                          //emailcontroller.text
-
-                          //SBBildirim.bilgi('a19'.tr);
-                        },
-                        icon: Icon(
-                          Icons.email_outlined,
-                          color: Color(0xff000200),
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.done,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.mail_outline,
+                          color: Color(0xff7C9099),
                         ),
-                        label: Text(
-                          'a18'.tr,
-                          style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff000200)),
-                        )),
+                        hintText: 'a1'.tr,
+                        hintStyle: TextStyle(color: Color(0xff7C9099)),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xff7C9099)),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xff7C9099)),
+                        ),
+                      ),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (email) =>
+                          email != null && !EmailValidator.validate(email)
+                              ? 'a17'.tr
+                              : null,
+                    ),
                   ),
-                )
-              ],
-            )));
+                  SizedBox(
+                    height: ekranYuksekligi / 25,
+                  ),
+                  Container(
+                    child: SizedBox(
+                      width: ekranGenisligi / 1.2,
+                      height: ekranYuksekligi / 18,
+                      child: ElevatedButton.icon(
+                          onPressed: () {
+                            if (emailcontroller.text == '') {
+                              SBBildirim.uyari(
+                                  'Lütfen Mail Adresinizi Giriniz');
+                              return null;
+                            }
+
+                            _authService
+                                .signInPerson(emailcontroller.text,
+                                    'aşkdsjşaldbfKŞJQWBKJABDVKBqhuew')
+                                .then((value) => null)
+                                .catchError((onError) {
+                              switch (onError.code.toString()) {
+                                case 'wrong-password':
+                                  {
+                                    _authService
+                                        .sendPasswordResetEmail(
+                                            emailcontroller.text)
+                                        .then((a) => {
+                                              SBBildirim.uyari(
+                                                'Girdiğiniz ' +
+                                                    emailcontroller.text +
+                                                    ' Mail Adresine Bir Mail Gönderdik Lütfen Kontrol Ediniz',
+                                              ),
+                                              Navigator.of(context).pop()
+                                            });
+
+                                    break;
+                                  }
+                                case 'user-not-found':
+                                  {
+                                    SBBildirim.uyari(emailcontroller.text +
+                                        ' Mail adresine ait bir kullanıcı bulunamadı. Lütfen Kayıt Olunuz');
+                                    break;
+                                  }
+                              }
+                            });
+
+                            //emailcontroller.text
+
+                            //SBBildirim.bilgi('a19'.tr);
+                          },
+                          icon: Icon(
+                            Icons.email_outlined,
+                            color: Color(0xff000200),
+                          ),
+                          label: Text(
+                            'a18'.tr,
+                            style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff000200)),
+                          )),
+                    ),
+                  )
+                ],
+              )),
+        ));
   }
 }

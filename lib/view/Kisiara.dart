@@ -101,93 +101,95 @@ class _KisiaraState extends State<Kisiara> {
       appBar: AppBar(
         title: Text('Kişi Arama'),
       ),
-      body: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              onChanged: (name) async {
-                print(name);
-                searchUser(name);
-              },
-              controller: _kisiNameController,
-              keyboardType: TextInputType.text,
-              cursorColor: Colors.white,
-              textCapitalization: TextCapitalization.words,
-              maxLines: 1,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Color(0xff1e2c49),
-                contentPadding: EdgeInsets.all(8),
-                hintText: 'Kişi Ara : Ad Soyad, Mail... ',
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(7),
-                  borderSide: BorderSide(
-                    color: Color(0xff017eba),
+      body: SafeArea(
+        child: ListView(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                onChanged: (name) async {
+                  print(name);
+                  searchUser(name);
+                },
+                controller: _kisiNameController,
+                keyboardType: TextInputType.text,
+                cursorColor: Colors.white,
+                textCapitalization: TextCapitalization.words,
+                maxLines: 1,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Color(0xff1e2c49),
+                  contentPadding: EdgeInsets.all(8),
+                  hintText: 'Kişi Ara : Ad Soyad, Mail... ',
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(7),
+                    borderSide: BorderSide(
+                      color: Color(0xff017eba),
+                    ),
                   ),
-                ),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Color(0xff017eba),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0xff017eba),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Container(
-            height: 500,
-            child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: kisiler.length,
-                itemBuilder: (BuildContext context, int index) {
-                  String img = kisiler[index]['img'];
-                  String name = kisiler[index]['name'];
-                  bool isMyFriend = kisiler[index]['isMyFriend'];
-                  bool isRequested = kisiler[index]['isRequested'];
-                  TextButton button = TextButton(
-                      onPressed: () {
-                        takipEt(kisiler[index]);
-                      },
-                      child: Text(
-                        'Takip Et',
-                        style: TextStyle(color: Color(0xff8bc34a)),
-                      ));
-                  if (isMyFriend == true) {
-                    button = TextButton(
+            Container(
+              height: 500,
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: kisiler.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    String img = kisiler[index]['img'];
+                    String name = kisiler[index]['name'];
+                    bool isMyFriend = kisiler[index]['isMyFriend'];
+                    bool isRequested = kisiler[index]['isRequested'];
+                    TextButton button = TextButton(
                         onPressed: () {
-                          cikart(kisiler[index]);
+                          takipEt(kisiler[index]);
                         },
                         child: Text(
-                          'Çıkart',
-                          style: TextStyle(color: Color(0xffffda15)),
+                          'Takip Et',
+                          style: TextStyle(color: Color(0xff8bc34a)),
                         ));
-                  }
-                  if (isRequested == true) {
-                    button = TextButton(
-                        onPressed: () {
-                          iptal(kisiler[index]);
-                        },
-                        child: Text(
-                          'İptal Et',
-                          style: TextStyle(color: Color(0xffff7373)),
-                        ));
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                        top: 0, left: 8, right: 8, bottom: 0),
-                    child: Card(
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(img, scale: 1),
+                    if (isMyFriend == true) {
+                      button = TextButton(
+                          onPressed: () {
+                            cikart(kisiler[index]);
+                          },
+                          child: Text(
+                            'Çıkart',
+                            style: TextStyle(color: Color(0xffffda15)),
+                          ));
+                    }
+                    if (isRequested == true) {
+                      button = TextButton(
+                          onPressed: () {
+                            iptal(kisiler[index]);
+                          },
+                          child: Text(
+                            'İptal Et',
+                            style: TextStyle(color: Color(0xffff7373)),
+                          ));
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                          top: 0, left: 8, right: 8, bottom: 0),
+                      child: Card(
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(img, scale: 1),
+                          ),
+                          title: Text('${name}'),
+                          trailing: button,
                         ),
-                        title: Text('${name}'),
-                        trailing: button,
                       ),
-                    ),
-                  );
-                }),
-          )
-        ],
+                    );
+                  }),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -146,6 +146,7 @@ class APP_VM {
                       onPressed: () {
                         Navigator.pop(context);
                         app.deleteAAlbum(album.id!);
+
                         silmeSonrasi();
                       },
                       child: Text('Evet',

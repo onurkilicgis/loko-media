@@ -22,6 +22,7 @@ class _AudioViewState extends State<AudioView> {
   String? filePath;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
+  Duration ilaveBilgi = Duration.zero;
   bool playGostersinmi = true;
   String isDark = 'dark';
   findTheme() async {
@@ -45,13 +46,14 @@ class _AudioViewState extends State<AudioView> {
               title: Text('Ses Dinleme Paneli'),
             )
           : null,
-      body: buildCenter(),
+      body: SafeArea(child: buildCenter()),
     );
   }
 
   Widget buildCenter() {
     dynamic settings = json.decode(widget.medias.settings.toString());
     duration = Duration(milliseconds: settings['duration']);
+    ilaveBilgi = Duration(milliseconds: settings['duration']);
     return Center(
         child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -100,10 +102,12 @@ class _AudioViewState extends State<AudioView> {
             value: position.inMilliseconds.toDouble(),
             onChangeEnd: (value) async {
               int milisecond = (value).toInt();
+
               position = Duration(milliseconds: milisecond);
               await player.seekToPlayer(position);
               await resumePlay();
               setState(() {});
+
               //
             },
             onChanged: (double value) {},
@@ -166,9 +170,10 @@ class _AudioViewState extends State<AudioView> {
         position = e.position;
         if (fark <= 200) {
           duration = e.duration;
-          position = e.duration;
+          position = ilaveBilgi;
           playGostersinmi = true;
         }
+
         setState(() {});
       });
     }

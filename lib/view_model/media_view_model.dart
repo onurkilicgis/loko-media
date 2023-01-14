@@ -131,7 +131,6 @@ class Media_VM {
                           tekSilinen.add(media.id!);
                           int silinenDosyaSayisi =
                               await AlbumDataBase.mediaMultiDelete(tekSilinen);
-
                           SBBildirim.bilgi(
                               '${silinenDosyaSayisi} Adet medya silinmiştir.');
                           model.setState(() {

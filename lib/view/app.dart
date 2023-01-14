@@ -3,7 +3,6 @@ import 'dart:core';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sound/flutter_sound.dart';
@@ -36,10 +35,6 @@ import 'Takipettiklerim.dart';
 import 'TextView.dart';
 
 class App extends StatefulWidget {
-  const App({
-    Key? key,
-  }) : super(key: key);
-
   @override
   State<App> createState() => AppState();
 }
@@ -55,8 +50,10 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
   String? fileName;
   PlatformFile? pickedFile;
   AlbumDataBase albumDataBase = AlbumDataBase();
+
   //dolu havuzumuz
   List<Album> albumList = [];
+
   //istediğimiz zaman doldurup boşaltabileceğimiz havuzumuz
   List<Album> filteredAlbumList = [];
   int tiklananAlbum = -1;
@@ -66,53 +63,65 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
   String cardType = 'GFCard';
   File? image;
   File? video;
+  dynamic user;
+  bool userload = false;
+  List<Album> deleteAlbum = [];
+
+  Future<void> getUser() async {
+    String userString = await MyLocal.getStringData('user');
+    user = json.decode(userString);
+    setState(() {
+      userload = true;
+    });
+  }
 
   Future pickImage(ImageSource source) async {
     try {
-      final image = await ImagePicker().pickImage(source: source);
-      if (image == null) return;
-      if (image != null) {
-        Loading.waiting('Çektiğiniz Fotoğraf Yükleniyor');
-      }
-
       dynamic positions = await GPS.getGPSPosition();
       if (positions['status'] == false) {
         SBBildirim.uyari(positions['message']);
         return;
-      }
-      await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
-      final imageTemporary = File(image.path);
-      int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
-      int now = DateTime.now().millisecondsSinceEpoch;
-      var parts = image.path.split('.');
-      String extension = parts[parts.length - 1];
-      String filename = 'image-' + now.toString() + '.' + extension;
-      String miniFilename = 'image-' + now.toString() + '-mini.' + extension;
-      Uint8List bytes = imageTemporary.readAsBytesSync();
-      dynamic? newPath = await FolderModel.createFile(
-          'albums/album-${aktifAlbumId}',
-          bytes,
-          filename,
-          miniFilename,
-          'image');
-      Medias dbImage = new Medias(
-        album_id: aktifAlbumId,
-        name: filename,
-        miniName: miniFilename,
-        path: newPath['file'],
-        latitude: positions['latitude'],
-        longitude: positions['longitude'],
-        altitude: positions['altitude'],
-        fileType: 'image',
-      );
-      dbImage.insertData({});
-      await AlbumDataBase.insertFile(dbImage, newPath['mini'], (lastId) {
-        dbImage.id = lastId;
-        getAlbumList();
-      });
-      Loading.close();
-      if (aktifTabIndex == 2) {
-        _mediaProvider.addMedia(dbImage);
+      } else {
+        final image = await ImagePicker().pickImage(source: source);
+        if (image == null) return;
+        if (image != null) {
+          Loading.waiting('Çektiğiniz Fotoğraf Yükleniyor');
+        }
+
+        await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
+        final imageTemporary = File(image.path);
+        int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
+        int now = DateTime.now().millisecondsSinceEpoch;
+        var parts = image.path.split('.');
+        String extension = parts[parts.length - 1];
+        String filename = 'image-' + now.toString() + '.' + extension;
+        String miniFilename = 'image-' + now.toString() + '-mini.' + extension;
+        Uint8List bytes = imageTemporary.readAsBytesSync();
+        dynamic? newPath = await FolderModel.createFile(
+            'albums/album-${aktifAlbumId}',
+            bytes,
+            filename,
+            miniFilename,
+            'image');
+        Medias dbImage = new Medias(
+          album_id: aktifAlbumId,
+          name: filename,
+          miniName: miniFilename,
+          path: newPath['file'],
+          latitude: positions['latitude'],
+          longitude: positions['longitude'],
+          altitude: positions['altitude'],
+          fileType: 'image',
+        );
+        dbImage.insertData({});
+        await AlbumDataBase.insertFile(dbImage, newPath['mini'], (lastId) {
+          dbImage.id = lastId;
+          getAlbumList();
+        });
+        Loading.close();
+        if (aktifTabIndex == 2) {
+          _mediaProvider.addMedia(dbImage);
+        }
       }
     } on PlatformException catch (e) {
       SBBildirim.hata(e.toString());
@@ -121,54 +130,55 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
 
   Future pickVideo(ImageSource source, File? video) async {
     try {
-      final video = await ImagePicker().pickVideo(
-        source: source,
-        maxDuration: const Duration(seconds: 300),
-      );
-      if (video == null) {
-        return;
-      } else {
-        Loading.waiting('Çektiğiniz Video Yükleniyor');
-      }
-
       dynamic positions = await GPS.getGPSPosition();
       if (positions['status'] == false) {
         SBBildirim.uyari(positions['message']);
         return;
-      }
-      await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
-      final imageTemporary = File(video.path);
-      int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
-      int now = DateTime.now().millisecondsSinceEpoch;
-      var parts = video.path.split('.');
-      String extension = parts[parts.length - 1];
-      String filename = 'video-' + now.toString() + '.' + extension;
-      String miniFilename = 'video-' + now.toString() + '-mini.png';
-      Uint8List bytes = imageTemporary.readAsBytesSync();
-      dynamic? newPath = await FolderModel.createFile(
-          'albums/album-${aktifAlbumId}',
-          bytes,
-          filename,
-          miniFilename,
-          'video');
-      Medias dbImage = new Medias(
-        album_id: aktifAlbumId,
-        name: filename,
-        miniName: miniFilename,
-        path: newPath['file'],
-        latitude: positions['latitude'],
-        longitude: positions['longitude'],
-        altitude: positions['altitude'],
-        fileType: 'video',
-      );
-      dbImage.insertData({});
-      await AlbumDataBase.insertFile(dbImage, newPath['mini'], (lastId) {
-        dbImage.id = lastId;
-        getAlbumList();
-      });
-      Loading.close();
-      if (aktifTabIndex == 2) {
-        _mediaProvider.addMedia(dbImage);
+      } else {
+        final video = await ImagePicker().pickVideo(
+          source: source,
+          maxDuration: const Duration(seconds: 300),
+        );
+        if (video == null) {
+          return;
+        } else {
+          Loading.waiting('Çektiğiniz Video Yükleniyor');
+        }
+
+        await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
+        final imageTemporary = File(video.path);
+        int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
+        int now = DateTime.now().millisecondsSinceEpoch;
+        var parts = video.path.split('.');
+        String extension = parts[parts.length - 1];
+        String filename = 'video-' + now.toString() + '.' + extension;
+        String miniFilename = 'video-' + now.toString() + '-mini.png';
+        Uint8List bytes = imageTemporary.readAsBytesSync();
+        dynamic? newPath = await FolderModel.createFile(
+            'albums/album-${aktifAlbumId}',
+            bytes,
+            filename,
+            miniFilename,
+            'video');
+        Medias dbImage = new Medias(
+          album_id: aktifAlbumId,
+          name: filename,
+          miniName: miniFilename,
+          path: newPath['file'],
+          latitude: positions['latitude'],
+          longitude: positions['longitude'],
+          altitude: positions['altitude'],
+          fileType: 'video',
+        );
+        dbImage.insertData({});
+        await AlbumDataBase.insertFile(dbImage, newPath['mini'], (lastId) {
+          dbImage.id = lastId;
+          getAlbumList();
+        });
+        Loading.close();
+        if (aktifTabIndex == 2) {
+          _mediaProvider.addMedia(dbImage);
+        }
       }
     } on PlatformException catch (e) {
       SBBildirim.hata(e.toString());
@@ -179,15 +189,24 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
     List<Album> dbAlbums = await AlbumDataBase.getAlbums();
     int aktif_album_no = await MyLocal.getIntData('aktifalbum');
     String cardType2 = await MyLocal.getStringData('card-type');
-    Album album =
-        dbAlbums.firstWhere((element) => aktif_album_no == element.id);
-    setState(() {
-      albumList = dbAlbums;
-      filteredAlbumList = dbAlbums;
-      aktifalbum = aktif_album_no;
-      cardType = cardType2;
-      aktifAlbumItem = album;
-    });
+    if (dbAlbums.length > 0) {
+      Album album =
+          dbAlbums.firstWhere((element) => aktif_album_no == element.id);
+      setState(() {
+        albumList = dbAlbums;
+        filteredAlbumList = dbAlbums;
+        aktifalbum = aktif_album_no;
+        cardType = cardType2;
+        aktifAlbumItem = album;
+      });
+    } else {
+      setState(() {
+        albumList = dbAlbums;
+        filteredAlbumList = dbAlbums;
+        aktifalbum = aktif_album_no;
+        cardType = cardType2;
+      });
+    }
   }
 
   final GlobalKey<ScaffoldState> scaffoldState = GlobalKey<ScaffoldState>();
@@ -201,11 +220,6 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
       child: ListTile(
         onTap: () {
           albumMedyalariniAc(album.id);
-          /*await MyLocal.setIntData('tiklananAlbum', album.id);
-          setState(() {
-            tiklananAlbum = album.id!;
-            controller.index = 1;
-          });*/
         },
         leading: image,
         title: Text(album.name),
@@ -421,9 +435,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
   late MediaProvider _mediaProvider;
 
   void initState() {
-    /* WidgetsBinding.instance.addPostFrameCallback((_) {
-      getDialog();
-    });*/
+    getUser();
 
     _mediaProvider = Provider.of<MediaProvider>(context, listen: false);
 
@@ -504,317 +516,334 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     Album album = Album();
 
-    return DefaultTabController(
-      length: 3,
-      initialIndex: 0,
-      child: Scaffold(
-        drawer: Container(
-          width: 350,
-          child: Drawer(
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(20),
-                  bottomRight: Radius.circular(20)),
-            ),
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                UserAccountsDrawerHeader(
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.only(topRight: Radius.circular(18)),
-                    color: Color(0xff26334d),
-                    image: DecorationImage(
-                        image: NetworkImage(''), fit: BoxFit.cover),
+    return userload == false
+        ? Container()
+        : DefaultTabController(
+            length: 3,
+            initialIndex: 0,
+            child: Scaffold(
+              drawer: Container(
+                width: 300,
+                child: Drawer(
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(20),
+                        bottomRight: Radius.circular(20)),
                   ),
-                  accountName: Text('onur kılıç'),
-                  accountEmail: Text('simurgonur@gmail.com'),
-                  currentAccountPicture: CircleAvatar(
-                    child: ClipOval(
-                      child: Image.network('', fit: BoxFit.cover),
-                    ),
-                  ),
-                  /* onDetailsPressed: () {},
-                    arrowColor: Colors.black,*/
-                ),
-                listMenuItems(Icons.event_note, "Albüm Oluştur", getDialog),
-                listMenuItems(Icons.search, "Kişi Ara", () {
-                  openPage('kisiara');
-                }),
-                listMenuItems(Icons.supervised_user_circle, "Takipçilerim", () {
-                  openPage('takipciler');
-                }),
-                listMenuItems(
-                    Icons.supervisor_account_rounded, "Takip Ettiklerim", () {
-                  openPage('takipettiklerim');
-                }),
-
-                // SizedBox(height: context.dynamicHeight(3)),
-                Container(
-                  child: Row(
+                  child: ListView(
+                    padding: EdgeInsets.zero,
                     children: [
-                      Expanded(
-                        child: ListTile(
-                            leading: Icon(FontAwesomeIcons.moon),
-                            title: Text(
-                              'Gece Modu',
-                              style: TextStyle(fontSize: 18),
-                            )),
-                      ),
-                      Consumer<SwitchModel>(
-                          builder: (context, switchModel, child) {
-                        return Switch(
-                            value: switchModel.isSwitchControl, //tetikleyici
-                            activeTrackColor: Colors.lightGreen,
-                            activeColor: Colors.green,
-                            inactiveTrackColor: Colors.black54,
-                            inactiveThumbColor: Colors.black,
-                            onChanged: (bool data) async {
-                              if (data == true) {
-                                await MyLocal.setStringData('theme', 'light');
-                              } else {
-                                await MyLocal.setStringData('theme', 'dark');
-                              }
-
-                              switchModel.switchChanged(data); // dinleyici
-                            });
-                      }),
-                    ],
-                  ),
-                ),
-                Container(
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: ListTile(
-                        leading: Icon(FontAwesomeIcons.arrowRightFromBracket),
-                        title: Text(
-                          'Çıkış',
-                          style: TextStyle(fontSize: 18),
+                      UserAccountsDrawerHeader(
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.only(topRight: Radius.circular(18)),
+                          color: Color(0xff26334d),
                         ),
-                        onTap: () async {
-                          await _authService.signOut();
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => LoginPage()));
-                        },
-                      ))
+                        accountName: Text(user['name']),
+                        accountEmail: Text(user['mail']),
+                        currentAccountPicture: CircleAvatar(
+                          child: ClipOval(
+                            child:
+                                Image.network(user['img'], fit: BoxFit.cover),
+                          ),
+                        ),
+                        /* onDetailsPressed: () {},
+                    arrowColor: Colors.black,*/
+                      ),
+                      listMenuItems(
+                          Icons.event_note, "Albüm Oluştur", getDialog),
+                      listMenuItems(Icons.search, "Kişi Ara", () {
+                        openPage('kisiara');
+                      }),
+                      listMenuItems(
+                          Icons.supervised_user_circle, "Takipçilerim", () {
+                        openPage('takipciler');
+                      }),
+                      listMenuItems(
+                          Icons.supervisor_account_rounded, "Takip Ettiklerim",
+                          () {
+                        openPage('takipettiklerim');
+                      }),
+
+                      // SizedBox(height: context.dynamicHeight(3)),
+                      Container(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: ListTile(
+                                  leading: Icon(FontAwesomeIcons.moon),
+                                  title: Text(
+                                    'Gece Modu',
+                                    style: TextStyle(fontSize: 18),
+                                  )),
+                            ),
+                            Consumer<SwitchModel>(
+                                builder: (context, switchModel, child) {
+                              return Switch(
+                                  value: switchModel.isSwitchControl,
+                                  //tetikleyici
+                                  activeTrackColor: Colors.lightGreen,
+                                  activeColor: Colors.green,
+                                  inactiveTrackColor: Colors.black54,
+                                  inactiveThumbColor: Colors.black,
+                                  onChanged: (bool data) async {
+                                    if (data == true) {
+                                      await MyLocal.setStringData(
+                                          'theme', 'light');
+                                    } else {
+                                      await MyLocal.setStringData(
+                                          'theme', 'dark');
+                                    }
+
+                                    switchModel
+                                        .switchChanged(data); // dinleyici
+                                  });
+                            }),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: ListTile(
+                              leading:
+                                  Icon(FontAwesomeIcons.arrowRightFromBracket),
+                              title: Text(
+                                'Çıkış',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              onTap: () async {
+                                await _authService.signOut();
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => LoginPage()));
+                              },
+                            ))
+                          ],
+                        ),
+                      )
                     ],
                   ),
-                )
-              ],
-            ),
-          ),
-        ),
-        appBar: AppBar(
-          centerTitle: false,
-          title: getAppController(),
-          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(40),
-            child: Material(
-              color: Color(0xff202b40),
-              child: TabBar(
-                onTap: (tabindex) async {
-                  if (tabindex == 2) {
-                    controller.index = controller.previousIndex;
-                    albumMedyalariniAc(aktifalbum);
-                  }
-                  if (tabindex == 3) {
-                    controller.index = controller.previousIndex;
-                    albumuHaritadaGoster(aktifAlbumItem);
-                  }
-                },
-                labelStyle: TextStyle(fontSize: 14),
-                unselectedLabelStyle: TextStyle(fontSize: 12),
-                indicatorColor: Color(0xff0e91ce),
-                controller: controller,
-                labelColor: Color(0xff0e91ce),
-                unselectedLabelColor: Color(0xff697a9b),
-                tabs: [
-                  Tab(
-                    child: Text(
-                      'Ahali',
-                    ),
-                    //icon: Icon(Icons.list_alt),
-                  ),
-                  Tab(
-                    child: Text(
-                      'Albümler',
-                    ),
-                    //icon: Icon(Icons.list_alt),
-                  ),
-                  Tab(
-                    child: Text(
-                      'Medya',
-                    ),
-                    //icon: Icon(Icons.media_bluetooth_off),
-                  ),
-                  Tab(
-                    child: Text(
-                      'Harita',
-                    ),
-                    //icon: Icon(Icons.map)
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ),
-        body: TabBarView(
-            controller: controller,
-            physics: aktifTabIndex != 3
-                ? BouncingScrollPhysics()
-                : NeverScrollableScrollPhysics(),
-            children: [
-              Paylasimlar(id: tiklananAlbum),
-              Column(
-                children: [
-                  APP_VM.getAramaKutusu(
-                    context,
-                    this,
-                    album,
-                  ),
-                  Expanded(
-                    child: cardType == 'GFCard'
-                        ? GridView(
-                            padding: EdgeInsets.all(12),
-                            shrinkWrap: false,
-                            scrollDirection: Axis.vertical,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                            ),
-                            children: createAlbumCards(),
-                          )
-                        : ListView(
-                            shrinkWrap: true,
-                            padding: const EdgeInsets.all(8),
-                            scrollDirection: Axis.vertical,
-                            children: createAlbumCards(),
+              appBar: AppBar(
+                centerTitle: false,
+                title: getAppController(),
+                backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(40),
+                  child: Material(
+                    color: Color(0xff202b40),
+                    child: TabBar(
+                      onTap: (tabindex) async {
+                        if (tabindex == 1) {
+                          getAlbumList();
+                        }
+                        if (tabindex == 2) {
+                          controller.index = controller.previousIndex;
+                          albumMedyalariniAc(aktifalbum);
+                        }
+                        if (tabindex == 3) {
+                          controller.index = controller.previousIndex;
+                          albumuHaritadaGoster(aktifAlbumItem);
+                        }
+                      },
+                      labelStyle: TextStyle(fontSize: 14),
+                      unselectedLabelStyle: TextStyle(fontSize: 12),
+                      indicatorColor: Color(0xff0e91ce),
+                      controller: controller,
+                      labelColor: Color(0xff0e91ce),
+                      unselectedLabelColor: Color(0xff697a9b),
+                      tabs: [
+                        Tab(
+                          child: Text(
+                            'Ahali',
                           ),
+                          //icon: Icon(Icons.list_alt),
+                        ),
+                        Tab(
+                          child: Text(
+                            'Albümler',
+                          ),
+                          //icon: Icon(Icons.list_alt),
+                        ),
+                        Tab(
+                          child: Text(
+                            'Medya',
+                          ),
+                          //icon: Icon(Icons.media_bluetooth_off),
+                        ),
+                        Tab(
+                          child: Text(
+                            'Harita',
+                          ),
+                          //icon: Icon(Icons.map)
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              body: TabBarView(
+                  controller: controller,
+                  physics: aktifTabIndex != 3
+                      ? BouncingScrollPhysics()
+                      : NeverScrollableScrollPhysics(),
+                  children: [
+                    Paylasimlar(id: tiklananAlbum),
+                    Column(
+                      children: [
+                        APP_VM.getAramaKutusu(
+                          context,
+                          this,
+                          album,
+                        ),
+                        Expanded(
+                          child: cardType == 'GFCard'
+                              ? GridView(
+                                  padding: EdgeInsets.all(12),
+                                  shrinkWrap: false,
+                                  scrollDirection: Axis.vertical,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                  ),
+                                  children: createAlbumCards(),
+                                )
+                              : ListView(
+                                  shrinkWrap: true,
+                                  padding: const EdgeInsets.all(8),
+                                  scrollDirection: Axis.vertical,
+                                  children: createAlbumCards(),
+                                ),
+                        ),
+                      ],
+                    ),
+                    Medya(
+                      id: tiklananAlbum,
+                    ),
+                    Harita(id: tiklananAlbum, type: 'album') //xxx
+                  ]),
+              bottomNavigationBar: BottomNavigationBar(
+                key: scaffoldState,
+                currentIndex: currentIndex,
+                onTap: (index) async {
+                  if (index == 0) {
+                    return BottomSheetItems(
+                        Icons.camera_alt_outlined,
+                        'Fotoğraf Çek ve Yükle',
+                        Icons.image_outlined,
+                        'Galiriden Fotoğraf Yükle', (num) {
+                      switch (num) {
+                        case 0:
+                          {
+                            pickImage(ImageSource.camera);
+
+                            break;
+                          }
+                        case 1:
+                          {
+                            pickImage(ImageSource.gallery);
+
+                            break;
+                          }
+                      }
+                    });
+                  }
+                  ;
+                  if (index == 1) {
+                    return BottomSheetItems(
+                        Icons.video_camera_back,
+                        'Video Kaydet ve Yükle',
+                        Icons.video_collection,
+                        'Galiriden Video Yükle', (num) {
+                      switch (num) {
+                        case 0:
+                          {
+                            pickVideo(ImageSource.camera, video);
+                            break;
+                          }
+                        case 1:
+                          {
+                            pickVideo(ImageSource.gallery, video);
+                            break;
+                          }
+                      }
+                    });
+                  }
+                  ;
+                  if (index == 2) {
+                    return BottomSheetItems(
+                        Icons.mic,
+                        'Anlık Ses Kaydet ve Yükle',
+                        Icons.audio_file,
+                        'Mevcut Bir Ses Kaydını Ekle', (num) async {
+                      switch (num) {
+                        case 0:
+                          {
+                            buildPushAudio(context, this);
+                            break;
+                          }
+                        case 1:
+                          {
+                            await audioFilePicker();
+                            break;
+                          }
+                      }
+                    });
+                  }
+                  ;
+                  if (index == 3) {
+                    return BottomSheetItems(
+                        Icons.text_snippet_sharp,
+                        'Not Yaz Ve Kaydet',
+                        Icons.insert_drive_file_rounded,
+                        'Mevcut Bir Text Dosyası Yükle', (num) async {
+                      switch (num) {
+                        case 0:
+                          {
+                            buildPushText(context, this);
+
+                            break;
+                          }
+                        case 1:
+                          {
+                            await textFilePicker();
+                            break;
+                          }
+                      }
+                    });
+                  }
+
+                  setState(() {
+                    currentIndex = index;
+                  });
+                },
+                type: BottomNavigationBarType.fixed,
+                // iconSize: context.dynamicHeight(50),
+                selectedFontSize: context.dynamicHeight(65),
+                unselectedFontSize: context.dynamicHeight(75),
+                items: [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.camera_alt),
+                    label: 'Fotoğraf Ekle',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.video_camera_back),
+                    label: 'Video Ekle',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.mic),
+                    label: 'Ses Ekle',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.wysiwyg),
+                    label: 'Yazı Ekle',
                   ),
                 ],
               ),
-              Medya(id: tiklananAlbum),
-              Harita(id: tiklananAlbum, type: 'album') //xxx
-            ]),
-        bottomNavigationBar: BottomNavigationBar(
-          key: scaffoldState,
-          currentIndex: currentIndex,
-          onTap: (index) async {
-            if (index == 0) {
-              return BottomSheetItems(
-                  Icons.camera_alt_outlined,
-                  'Fotoğraf Çek ve Yükle',
-                  Icons.image_outlined,
-                  'Galiriden Fotoğraf Yükle', (num) {
-                switch (num) {
-                  case 0:
-                    {
-                      pickImage(ImageSource.camera);
-
-                      break;
-                    }
-                  case 1:
-                    {
-                      pickImage(ImageSource.gallery);
-
-                      break;
-                    }
-                }
-              });
-            }
-            ;
-            if (index == 1) {
-              return BottomSheetItems(
-                  Icons.video_camera_back,
-                  'Video Kaydet ve Yükle',
-                  Icons.video_collection,
-                  'Galiriden Video Yükle', (num) {
-                switch (num) {
-                  case 0:
-                    {
-                      pickVideo(ImageSource.camera, video);
-                      break;
-                    }
-                  case 1:
-                    {
-                      pickVideo(ImageSource.gallery, video);
-                      break;
-                    }
-                }
-              });
-            }
-            ;
-            if (index == 2) {
-              return BottomSheetItems(Icons.mic, 'Anlık Ses Kaydet ve Yükle',
-                  Icons.audio_file, 'Mevcut Bir Ses Kaydını Ekle', (num) async {
-                switch (num) {
-                  case 0:
-                    {
-                      buildPushAudio(context, this);
-                      break;
-                    }
-                  case 1:
-                    {
-                      await audioFilePicker();
-                      break;
-                    }
-                }
-              });
-            }
-            ;
-            if (index == 3) {
-              return BottomSheetItems(
-                  Icons.text_snippet_sharp,
-                  'Not Yaz Ve Kaydet',
-                  Icons.insert_drive_file_rounded,
-                  'Mevcut Bir Text Dosyası Yükle', (num) async {
-                switch (num) {
-                  case 0:
-                    {
-                      buildPushText(context, this);
-
-                      break;
-                    }
-                  case 1:
-                    {
-                      await textFilePicker();
-                      break;
-                    }
-                }
-              });
-            }
-
-            setState(() {
-              currentIndex = index;
-            });
-          },
-          type: BottomNavigationBarType.fixed,
-          // iconSize: context.dynamicHeight(50),
-          selectedFontSize: context.dynamicHeight(65),
-          unselectedFontSize: context.dynamicHeight(75),
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.camera_alt),
-              label: 'Fotoğraf Ekle',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.video_camera_back),
-              label: 'Video Ekle',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.mic),
-              label: 'Ses Ekle',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.wysiwyg),
-              label: 'Yazı Ekle',
-            ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 
   Future<dynamic> buildPushAudio(BuildContext context, AppState model) {
@@ -975,15 +1004,6 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
           return Text('Albümün Haritası', style: TextStyle());
         }
     }
-    /*if (controller.index == 0) {
-      return Text('Oluşturulmuş Albümler', style: TextStyle());
-    } else {
-      if (controller.index == 1) {
-        return Text('Albümün Medyaları', style: TextStyle());
-      } else {
-        return Text('Albümün Haritası', style: TextStyle());
-      }
-    }*/
   }
 
   // aktif olan albümü silme
@@ -1009,8 +1029,10 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
       SBBildirim.bilgi(
           '${silinenMediaSayisi} Adet medya öğesi ve ${silinenAlbumSayisi} adet, ${silinecekAlbum?.name} adlı albüm silindi.');
     }
-    Loading.close();
+
     getAlbumList();
+
+    Loading.close();
   }
 
   albumArama(String name) async {
@@ -1031,124 +1053,139 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
   }
 
   audioFilePicker() async {
-    // Navigator.pop(context);
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['mp3', 'wav', 'm4a', 'ogv'],
-    );
-    if (result != null) {
-      fileName = result.files.first.name;
-      // Uint8List? bytes = result.files.first.bytes;
-      pickedFile = result.files.first;
-
-      audioFile = File(pickedFile!.path!);
+    try {
       dynamic positions = await GPS.getGPSPosition();
       if (positions['status'] == false) {
         SBBildirim.uyari(positions['message']);
         return;
+      } else {
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ['mp3', 'wav', 'm4a', 'ogv'],
+        );
+        if (result != null) {
+          fileName = result.files.first.name;
+          // Uint8List? bytes = result.files.first.bytes;
+          pickedFile = result.files.first;
+
+          audioFile = File(pickedFile!.path!);
+
+          Loading.waiting('Seçtiğiniz Ses Dosyası Yükleniyor...');
+
+          await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
+
+          int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
+          int now = DateTime.now().millisecondsSinceEpoch;
+          var parts = audioFile!.path.split('.');
+          String extension = parts[parts.length - 1];
+          String filename = 'audio-' + now.toString() + '.' + extension;
+          //String miniFilename = 'audio-' + now.toString() + '-mini.' + extension;
+          // dosyaları byte tipinde okur. byte içerisinde integerlar bulunan bir dizidir.
+          Uint8List bytes = audioFile!.readAsBytesSync();
+          dynamic? newPath = await FolderModel.createFile(
+              'albums/album-${aktifAlbumId}', bytes, filename, '', 'audio');
+          Medias dbAudio = new Medias(
+            album_id: aktifAlbumId,
+            name: fileName,
+            miniName: '',
+            path: newPath['file'],
+            latitude: positions['latitude'],
+            longitude: positions['longitude'],
+            altitude: positions['altitude'],
+            fileType: 'audio',
+          );
+          final player = FlutterSoundPlayer();
+          player.openPlayer();
+          Duration? duration =
+              await player.startPlayer(fromURI: newPath['file']);
+          dbAudio.insertData({'duration': duration?.inMilliseconds});
+          player.closePlayer();
+          await AlbumDataBase.insertFile(dbAudio, '', (lastId) {
+            dbAudio.id = lastId;
+            getAlbumList();
+          });
+
+          Loading.close();
+          if (aktifTabIndex == 2) {
+            _mediaProvider.addMedia(dbAudio);
+          }
+        } else {
+          return null;
+        }
       }
-      Loading.waiting('Seçtiğiniz Ses Dosyası Yükleniyor...');
-
-      await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
-
-      int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
-      int now = DateTime.now().millisecondsSinceEpoch;
-      var parts = audioFile!.path.split('.');
-      String extension = parts[parts.length - 1];
-      String filename = 'audio-' + now.toString() + '.' + extension;
-      //String miniFilename = 'audio-' + now.toString() + '-mini.' + extension;
-      // dosyaları byte tipinde okur. byte içerisinde integerlar bulunan bir dizidir.
-      Uint8List bytes = audioFile!.readAsBytesSync();
-      dynamic? newPath = await FolderModel.createFile(
-          'albums/album-${aktifAlbumId}', bytes, filename, '', 'audio');
-      Medias dbAudio = new Medias(
-        album_id: aktifAlbumId,
-        name: fileName,
-        miniName: '',
-        path: newPath['file'],
-        latitude: positions['latitude'],
-        longitude: positions['longitude'],
-        altitude: positions['altitude'],
-        fileType: 'audio',
-      );
-      final player = FlutterSoundPlayer();
-      player.openPlayer();
-      Duration? duration = await player.startPlayer(fromURI: newPath['file']);
-      dbAudio.insertData({'duration': duration?.inMilliseconds});
-      player.closePlayer();
-      await AlbumDataBase.insertFile(dbAudio, '', (lastId) {
-        dbAudio.id = lastId;
-        getAlbumList();
-      });
-
-      Loading.close();
-      if (aktifTabIndex == 2) {
-        _mediaProvider.addMedia(dbAudio);
-      }
-    } else {
-      return null;
+    } on PlatformException catch (e) {
+      SBBildirim.hata(e.toString());
     }
   }
 
   textFilePicker() async {
-    // Navigator.pop(context);
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: [
-        'txt',
-        'pdf',
-      ],
-    );
-    if (result != null) {
-      fileName = result.files.first.name;
-      pickedFile = result.files.first;
-
-      final textFile2 = File(pickedFile!.path!);
+    try {
       dynamic positions = await GPS.getGPSPosition();
       if (positions['status'] == false) {
         SBBildirim.uyari(positions['message']);
         return;
+      } else {
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: [
+            'txt',
+            'pdf',
+          ],
+        );
+        if (result != null) {
+          fileName = result.files.first.name;
+          pickedFile = result.files.first;
+
+          final textFile2 = File(pickedFile!.path!);
+
+          Loading.waiting('Seçtiğiniz Yazı Dosyası Yükleniyor...');
+
+          await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
+
+          int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
+          int now = DateTime.now().millisecondsSinceEpoch;
+          var parts = textFile2.path.split('.');
+          String extension = parts[parts.length - 1];
+          extension = extension.toLowerCase();
+          String filename = extension + '-' + now.toString() + '.' + extension;
+          String miniFilename = '';
+          Uint8List bytes = textFile2.readAsBytesSync();
+          dynamic newPath = await FolderModel.createFile(
+              'albums/album-${aktifAlbumId}',
+              bytes,
+              filename,
+              miniFilename,
+              'txt');
+
+          Medias dbText = new Medias(
+            album_id: aktifAlbumId,
+            name: fileName,
+            miniName: '',
+            path: newPath['file'],
+            latitude: positions['latitude'],
+            longitude: positions['longitude'],
+            altitude: positions['altitude'],
+            fileType: 'txt',
+          );
+
+          dbText.insertData({'type': extension});
+
+          await AlbumDataBase.insertFile(dbText, '', (lastId) {
+            dbText.id = lastId;
+            getAlbumList();
+          });
+
+          Loading.close();
+          SBBildirim.bilgi('Mevcut Dosyanız Yüklendi');
+          if (aktifTabIndex == 2) {
+            _mediaProvider.addMedia(dbText);
+          }
+        } else {
+          return null;
+        }
       }
-      Loading.waiting('Seçtiğiniz Yazı Dosyası Yükleniyor...');
-
-      await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
-
-      int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
-      int now = DateTime.now().millisecondsSinceEpoch;
-      var parts = textFile2.path.split('.');
-      String extension = parts[parts.length - 1];
-      extension = extension.toLowerCase();
-      String filename = extension + '-' + now.toString() + '.' + extension;
-      String miniFilename = '';
-      Uint8List bytes = textFile2.readAsBytesSync();
-      dynamic newPath = await FolderModel.createFile(
-          'albums/album-${aktifAlbumId}', bytes, filename, miniFilename, 'txt');
-
-      Medias dbText = new Medias(
-        album_id: aktifAlbumId,
-        name: fileName,
-        miniName: '',
-        path: newPath['file'],
-        latitude: positions['latitude'],
-        longitude: positions['longitude'],
-        altitude: positions['altitude'],
-        fileType: 'txt',
-      );
-
-      dbText.insertData({'type': extension});
-
-      await AlbumDataBase.insertFile(dbText, '', (lastId) {
-        dbText.id = lastId;
-        getAlbumList();
-      });
-
-      Loading.close();
-      SBBildirim.bilgi('Mevcut Dosyanız Yüklendi');
-      if (aktifTabIndex == 2) {
-        _mediaProvider.addMedia(dbText);
-      }
-    } else {
-      return null;
+    } on PlatformException catch (e) {
+      SBBildirim.hata(e.toString());
     }
   }
 }

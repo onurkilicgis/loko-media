@@ -21,8 +21,10 @@ class Medya extends StatefulWidget {
   final PageController pageController;
   late int index;
 
-  Medya({this.id, this.index = 0})
-      : pageController = PageController(initialPage: index);
+  Medya({
+    this.id,
+    this.index = 0,
+  }) : pageController = PageController(initialPage: index);
 
   @override
   State<Medya> createState() => MedyaState();
@@ -35,7 +37,7 @@ class MedyaState extends State<Medya> {
   bool selectionMode = false;
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
   late MediaProvider _mediaProvider;
-  late String isDark = 'dark';
+  String isDark = 'dark';
   findTheme() async {
     isDark = await MyLocal.getStringData('theme');
   }
@@ -347,13 +349,15 @@ class MedyaState extends State<Medya> {
                   labelBackgroundColor: Color(0xff26334d),
                 ),
                 SpeedDialChild(
-                  onTap: ()  async{
+                  onTap: () async {
                     Util.evetHayir(context, 'Toplu Medya Silme İşlemi',
                         '${selecteds.length} Adet medya öğesini silmek istediğinize emin misiniz?',
                         (cevap) async {
                       if (cevap == true) {
                         int silinenDosyaSayisi =
-                            await AlbumDataBase.mediaMultiDelete(selecteds);
+                            await AlbumDataBase.mediaMultiDelete(
+                          selecteds,
+                        );
 
                         SBBildirim.bilgi(
                             '${silinenDosyaSayisi} Adet medya silinmiştir.');
@@ -391,38 +395,41 @@ class MedyaState extends State<Medya> {
                 ),
               ],
             ),
-            body: GridView.builder(
-                itemCount: medyaProvider.fileList.length,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 10,
-                ),
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  mainAxisExtent: context.dynamicWidth(5),
-                  maxCrossAxisExtent: context.dynamicHeight(10),
-                ),
-                itemBuilder: (BuildContext context, int index) {
-                  return mediaCardBuilder(
-                      medyaProvider.fileList[index], index, this);
-                }),
+            body: SafeArea(
+              child: GridView.builder(
+                  itemCount: medyaProvider.fileList.length,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 10,
+                  ),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      mainAxisExtent: context.dynamicWidth(5),
+                      crossAxisCount: 5),
+                  itemBuilder: (BuildContext context, int index) {
+                    return mediaCardBuilder(
+                        medyaProvider.fileList[index], index, this);
+                  }),
+            ),
           ),
         );
       } else {
         return Scaffold(
-          body: GridView.builder(
-            itemCount: medyaProvider.fileList.length,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 10,
+          body: SafeArea(
+            child: GridView.builder(
+              itemCount: medyaProvider.fileList.length,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 10,
+              ),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                mainAxisExtent: context.dynamicWidth(5),
+                crossAxisCount: 5,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return mediaCardBuilder(
+                    medyaProvider.fileList[index], index, this);
+              },
             ),
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              mainAxisExtent: context.dynamicWidth(5),
-              maxCrossAxisExtent: context.dynamicHeight(10),
-            ),
-            itemBuilder: (BuildContext context, int index) {
-              return mediaCardBuilder(
-                  medyaProvider.fileList[index], index, this);
-            },
           ),
         );
       }
@@ -458,15 +465,17 @@ class MedyaState extends State<Medya> {
   }
 
   openVideo(Medias medias, bool autoplay) {
-    return FittedBox(
-      fit: BoxFit.fitHeight,
+    return Container(
       child: Chewie(
         controller: ChewieController(
             videoPlayerController:
                 VideoPlayerController.file(ioo.File(medias.path.toString())),
             autoPlay: autoplay,
+            allowFullScreen: true,
+            //fullScreenByDefault: true,
+            autoInitialize: true,
             looping: false,
-            aspectRatio: 1,
+            aspectRatio: 0.7,
             errorBuilder: (context, errorMessage) {
               return Center(
                   child: Text(
@@ -486,29 +495,30 @@ class MedyaState extends State<Medya> {
 
   openLongVideo(Medias medias) {
     return Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => FittedBox(
-              fit: BoxFit.fitHeight,
-              child: Chewie(
-                controller: ChewieController(
-                    videoPlayerController: VideoPlayerController.file(
-                        ioo.File(medias.path.toString())),
-                    autoPlay: false,
-                    looping: false,
-                    aspectRatio: 1,
-                    errorBuilder: (context, errorMessage) {
-                      return Center(
-                          child: Text(
-                        errorMessage,
-                        style: TextStyle(color: Colors.white),
-                      ));
-                    },
-                    // allowFullScreen: true,
-                    additionalOptions: (context) {
-                      return <OptionItem>[
-                        //OptionItem(onTap: onTap, iconData: iconData, title: title)
-                      ];
-                    }),
-              ),
+        builder: (context) => Chewie(
+              controller: ChewieController(
+                  videoPlayerController: VideoPlayerController.file(ioo.File(
+                    medias.path.toString(),
+                  )),
+                  autoPlay: false,
+                  looping: false,
+                  //allowFullScreen: true,
+                  // fullScreenByDefault: true,
+                  aspectRatio: 0.47,
+                  autoInitialize: true,
+                  errorBuilder: (context, errorMessage) {
+                    return Center(
+                        child: Text(
+                      errorMessage,
+                      style: TextStyle(color: Colors.white),
+                    ));
+                  },
+                  // allowFullScreen: true,
+                  additionalOptions: (context) {
+                    return <OptionItem>[
+                      //OptionItem(onTap: onTap, iconData: iconData, title: title)
+                    ];
+                  }),
             )));
   }
 }

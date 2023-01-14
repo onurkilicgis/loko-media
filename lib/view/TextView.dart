@@ -44,104 +44,105 @@ class _TextViewState extends State<TextView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _textTitleController,
-              keyboardType: TextInputType.text,
-              cursorColor: Colors.white,
-              textAlign: TextAlign.center,
-              textCapitalization: TextCapitalization.words,
-              maxLines: 2,
-              decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Color(0xff1e2c49),
-                  contentPadding: EdgeInsets.all(8),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7),
-                    borderSide: BorderSide(
-                      color: Color(0xff017eba),
-                    ),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0xff017eba),
-                    ),
-                  ),
-                  // border: InputBorder.none,
-                  /*focusedBorder: UnderlineInputBorder(
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _textTitleController,
+                keyboardType: TextInputType.text,
+                cursorColor: Colors.white,
+                textCapitalization: TextCapitalization.words,
+                maxLines: 2,
+                decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Color(0xff1e2c49),
+                    contentPadding: EdgeInsets.all(8),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
                       borderSide: BorderSide(
-                    color: Color(0xff017eba),
-                  )),*/
-                  labelText: 'Başlık ',
-                  labelStyle: TextStyle(
-                    color: Color(0xff017eba),
-                  )),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _textController,
-              keyboardType: TextInputType.text,
-              cursorColor: Colors.white,
-              textCapitalization: TextCapitalization.words,
-              maxLines: 5,
-              decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Color(0xff1e2c49),
-                  contentPadding: EdgeInsets.all(8),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7),
-                    borderSide: BorderSide(
-                      color: Color(0xff017eba),
+                        color: Color(0xff017eba),
+                      ),
                     ),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0xff017eba),
-                    ),
-                  ),
-                  // border: InputBorder.none,
-                  /* focusedBorder: UnderlineInputBorder(
+                    focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(
-                    color: Color(0xff017eba),
-                  )),*/
-                  labelText: 'İçerik ',
-                  labelStyle: TextStyle(
-                    color: Color(0xff017eba),
-                  )),
+                        color: Color(0xff017eba),
+                      ),
+                    ),
+                    // border: InputBorder.none,
+                    /*focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                      color: Color(0xff017eba),
+                    )),*/
+                    labelText: 'Başlık ',
+                    labelStyle: TextStyle(
+                      color: Color(0xff017eba),
+                    )),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 8,
-              right: 8,
-              top: 20,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _textController,
+                keyboardType: TextInputType.text,
+                cursorColor: Colors.white,
+                textCapitalization: TextCapitalization.words,
+                maxLines: 5,
+                decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Color(0xff1e2c49),
+                    contentPadding: EdgeInsets.all(8),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      borderSide: BorderSide(
+                        color: Color(0xff017eba),
+                      ),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xff017eba),
+                      ),
+                    ),
+                    // border: InputBorder.none,
+                    /* focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                      color: Color(0xff017eba),
+                    )),*/
+                    labelText: 'İçerik ',
+                    labelStyle: TextStyle(
+                      color: Color(0xff017eba),
+                    )),
+              ),
             ),
-            child: SizedBox(
-              height: 40,
-              width: context.dynamicWidth(1.2),
-              child: ElevatedButton(
-                  onPressed: () async {
-                    filePath = await FolderModel.generateTextPath();
-                    await textInsertFile(_textTitleController.text,
-                        _textController.text, filePath!);
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xff017eba),
-                  ),
-                  child: Text(
-                    'Kaydet',
-                    style: TextStyle(fontSize: 15),
-                  )),
-            ),
-          )
-        ],
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 8,
+                right: 8,
+                top: 20,
+              ),
+              child: SizedBox(
+                height: 40,
+                width: context.dynamicWidth(1.2),
+                child: ElevatedButton(
+                    onPressed: () async {
+                      filePath = await FolderModel.generateTextPath();
+                      await textInsertFile(_textTitleController.text,
+                          _textController.text, filePath!);
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xff017eba),
+                    ),
+                    child: Text(
+                      'Kaydet',
+                      style: TextStyle(fontSize: 15),
+                    )),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

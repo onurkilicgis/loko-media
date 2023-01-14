@@ -10,13 +10,13 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
-
+import 'package:home_widget/home_widget.dart';
 import 'package:local_assets_server/local_assets_server.dart';
 import 'package:loko_media/providers/SwitchProvider.dart';
-import 'package:loko_media/services/utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:workmanager/workmanager.dart';
 
 import '../database/AlbumDataBase.dart';
 import '../providers/MedyaProvider.dart';
@@ -27,8 +27,6 @@ import '../view_model/multi_language.dart';
 import '../view_model/register_view_models.dart';
 import '../view_model/theme.dart';
 import 'LoginPage.dart';
-import 'package:home_widget/home_widget.dart';
-import 'package:workmanager/workmanager.dart';
 
 void callbackDispatcher() {
   Workmanager().executeTask((taskName, inputData) {
@@ -131,20 +129,8 @@ Future<void> main() async {
   await localhostServer.start();
   //HttpOverrides.global = MyHttpOverrides();
 
-
-
   runApp(MyApp());
 }
-
-/*class MyHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-  }
-}*/
-
 
 Future initialization(BuildContext, context) async {
   await Future.delayed(const Duration(milliseconds: 500));
@@ -166,8 +152,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     HomeWidget.registerBackgroundCallback(backgroundCallback);
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -197,5 +181,4 @@ class _MyAppState extends State<MyApp> {
           );
         }));
   }
-
 }

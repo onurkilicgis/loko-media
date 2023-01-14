@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:loko_media/services/MyLocal.dart';
 
 import '../services/API2.dart';
-import '../services/FileDrive.dart';
 
 class Paylasimlar extends StatefulWidget {
   int? id;
@@ -16,10 +15,10 @@ class Paylasimlar extends StatefulWidget {
 
 class _PaylasimlarState extends State<Paylasimlar> {
   List<dynamic> items = [];
-  String token='';
+  String token = '';
   getSharesMedya() async {
     dynamic medya =
-    await API.postRequest("api/lokomedia/getShares", {'offset': "0"});
+        await API.postRequest("api/lokomedia/getShares", {'offset': "0"});
     if (medya['status'] == true) {
       items = medya['data'];
     } else {
@@ -28,11 +27,9 @@ class _PaylasimlarState extends State<Paylasimlar> {
     setState(() {});
   }
 
-  getToken()async{
+  getToken() async {
     token = await MyLocal.getStringData('token');
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -70,7 +67,8 @@ class _PaylasimlarState extends State<Paylasimlar> {
             ),
             itemBuilder: (BuildContext context, index, int pageViewIndex) {
               dynamic media = medias[index];
-              String mediaURL = API.generateStorageFileUrl(token,media['fid'].toString());
+              String mediaURL =
+                  API.generateStorageFileUrl(token, media['fid'].toString());
               String mediaType = media['type'];
               switch (mediaType) {
                 case 'image':
@@ -253,21 +251,25 @@ class _PaylasimlarState extends State<Paylasimlar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: token==''?Container():Container(
-          color: Colors.black54,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: items.length,
-                    itemBuilder: (ctx, i) {
-                      return createItem(items[i]);
-                    })
-              ],
-            ),
-          ),
-        ));
+        body: token == ''
+            ? Container()
+            : SafeArea(
+                child: Container(
+                  color: Colors.black54,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: items.length,
+                            itemBuilder: (ctx, i) {
+                              return createItem(items[i]);
+                            })
+                      ],
+                    ),
+                  ),
+                ),
+              ));
   }
 }
