@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/view/AlbumShare.dart';
 import 'package:loko_media/view_model/layout.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../models/Album.dart';
 import '../services/MyLocal.dart';
@@ -182,14 +183,6 @@ class APP_VM {
             actions: [
               Column(
                 children: [
-                  /*ListTile(
-                      leading: Icon(Icons.list_alt),
-                      title: Text('Test'),
-                      onTap: () async {
-                        FileDrive a = FileDrive();
-                        await a.ready();
-                        await a.uploadFile("/data/user/0/com.gislayer.lokomedia.loko_media/app_flutter/albums/album-1/pdf-1672436122382.pdf");
-                      }),*/
                   ListTile(
                     leading: Icon(Icons.check),
                     title: Text('Albümü Aktif Et'),
@@ -200,9 +193,9 @@ class APP_VM {
                   ),
                   ListTile(
                       leading: Icon(Icons.list_alt),
-                      title: Text('Albümün İçindekileri Listele'),
+                      title: Text(' İçindekileri Listele'),
                       onTap: () async {
-                        app.albumMedyalariniAc(album);
+                        app.albumMedyalariniAc(album.id);
                         Navigator.pop(context);
                       }),
                   ListTile(
@@ -293,14 +286,24 @@ class APP_VM {
                                 )));
                   },
                 ),
-                ListTile(
+                /*ListTile(
                     leading: Icon(Icons.link),
                     title: Text('Bağlantıyı Paylaş'),
-                    onTap: () {}),
+                    onTap: () {}),*/
                 ListTile(
                     leading: Icon(Icons.mail),
-                    title: Text('Mail Olarak Gönder'),
-                    onTap: () {}),
+                    title: Text('Diğer Uygulamalarda Paylaş'),
+                    onTap: () async {
+                      List<XFile> files = [];
+                      List<Medias> medias =
+                          await AlbumDataBase.getFiles(album.id!);
+                      for (int i = 0; i < medias.length; i++) {
+                        files.add(XFile(medias[i].path!));
+                      }
+                      await Share.shareXFiles(files);
+
+                      Navigator.pop(context);
+                    }),
               ],
             )
           ],
@@ -322,7 +325,10 @@ class APP_VM {
             Column(
               children: [
                 ListTile(
-                  title: Text('En Çok Medya Olanı Listele'),
+                  title: Text(
+                    'En Çok Medya Olanı Listele',
+                    style: TextStyle(fontSize: 15),
+                  ),
                   onTap: () {
                     Comparator<Album> siralama =
                         (y, x) => x.itemCount!.compareTo(y.itemCount!);
@@ -333,7 +339,10 @@ class APP_VM {
                   },
                 ),
                 ListTile(
-                    title: Text('En Az Medya Olanı Listele'),
+                    title: Text(
+                      'En Az Medya Olanı Listele',
+                      style: TextStyle(fontSize: 15),
+                    ),
                     onTap: () {
                       Comparator<Album> siralama =
                           (x, y) => x.itemCount!.compareTo(y.itemCount!);
@@ -343,7 +352,10 @@ class APP_VM {
                       });
                     }),
                 ListTile(
-                    title: Text('Son Oluşturma Tarihine Göre Listele'),
+                    title: Text(
+                      'Son Oluşturma Tarihine Göre Listele',
+                      style: TextStyle(fontSize: 15),
+                    ),
                     onTap: () {
                       Comparator<Album> siralama =
                           (y, x) => x.id!.compareTo(y.id!);
@@ -353,7 +365,10 @@ class APP_VM {
                       });
                     }),
                 ListTile(
-                    title: Text('İlk Oluşturma Tarihine Göre Listele'),
+                    title: Text(
+                      'İlk Oluşturma Tarihine Göre Listele',
+                      style: TextStyle(fontSize: 15),
+                    ),
                     onTap: () {
                       Comparator<Album> siralama =
                           (x, y) => x.id!.compareTo(y.id!);
@@ -363,7 +378,10 @@ class APP_VM {
                       });
                     }),
                 ListTile(
-                    title: Text('Bana En Yakın Mediaya Göre Listele'),
+                    title: Text(
+                      'Bana En Yakın Mediaya Göre Listele',
+                      style: TextStyle(fontSize: 15),
+                    ),
                     onTap: () {}),
               ],
             )
@@ -388,15 +406,18 @@ class APP_VM {
           actions: [
             Column(
               children: [
-                ListTile(
+                /*ListTile(
                   title: Text('Paylaşılmış Albümleri Filterele'),
                   onTap: () {},
                 ),
                 ListTile(
                     title: Text('Yayınlanmış Albümleri Filtrele'),
-                    onTap: () {}),
+                    onTap: () {}),*/
                 ListTile(
-                    title: Text('İçerisinde Resim Olan Albümleri Filtrele'),
+                    title: Text(
+                      'Resimli Albümleri Göster',
+                      style: TextStyle(fontSize: 15),
+                    ),
                     onTap: () async {
                       List<Album> filterList = [];
                       filterList = await AlbumDataBase.getFilterAlbums('image');
@@ -406,7 +427,10 @@ class APP_VM {
                       Navigator.pop(context);
                     }),
                 ListTile(
-                  title: Text('İçerisinde Video Olan Albümleri Filtrele'),
+                  title: Text(
+                    'Videolu Albümleri Göster',
+                    style: TextStyle(fontSize: 15),
+                  ),
                   onTap: () async {
                     List<Album> filterList = [];
                     filterList = await AlbumDataBase.getFilterAlbums('video');
@@ -417,7 +441,10 @@ class APP_VM {
                   },
                 ),
                 ListTile(
-                  title: Text('İçerisinde Ses Olan Albümleri Filtrele'),
+                  title: Text(
+                    'Sesli Albümleri Göster',
+                    style: TextStyle(fontSize: 15),
+                  ),
                   onTap: () async {
                     List<Album> filterList = [];
                     filterList = await AlbumDataBase.getFilterAlbums('audio');
@@ -428,7 +455,10 @@ class APP_VM {
                   },
                 ),
                 ListTile(
-                  title: Text('İçerisinde Yazı Olan Albümleri Filtrele'),
+                  title: Text(
+                    'Dökümanlı Albümleri Göster',
+                    style: TextStyle(fontSize: 15),
+                  ),
                   onTap: () async {
                     List<Album> filterList = [];
                     filterList = await AlbumDataBase.getFilterAlbums('txt');
@@ -439,7 +469,10 @@ class APP_VM {
                   },
                 ),
                 ListTile(
-                  title: Text('Boş Albümleri Filtrele'),
+                  title: Text(
+                    'Boş Albümleri Göster',
+                    style: TextStyle(fontSize: 15),
+                  ),
                   onTap: () {
                     List<Album> filterListitem = app.filteredAlbumList
                         .where((e) => e.itemCount == 0)

@@ -223,7 +223,8 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         },
         leading: image,
         title: Text(album.name),
-        subtitle: Text('Öğe Sayısı : ${album.itemCount} Durum : ${durum}'),
+        subtitle: Text('Öğe Sayısı : ${album.itemCount} Durum : ${durum}',
+            style: TextStyle(fontSize: 11)),
         trailing: IconButton(
             onPressed: () {
               APP_VM.showAlbumDialog(context, this, album);
@@ -276,7 +277,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
     getAlbumList();
   }
 
-  albumMedyalariniAc(album_id) {
+  albumMedyalariniAc(int album_id) {
     setState(() {
       tiklananAlbum = album_id;
     });
@@ -416,8 +417,10 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
             fit: BoxFit.fitWidth,
           );
         } else {
-          image = Image.file(File(album.image.toString()),
-              fit: BoxFit.fill, width: context.dynamicWidth(4.1));
+          image = Image.file(
+            File(album.image.toString()),
+            fit: BoxFit.contain,
+          );
         }
       }
 

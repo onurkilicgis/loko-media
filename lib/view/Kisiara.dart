@@ -135,59 +135,57 @@ class _KisiaraState extends State<Kisiara> {
                 ),
               ),
             ),
-            Container(
-              height: 500,
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: kisiler.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    String img = kisiler[index]['img'];
-                    String name = kisiler[index]['name'];
-                    bool isMyFriend = kisiler[index]['isMyFriend'];
-                    bool isRequested = kisiler[index]['isRequested'];
-                    TextButton button = TextButton(
+            ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: kisiler.length,
+                itemBuilder: (BuildContext context, int index) {
+                  String img = kisiler[index]['img'];
+                  String name = kisiler[index]['name'];
+                  bool isMyFriend = kisiler[index]['isMyFriend'];
+                  bool isRequested = kisiler[index]['isRequested'];
+                  TextButton button = TextButton(
+                      onPressed: () {
+                        takipEt(kisiler[index]);
+                      },
+                      child: Text(
+                        'Takip Et',
+                        style: TextStyle(color: Color(0xff8bc34a)),
+                      ));
+                  if (isMyFriend == true) {
+                    button = TextButton(
                         onPressed: () {
-                          takipEt(kisiler[index]);
+                          cikart(kisiler[index]);
                         },
                         child: Text(
-                          'Takip Et',
-                          style: TextStyle(color: Color(0xff8bc34a)),
+                          'Çıkart',
+                          style: TextStyle(color: Color(0xffffda15)),
                         ));
-                    if (isMyFriend == true) {
-                      button = TextButton(
-                          onPressed: () {
-                            cikart(kisiler[index]);
-                          },
-                          child: Text(
-                            'Çıkart',
-                            style: TextStyle(color: Color(0xffffda15)),
-                          ));
-                    }
-                    if (isRequested == true) {
-                      button = TextButton(
-                          onPressed: () {
-                            iptal(kisiler[index]);
-                          },
-                          child: Text(
-                            'İptal Et',
-                            style: TextStyle(color: Color(0xffff7373)),
-                          ));
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                          top: 0, left: 8, right: 8, bottom: 0),
-                      child: Card(
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(img, scale: 1),
-                          ),
-                          title: Text('${name}'),
-                          trailing: button,
+                  }
+                  if (isRequested == true) {
+                    button = TextButton(
+                        onPressed: () {
+                          iptal(kisiler[index]);
+                        },
+                        child: Text(
+                          'İptal Et',
+                          style: TextStyle(color: Color(0xffff7373)),
+                        ));
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                        top: 0, left: 8, right: 8, bottom: 0),
+                    child: Card(
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(img, scale: 1),
                         ),
+                        title: Text('${name}'),
+                        trailing: button,
                       ),
-                    );
-                  }),
-            )
+                    ),
+                  );
+                })
           ],
         ),
       ),

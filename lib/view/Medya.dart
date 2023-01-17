@@ -34,6 +34,7 @@ class MedyaState extends State<Medya> {
   List<Medias> fileList = [];
   late int index = widget.index;
   List<int> selectedMedias = [];
+
   bool selectionMode = false;
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
   late MediaProvider _mediaProvider;
@@ -379,10 +380,11 @@ class MedyaState extends State<Medya> {
                 ),
                 SpeedDialChild(
                   child: Icon(Icons.check),
-                  onTap: () {
+                  onTap: () async {
                     List<int> listem = [];
-                    for (int i = 0; i < fileList.length; i++) {
-                      int allList = fileList[i].id!;
+
+                    for (int i = 0; i < medyaProvider.fileList.length; i++) {
+                      int allList = medyaProvider.fileList[i].id!;
                       listem.add(allList);
                     }
                     setState(() {

@@ -114,36 +114,34 @@ class _TakipcilerimState extends State<Takipcilerim> {
                 ),
               ),
             ),
-            Container(
-              height: 500,
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: filtered.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    String img = filtered[index]['img'];
-                    String name = filtered[index]['name'];
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                          top: 0, left: 8, right: 8, bottom: 0),
-                      child: Card(
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(img, scale: 1),
-                          ),
-                          title: Text('${name}'),
-                          trailing: TextButton(
-                              onPressed: () {
-                                cikart(filtered[index]);
-                              },
-                              child: Text(
-                                'Çıkart',
-                                style: TextStyle(color: Color(0xffffda15)),
-                              )),
+            ListView.builder(
+                shrinkWrap: true,
+                itemCount: filtered.length,
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (BuildContext context, int index) {
+                  String img = filtered[index]['img'];
+                  String name = filtered[index]['name'];
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                        top: 0, left: 8, right: 8, bottom: 0),
+                    child: Card(
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(img, scale: 1),
                         ),
+                        title: Text('${name}'),
+                        trailing: TextButton(
+                            onPressed: () {
+                              cikart(filtered[index]);
+                            },
+                            child: Text(
+                              'Çıkart',
+                              style: TextStyle(color: Color(0xffffda15)),
+                            )),
                       ),
-                    );
-                  }),
-            )
+                    ),
+                  );
+                })
           ],
         ),
       ),

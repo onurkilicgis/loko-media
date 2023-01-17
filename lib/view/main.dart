@@ -143,12 +143,11 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   SwitchModel switchModels = SwitchModel();
-  late String isDark;
+  String? isDark;
   _MyAppState({required this.isDark});
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     HomeWidget.registerBackgroundCallback(backgroundCallback);
   }
