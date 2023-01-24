@@ -69,7 +69,7 @@ class _AlbumShareState extends State<AlbumShare> {
     setState(() {});
   }
 
-  late String isDark = 'dark';
+  String isDark = 'dark';
   findTheme() async {
     isDark = await MyLocal.getStringData('theme');
   }

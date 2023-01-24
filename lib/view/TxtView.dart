@@ -42,30 +42,54 @@ class _TxtViewState extends State<TxtView> {
                         color: Color(0xff2B3553),
                         borderRadius: BorderRadius.circular(10)),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(
-                              left: 8, right: 8, top: 15, bottom: 8),
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              widget.medias.name!,
-                              style: TextStyle(fontSize: 20),
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Başlık :',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Slabo27px',
+                              fontSize: 17,
+                              color: Color(0xff747d9c),
                             ),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 8, left: 8, right: 8, bottom: 30),
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              '${snapshot.data}',
-                              style: TextStyle(fontSize: 16),
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            widget.medias.name!,
+                            style: TextStyle(
+                              fontFamily: 'Slabo27px',
+                              fontSize: 14,
+                              color: Color(0xffbabdc6),
                             ),
                           ),
                         ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'İçerik :',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w200,
+                              fontFamily: 'Slabo27px',
+                              fontSize: 17,
+                              color: Color(0xff747d9c),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '${snapshot.data}',
+                            style: TextStyle(
+                              fontFamily: 'Slabo27px',
+                              fontSize: 14,
+                              color: Color(0xffbabdc6),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),

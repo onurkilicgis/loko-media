@@ -3,10 +3,17 @@ import 'package:flutter/material.dart';
 class MyTheme {
   static ThemeData lightTheme = ThemeData(
       drawerTheme: DrawerThemeData(backgroundColor: Colors.white),
+      textTheme: TextTheme(
+          headline5: TextStyle(
+        color: Color(0xff232326),
+      )),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: Color(0xffe3e6ea),
+      ),
       primarySwatch: Colors.red,
       brightness: Brightness.light,
       colorScheme: ColorScheme.light(),
-      scaffoldBackgroundColor: Color(0xff273238),
+      scaffoldBackgroundColor: Color(0xffaebac1),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
             shadowColor: Colors.black,
@@ -24,7 +31,7 @@ class MyTheme {
 
   static ThemeData darkTheme = ThemeData(
       progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: Color(0xff3f5980),
+        color: Color(0xff293d5a),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: Color(0xff202b40),

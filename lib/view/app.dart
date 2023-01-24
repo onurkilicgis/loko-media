@@ -31,6 +31,7 @@ import '../services/auth.dart';
 import '../view_model/folder_model.dart';
 import 'Harita.dart';
 import 'LoginPage.dart';
+import 'Profil.dart';
 import 'Takipettiklerim.dart';
 import 'TextView.dart';
 
@@ -405,12 +406,21 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
       Image image;
       if (album.image == '') {
         if (isDark == 'dark') {
-          image = Image.asset('assets/images/album_dark.png');
+          image = Image.asset(
+            'assets/images/album_dark.png',
+            fit: BoxFit.cover,
+            width: 75,
+            height: 75,
+          );
         } else {
-          image = Image.asset('assets/images/album_light.png');
+          image = Image.asset(
+            'assets/images/album_light.png',
+            fit: BoxFit.cover,
+            width: 75,
+            height: 75,
+          );
         }
       } else {
-        // image = new Image.file(imageFile);
         if (cardType == 'GFCard') {
           image = Image.file(
             File(album.image.toString()),
@@ -499,6 +509,12 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
               context, MaterialPageRoute(builder: (context) => Kisiara()));
           break;
         }
+      case 'profil':
+        {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Profil()));
+          break;
+        }
     }
   }
 
@@ -553,6 +569,9 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                         /* onDetailsPressed: () {},
                     arrowColor: Colors.black,*/
                       ),
+                      listMenuItems(Icons.person, "Profilim", () {
+                        openPage('profil');
+                      }),
                       listMenuItems(
                           Icons.event_note, "Albüm Oluştur", getDialog),
                       listMenuItems(Icons.search, "Kişi Ara", () {
@@ -573,35 +592,40 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                         child: Row(
                           children: [
                             Expanded(
-                              child: ListTile(
-                                  leading: Icon(FontAwesomeIcons.moon),
-                                  title: Text(
-                                    'Gece Modu',
-                                    style: TextStyle(fontSize: 18),
-                                  )),
-                            ),
-                            Consumer<SwitchModel>(
-                                builder: (context, switchModel, child) {
-                              return Switch(
-                                  value: switchModel.isSwitchControl,
-                                  //tetikleyici
-                                  activeTrackColor: Colors.lightGreen,
-                                  activeColor: Colors.green,
-                                  inactiveTrackColor: Colors.black54,
-                                  inactiveThumbColor: Colors.black,
-                                  onChanged: (bool data) async {
-                                    if (data == true) {
-                                      await MyLocal.setStringData(
-                                          'theme', 'light');
-                                    } else {
-                                      await MyLocal.setStringData(
-                                          'theme', 'dark');
-                                    }
+                                child: ListTile(
+                              leading: Icon(
+                                FontAwesomeIcons.moon,
+                                color: Colors.lightGreen,
+                              ),
+                              title: Text(
+                                'Gece Modu',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                              trailing: Consumer<SwitchModel>(
+                                  builder: (context, switchModel, child) {
+                                return Switch(
+                                    value: switchModel.isSwitchControl,
+                                    //tetikleyici
+                                    activeTrackColor: Colors.lightGreen,
+                                    activeColor: Colors.green,
+                                    inactiveTrackColor: Colors.grey,
+                                    // inactiveThumbColor: Colors.black,
+                                    onChanged: (bool data) async {
+                                      if (data == true) {
+                                        await MyLocal.setStringData(
+                                            'theme', 'light');
+                                      } else {
+                                        await MyLocal.setStringData(
+                                            'theme', 'dark');
+                                      }
 
-                                    switchModel
-                                        .switchChanged(data); // dinleyici
-                                  });
-                            }),
+                                      switchModel
+                                          .switchChanged(data); // dinleyici
+                                    });
+                              }),
+                            ))
                           ],
                         ),
                       ),
@@ -610,11 +634,13 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                           children: [
                             Expanded(
                                 child: ListTile(
-                              leading:
-                                  Icon(FontAwesomeIcons.arrowRightFromBracket),
+                              leading: Icon(
+                                FontAwesomeIcons.arrowRightFromBracket,
+                                color: Colors.lightGreen,
+                              ),
                               title: Text(
                                 'Çıkış',
-                                style: TextStyle(fontSize: 18),
+                                style: TextStyle(fontSize: 14),
                               ),
                               onTap: () async {
                                 await _authService.signOut();
@@ -912,17 +938,16 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
 
   getDialog() {
     Navigator.pop(context);
+    albumNameController.text = '';
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
-
           title: Text('Albüm Adı'),
           backgroundColor:
               Theme.of(context).bottomNavigationBarTheme.backgroundColor,
-          // content: Text('albüm adını giriniz'),
           actions: [
             Column(
               children: [
@@ -933,9 +958,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                   child: TextField(
                     controller: albumNameController,
                     keyboardType: TextInputType.text,
-                    // textAlign: TextAlign.center,
                     cursorColor: Colors.white,
-
                     decoration: InputDecoration(
                       focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.white)),

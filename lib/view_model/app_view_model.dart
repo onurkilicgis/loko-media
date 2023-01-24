@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
@@ -6,6 +8,7 @@ import 'package:loko_media/view_model/layout.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../models/Album.dart';
+import '../services/GPS.dart';
 import '../services/MyLocal.dart';
 
 class APP_VM {
@@ -336,6 +339,7 @@ class APP_VM {
                     app.setState(() {
                       siralama;
                     });
+                    Navigator.pop(context);
                   },
                 ),
                 ListTile(
@@ -350,6 +354,7 @@ class APP_VM {
                       app.setState(() {
                         siralama;
                       });
+                      Navigator.pop(context);
                     }),
                 ListTile(
                     title: Text(
@@ -363,6 +368,7 @@ class APP_VM {
                       app.setState(() {
                         siralama;
                       });
+                      Navigator.pop(context);
                     }),
                 ListTile(
                     title: Text(
@@ -376,13 +382,17 @@ class APP_VM {
                       app.setState(() {
                         siralama;
                       });
+                      Navigator.pop(context);
                     }),
                 ListTile(
                     title: Text(
                       'Bana En Yakın Mediaya Göre Listele',
                       style: TextStyle(fontSize: 15),
                     ),
-                    onTap: () {}),
+                    onTap: () async {
+                      uzaklik(app);
+                      Navigator.pop(context);
+                    }),
               ],
             )
           ],
@@ -406,11 +416,11 @@ class APP_VM {
           actions: [
             Column(
               children: [
-                /*ListTile(
-                  title: Text('Paylaşılmış Albümleri Filterele'),
+                ListTile(
+                  title: Text('Paylaşılmış Albümleri Göster'),
                   onTap: () {},
                 ),
-                ListTile(
+                /* ListTile(
                     title: Text('Yayınlanmış Albümleri Filtrele'),
                     onTap: () {}),*/
                 ListTile(
@@ -489,5 +499,80 @@ class APP_VM {
         );
       },
     );
+  }
+
+  static uzaklikHesapla(double userEnlem, double userBoylam, double noktaEnlem,
+      double noktaBoylam) {
+    return sqrt(
+        pow((userEnlem - noktaEnlem), 2) + pow((userBoylam - noktaBoylam), 2));
+  }
+
+  static uzaklik(app) async {
+    dynamic positions = await GPS.getGPSPosition();
+
+    double userEnlem = positions['latitude'];
+    double userBoylam = positions['longitude'];
+
+    List<Album> albumler = await AlbumDataBase.getAlbums();
+    List<dynamic> listem = [];
+
+    for (int i = 0; i < albumler.length; i++) {
+      List<Medias> list = await AlbumDataBase.getFiles(albumler[i].id!);
+      for (int j = 0; j < list.length; j++) {
+        listem.add({
+          'media_id': list[j].id,
+          'album_id': albumler[i].id,
+          'enlem': list[j].latitude,
+          'boylam': list[j].longitude,
+          'uzaklik': 0.0,
+        });
+      }
+    }
+
+    for (int i = 0; i < listem.length; i++) {
+      dynamic item = listem[i];
+      item['uzaklik'] =
+          uzaklikHesapla(userEnlem, userBoylam, item['enlem'], item['boylam']);
+    }
+
+    listem.sort((a, b) {
+      return a['uzaklik'].compareTo(b['uzaklik']);
+    });
+
+    // en yakın medyaların albüm id bilgisini aldık. ancak bu listede album_id bilgisi mükerrer değildir.
+    // mükerrer = tekrarlı kayıt, aynı değerden birden fazla varsa mükerrer denir.
+    List<int> album_id_list = [];
+    for (int i = 0; i < listem.length; i++) {
+      dynamic item = listem[i];
+      if (album_id_list.indexOf(item['album_id']) == -1) {
+        album_id_list.add(item['album_id']);
+      }
+    }
+
+    //album_id_list de albümlerin id bilgisi var ve albüm nesnesini almak istiyoruz. returnda kullanmak için
+    // bu kısım da album_id_list içerisindeki album_id leri kullanarak albumler dizisinden albümü bulup diziye ekler.
+    List<Album> cikti = [];
+    for (int i = 0; i < album_id_list.length; i++) {
+      int album_id = album_id_list[i];
+      Album album = albumler.firstWhere((a) => album_id == a.id);
+
+      /* Album bulunanAlbum;
+      for(int j=0;j<albumler.length;j++){
+        Album item = albumler[j];
+        if(item.id==album_id){
+          bulunanAlbum = item;
+          break;
+        }
+      }*/
+
+      if (album != null) {
+        cikti.add(album);
+      }
+    }
+
+    app.setState(() {
+      app.filteredAlbumList = cikti;
+    });
+    return app.filteredAlbumList;
   }
 }

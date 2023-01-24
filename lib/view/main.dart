@@ -129,7 +129,7 @@ Future<void> main() async {
   await localhostServer.start();
   //HttpOverrides.global = MyHttpOverrides();
 
-  runApp(MyApp());
+  runApp(MyApp(isDark: isDark));
 }
 
 Future initialization(BuildContext, context) async {
@@ -137,13 +137,19 @@ Future initialization(BuildContext, context) async {
 }
 
 class MyApp extends StatefulWidget {
+  late String isDark;
+  MyApp({required this.isDark});
+
   @override
-  _MyAppState createState() => _MyAppState(isDark: 'dark');
+  _MyAppState createState() {
+    return _MyAppState(isDark: isDark);
+  }
 }
 
 class _MyAppState extends State<MyApp> {
-  SwitchModel switchModels = SwitchModel();
-  String? isDark;
+  //SwitchModel switchModels = SwitchModel();
+  String isDark;
+
   _MyAppState({required this.isDark});
 
   @override
@@ -156,14 +162,17 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (context) => SwitchModel()),
+          ChangeNotifierProvider(
+              create: (context) => SwitchModel(userSelection: this.isDark)),
           ChangeNotifierProvider(create: (context) => CheckboxModel()),
           ChangeNotifierProvider(create: (context) => VisibleModel()),
           ChangeNotifierProvider(create: (context) => MediaProvider()),
         ],
         child: Consumer<SwitchModel>(builder: (context, switchModels, child) {
           return GetMaterialApp(
-            theme: isDark == 'dark' ? MyTheme.darkTheme : MyTheme.lightTheme,
+            theme: switchModels.isSwitchControl == false
+                ? MyTheme.darkTheme
+                : MyTheme.lightTheme,
             title: 'LOKO MEDIA',
             debugShowCheckedModeBanner: false,
             translations: Messages(),

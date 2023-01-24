@@ -38,7 +38,7 @@ class MedyaState extends State<Medya> {
   bool selectionMode = false;
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
   late MediaProvider _mediaProvider;
-  String isDark = 'dark';
+  late String isDark;
   findTheme() async {
     isDark = await MyLocal.getStringData('theme');
   }
