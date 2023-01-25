@@ -13,8 +13,8 @@ class Takipcilerim extends StatefulWidget {
 
 class _TakipcilerimState extends State<Takipcilerim> {
   TextEditingController _kisiNameController = TextEditingController();
-  late List<dynamic> takipciler = [];
-  late List<dynamic> filtered = [];
+  List<dynamic> takipciler = [];
+  List<dynamic> filtered = [];
 
   getMyFriends() async {
     //

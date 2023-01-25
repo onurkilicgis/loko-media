@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/Album.dart';
 import '../services/API2.dart';
 import '../services/utils.dart';
+import 'Profil.dart';
 
 class Takipettiklerim extends StatefulWidget {
   const Takipettiklerim({Key? key}) : super(key: key);
@@ -13,8 +14,8 @@ class Takipettiklerim extends StatefulWidget {
 
 class _TakipettiklerimState extends State<Takipettiklerim> {
   TextEditingController _kisiNameController = TextEditingController();
-  late List<dynamic> takipciler = [];
-  late List<dynamic> filtered = [];
+  List<dynamic> takipciler = [];
+  List<dynamic> filtered = [];
 
   getYouFriends() async {
     //
@@ -121,23 +122,32 @@ class _TakipettiklerimState extends State<Takipettiklerim> {
                 itemBuilder: (BuildContext context, int index) {
                   String img = filtered[index]['img'];
                   String name = filtered[index]['name'];
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                        top: 0, left: 8, right: 8, bottom: 0),
-                    child: Card(
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(img, scale: 1),
+                  String id = filtered[index]['id'];
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Profil(user: {'id': id})));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          top: 0, left: 8, right: 8, bottom: 0),
+                      child: Card(
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(img, scale: 1),
+                          ),
+                          title: Text('${name}'),
+                          trailing: TextButton(
+                              onPressed: () {
+                                cikart(filtered[index]);
+                              },
+                              child: Text(
+                                'Çıkart',
+                                style: TextStyle(color: Color(0xffffda15)),
+                              )),
                         ),
-                        title: Text('${name}'),
-                        trailing: TextButton(
-                            onPressed: () {
-                              cikart(filtered[index]);
-                            },
-                            child: Text(
-                              'Çıkart',
-                              style: TextStyle(color: Color(0xffffda15)),
-                            )),
                       ),
                     ),
                   );

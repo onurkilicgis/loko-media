@@ -511,8 +511,8 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         }
       case 'profil':
         {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Profil()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => Profil(user: user)));
           break;
         }
     }
