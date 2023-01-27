@@ -12,10 +12,10 @@ import firebase_core
 import firebase_storage
 import geolocator_apple
 import maps_launcher
-import path_provider_foundation
+import path_provider_macos
 import record_macos
 import share_plus
-import shared_preferences_foundation
+import shared_preferences_macos
 import sqflite
 import url_launcher_macos
 import wakelock_macos

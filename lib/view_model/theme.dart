@@ -23,11 +23,15 @@ class MyTheme {
                 borderRadius: BorderRadius.all(Radius.circular(20)))),
       ),
       appBarTheme: AppBarTheme(
-        color: Color(0xff80C783),
-      ),
+          color: Color(0xffe7e7e7), foregroundColor: Color(0xff808080)),
       buttonTheme: ButtonThemeData(
         buttonColor: Color(0xff80C783),
-      ));
+      ),
+      tabBarTheme: const TabBarTheme(
+        labelColor: Color(0xff585858),
+        labelStyle: TextStyle(color: Color(0xff585858)),
+      ),
+      primaryColor: Color(0xff3b3b3b));
 
   static ThemeData darkTheme = ThemeData(
       progressIndicatorTheme: ProgressIndicatorThemeData(
@@ -63,8 +67,7 @@ class MyTheme {
                 borderRadius: BorderRadius.all(Radius.circular(20)))),
       ),
       appBarTheme: AppBarTheme(
-        color: Color(0xff26334d),
-      ),
+          color: Color(0xff26334d), foregroundColor: Color(0xffd9d9d9)),
       tabBarTheme: const TabBarTheme(
         labelColor: Colors.cyan,
         labelStyle: TextStyle(color: Colors.cyan), // color for text
@@ -73,5 +76,6 @@ class MyTheme {
       ),
       buttonTheme: ButtonThemeData(
         buttonColor: Color(0xff80C783),
-      ));
+      ),
+      primaryColor: Color(0xff202b40));
 }

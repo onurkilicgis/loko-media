@@ -659,10 +659,11 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                 centerTitle: false,
                 title: getAppController(),
                 backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+                foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
                 bottom: PreferredSize(
                   preferredSize: Size.fromHeight(40),
                   child: Material(
-                    color: Color(0xff202b40),
+                    color: Theme.of(context).primaryColor,
                     child: TabBar(
                       onTap: (tabindex) async {
                         if (tabindex == 1) {
