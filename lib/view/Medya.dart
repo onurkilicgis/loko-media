@@ -245,6 +245,7 @@ class MedyaState extends State<Medya> {
         Media_VM.openMediaLongPDialog(context, this, medias);
       },
       child: Container(
+        color:Theme.of(context).backgroundColor,
         margin: EdgeInsets.all(margin),
         child: Stack(
           fit: StackFit.expand,
@@ -398,39 +399,45 @@ class MedyaState extends State<Medya> {
               ],
             ),
             body: SafeArea(
-              child: GridView.builder(
-                  itemCount: medyaProvider.fileList.length,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 10,
-                  ),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      mainAxisExtent: context.dynamicWidth(5),
-                      crossAxisCount: 5),
-                  itemBuilder: (BuildContext context, int index) {
-                    return mediaCardBuilder(
-                        medyaProvider.fileList[index], index, this);
-                  }),
+              child: Container(
+                color: Theme.of(context).backgroundColor,
+                child: GridView.builder(
+                    itemCount: medyaProvider.fileList.length,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 10,
+                    ),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        mainAxisExtent: context.dynamicWidth(5),
+                        crossAxisCount: 5),
+                    itemBuilder: (BuildContext context, int index) {
+                      return mediaCardBuilder(
+                          medyaProvider.fileList[index], index, this);
+                    }),
+              ),
             ),
           ),
         );
       } else {
         return Scaffold(
           body: SafeArea(
-            child: GridView.builder(
-              itemCount: medyaProvider.fileList.length,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 10,
+            child: Container(
+              color:Theme.of(context).backgroundColor,
+              child: GridView.builder(
+                itemCount: medyaProvider.fileList.length,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 10,
+                ),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  mainAxisExtent: context.dynamicWidth(5),
+                  crossAxisCount: 5,
+                ),
+                itemBuilder: (BuildContext context, int index) {
+                  return mediaCardBuilder(
+                      medyaProvider.fileList[index], index, this);
+                },
               ),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisExtent: context.dynamicWidth(5),
-                crossAxisCount: 5,
-              ),
-              itemBuilder: (BuildContext context, int index) {
-                return mediaCardBuilder(
-                    medyaProvider.fileList[index], index, this);
-              },
             ),
           ),
         );
@@ -448,18 +455,22 @@ class MedyaState extends State<Medya> {
 
   openImage(Medias medias) {
     return Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => PhotoView(
-        imageProvider: FileImage(
-          ioo.File(medias.path.toString()),
-        ),
-        enableRotation: true,
-        backgroundDecoration:
-            BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
-        loadingBuilder: (context, event) => Center(
-          child: Container(
-            width: 30.0,
-            height: 30.0,
-            child: CircularProgressIndicator(color: Colors.white),
+      builder: (context) => Container(
+        color:Theme.of(context).backgroundColor,
+        child: PhotoView(
+          imageProvider: FileImage(
+            ioo.File(medias.path.toString()),
+          ),
+          enableRotation: true,
+          backgroundDecoration:
+              BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
+          loadingBuilder: (context, event) => Center(
+            child: Container(
+              color: Theme.of(context).backgroundColor,
+              width: 30.0,
+              height: 30.0,
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
           ),
         ),
       ),

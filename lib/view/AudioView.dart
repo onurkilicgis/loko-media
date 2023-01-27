@@ -54,110 +54,113 @@ class _AudioViewState extends State<AudioView> {
     dynamic settings = json.decode(widget.medias.settings.toString());
     duration = Duration(milliseconds: settings['duration']);
     ilaveBilgi = Duration(milliseconds: settings['duration']);
-    return Center(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Stack(alignment: Alignment.topCenter, children: [
-          Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: isDark == 'dark'
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Container(
-                        color: Colors.black45,
-                        child: Image.asset(
-                          'assets/images/audio_dark.png',
-                          fit: BoxFit.cover,
+    return Container(
+      color:Theme.of(context).backgroundColor,
+      child: Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Stack(alignment: Alignment.topCenter, children: [
+            Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: isDark == 'dark'
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          color: Colors.black45,
+                          child: Image.asset(
+                            'assets/images/audio_dark.png',
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                    )
-                  : ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Container(
-                        color: Colors.black45,
-                        child: Image.asset(
-                          'assets/images/audio_light.png',
-                          fit: BoxFit.cover,
+                      )
+                    : ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          color: Colors.black45,
+                          child: Image.asset(
+                            'assets/images/audio_light.png',
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                    )),
-          widget.medias.name == null
-              ? Text('')
-              : Positioned(
-                  top: 15,
-                  child: Text(
-                    widget.medias.name!,
-                    style: TextStyle(fontSize: 18),
+                      )),
+            widget.medias.name == null
+                ? Text('')
+                : Positioned(
+                    top: 15,
+                    child: Text(
+                      widget.medias.name!,
+                      style: TextStyle(fontSize: 18),
+                    ),
                   ),
-                ),
-        ]),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Slider(
-            activeColor: Color(0xff31376a),
-            inactiveColor: Color(0xBEFFFFFF),
-            min: 0,
-            max: duration.inMilliseconds.toDouble(),
-            value: position.inMilliseconds.toDouble(),
-            onChangeEnd: (value) async {
-              int milisecond = (value).toInt();
+          ]),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Slider(
+              activeColor: Color(0xff31376a),
+              inactiveColor: Color(0xBEFFFFFF),
+              min: 0,
+              max: duration.inMilliseconds.toDouble(),
+              value: position.inMilliseconds.toDouble(),
+              onChangeEnd: (value) async {
+                int milisecond = (value).toInt();
 
-              position = Duration(milliseconds: milisecond);
-              await player.seekToPlayer(position);
-              await resumePlay();
-              setState(() {});
-
-              //
-            },
-            onChanged: (double value) {},
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 30, right: 30),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(AudioRecorderState.formatTime(position)),
-              Text(AudioRecorderState.formatTime(duration - position))
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            backgroundColor: Color(0xff31376a),
-            radius: 35,
-            child: IconButton(
-              icon: Icon(
-                  playGostersinmi
-                      ? Icons.play_arrow
-                      : player.isPaused
-                          ? Icons.play_arrow
-                          : player.isPlaying
-                              ? Icons.pause
-                              : Icons.play_arrow,
-                  color: Color(0xBEFFFFFF)),
-              iconSize: 30,
-              tooltip: 'Dinle',
-              onPressed: () async {
-                if (player.isPaused) {
-                  await resumePlay();
-                } else {
-                  if (player.isPlaying) {
-                    await pausePlay();
-                  } else {
-                    await startPlay(widget.medias.path);
-                    playGostersinmi = false;
-                  }
-                }
+                position = Duration(milliseconds: milisecond);
+                await player.seekToPlayer(position);
+                await resumePlay();
                 setState(() {});
+
+                //
               },
+              onChanged: (double value) {},
             ),
           ),
-        ),
-      ],
-    ));
+          Padding(
+            padding: const EdgeInsets.only(left: 30, right: 30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(AudioRecorderState.formatTime(position)),
+                Text(AudioRecorderState.formatTime(duration - position))
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CircleAvatar(
+              backgroundColor: Color(0xff31376a),
+              radius: 35,
+              child: IconButton(
+                icon: Icon(
+                    playGostersinmi
+                        ? Icons.play_arrow
+                        : player.isPaused
+                            ? Icons.play_arrow
+                            : player.isPlaying
+                                ? Icons.pause
+                                : Icons.play_arrow,
+                    color: Color(0xBEFFFFFF)),
+                iconSize: 30,
+                tooltip: 'Dinle',
+                onPressed: () async {
+                  if (player.isPaused) {
+                    await resumePlay();
+                  } else {
+                    if (player.isPlaying) {
+                      await pausePlay();
+                    } else {
+                      await startPlay(widget.medias.path);
+                      playGostersinmi = false;
+                    }
+                  }
+                  setState(() {});
+                },
+              ),
+            ),
+          ),
+        ],
+      )),
+    );
   }
 
   openPlayer() async {

@@ -217,165 +217,168 @@ class AudioRecorderState extends State<AudioRecorder> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Center(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            StreamBuilder<RecordingDisposition>(
-              builder: (context, snapshot) {
-                duration =
-                    snapshot.hasData ? snapshot.data!.duration : Duration.zero;
-                currentDuration = duration;
-                String twoDigits(int n) => n.toString().padLeft(2, '0');
-                final twoDigitMinutes =
-                    twoDigits(duration.inMinutes.remainder(60));
-                final twodigitSeconds =
-                    twoDigits(duration.inSeconds.remainder(60));
-
-                return CircleAvatar(
-                    radius: 93,
-                    backgroundColor: Colors.white,
-                    child: CircleAvatar(
-                        radius: 90,
-                        backgroundColor: Color(0xff31376a),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Icon(
-                              Icons.mic,
-                              color: Color(0xBEFFFFFF),
-                            ),
-                            Text(
-                              '${twoDigitMinutes}:${twodigitSeconds}',
-                              style: TextStyle(
-                                  fontSize: 40, color: Color(0xBEFFFFFF)),
-                            ),
-                            SizedBox(),
-                            Text(
-                              recorder.isRecording
-                                  ? 'Kayıt  Ediyor...'
-                                  : 'Başlata Basınız.',
-                              style: TextStyle(
-                                  fontSize: 13, color: Color(0xC3FFFFFF)),
-                            ),
-                          ],
-                        )));
-              },
-              stream: recorder.onProgress,
-            ),
-            SizedBox(
-              height: 50,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: ustButonlar,
-            ),
-            Visibility(
-              visible: mod == 'kayit-bitti' ? true : false,
+        child: Container(
+          color:Theme.of(context).backgroundColor,
+          child: Center(
               child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Slider(
-                      activeColor: Color(0xff31376a),
-                      inactiveColor: Color(0xBEFFFFFF),
-                      min: 0,
-                      max: duration.inMilliseconds.toDouble(),
-                      value: position.inMilliseconds.toDouble(),
-                      onChangeEnd: (value) async {
-                        int milisecond = (value).toInt();
-                        position = Duration(milliseconds: milisecond);
-                        await player.seekToPlayer(position);
-                        await resumePlay();
-                        setState(() {});
-                        //
-                      },
-                      onChanged: (double value) {},
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30, right: 30),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(formatTime(position)),
-                        Text(formatTime(duration - position))
-                      ],
-                    ),
-                  ),
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    CircleAvatar(
-                      backgroundColor: Color(0xff31376a),
-                      radius: 35,
-                      child: IconButton(
-                        icon: Icon(Icons.delete, color: Color(0xBEFFFFFF)),
-                        tooltip: 'Kaydı Sil',
-                        iconSize: 30,
-                        onPressed: () async {
-                          Util.evetHayir(context, 'Kayıt Silme İşlemi',
-                              'Bu medya öğesini silmek istediğinize emin misiniz?',
-                              (cevap) async {
-                            if (cevap == true) {
-                              await deleteRecord(filePath);
-                              SBBildirim.bilgi("Bu Medya Öğesi Silinmiştir.");
-                            }
-                          });
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              StreamBuilder<RecordingDisposition>(
+                builder: (context, snapshot) {
+                  duration =
+                      snapshot.hasData ? snapshot.data!.duration : Duration.zero;
+                  currentDuration = duration;
+                  String twoDigits(int n) => n.toString().padLeft(2, '0');
+                  final twoDigitMinutes =
+                      twoDigits(duration.inMinutes.remainder(60));
+                  final twodigitSeconds =
+                      twoDigits(duration.inSeconds.remainder(60));
 
+                  return CircleAvatar(
+                      radius: 93,
+                      backgroundColor: Colors.white,
+                      child: CircleAvatar(
+                          radius: 90,
+                          backgroundColor: Color(0xff31376a),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Icon(
+                                Icons.mic,
+                                color: Color(0xBEFFFFFF),
+                              ),
+                              Text(
+                                '${twoDigitMinutes}:${twodigitSeconds}',
+                                style: TextStyle(
+                                    fontSize: 40, color: Color(0xBEFFFFFF)),
+                              ),
+                              SizedBox(),
+                              Text(
+                                recorder.isRecording
+                                    ? 'Kayıt  Ediyor...'
+                                    : 'Başlata Basınız.',
+                                style: TextStyle(
+                                    fontSize: 13, color: Color(0xC3FFFFFF)),
+                              ),
+                            ],
+                          )));
+                },
+                stream: recorder.onProgress,
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: ustButonlar,
+              ),
+              Visibility(
+                visible: mod == 'kayit-bitti' ? true : false,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Slider(
+                        activeColor: Color(0xff31376a),
+                        inactiveColor: Color(0xBEFFFFFF),
+                        min: 0,
+                        max: duration.inMilliseconds.toDouble(),
+                        value: position.inMilliseconds.toDouble(),
+                        onChangeEnd: (value) async {
+                          int milisecond = (value).toInt();
+                          position = Duration(milliseconds: milisecond);
+                          await player.seekToPlayer(position);
+                          await resumePlay();
                           setState(() {});
+                          //
                         },
+                        onChanged: (double value) {},
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CircleAvatar(
+                      padding: const EdgeInsets.only(left: 30, right: 30),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(formatTime(position)),
+                          Text(formatTime(duration - position))
+                        ],
+                      ),
+                    ),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      CircleAvatar(
                         backgroundColor: Color(0xff31376a),
                         radius: 35,
                         child: IconButton(
-                          icon: Icon(
-                              playGostersinmi
-                                  ? Icons.play_arrow
-                                  : player.isPaused
-                                      ? Icons.play_arrow
-                                      : player.isPlaying
-                                          ? Icons.pause
-                                          : Icons.play_arrow,
-                              color: Color(0xBEFFFFFF)),
+                          icon: Icon(Icons.delete, color: Color(0xBEFFFFFF)),
+                          tooltip: 'Kaydı Sil',
                           iconSize: 30,
-                          tooltip: 'Dinle',
                           onPressed: () async {
-                            if (player.isPaused) {
-                              await resumePlay();
-                            } else {
-                              if (player.isPlaying) {
-                                await pausePlay();
-                              } else {
-                                await startPlay(filePath);
-                                playGostersinmi = false;
+                            Util.evetHayir(context, 'Kayıt Silme İşlemi',
+                                'Bu medya öğesini silmek istediğinize emin misiniz?',
+                                (cevap) async {
+                              if (cevap == true) {
+                                await deleteRecord(filePath);
+                                SBBildirim.bilgi("Bu Medya Öğesi Silinmiştir.");
                               }
-                            }
+                            });
+
                             setState(() {});
                           },
                         ),
                       ),
-                    ),
-                    CircleAvatar(
-                      backgroundColor: Color(0xff31376a),
-                      radius: 35,
-                      child: IconButton(
-                        icon: Icon(Icons.save, color: Color(0xBEFFFFFF)),
-                        tooltip: 'Kaydet',
-                        iconSize: 30,
-                        onPressed: () {
-                          getAudioDialog();
-                        },
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircleAvatar(
+                          backgroundColor: Color(0xff31376a),
+                          radius: 35,
+                          child: IconButton(
+                            icon: Icon(
+                                playGostersinmi
+                                    ? Icons.play_arrow
+                                    : player.isPaused
+                                        ? Icons.play_arrow
+                                        : player.isPlaying
+                                            ? Icons.pause
+                                            : Icons.play_arrow,
+                                color: Color(0xBEFFFFFF)),
+                            iconSize: 30,
+                            tooltip: 'Dinle',
+                            onPressed: () async {
+                              if (player.isPaused) {
+                                await resumePlay();
+                              } else {
+                                if (player.isPlaying) {
+                                  await pausePlay();
+                                } else {
+                                  await startPlay(filePath);
+                                  playGostersinmi = false;
+                                }
+                              }
+                              setState(() {});
+                            },
+                          ),
+                        ),
                       ),
-                    ),
-                  ])
-                ],
-              ),
-            )
-          ],
-        )),
+                      CircleAvatar(
+                        backgroundColor: Color(0xff31376a),
+                        radius: 35,
+                        child: IconButton(
+                          icon: Icon(Icons.save, color: Color(0xBEFFFFFF)),
+                          tooltip: 'Kaydet',
+                          iconSize: 30,
+                          onPressed: () {
+                            getAudioDialog();
+                          },
+                        ),
+                      ),
+                    ])
+                  ],
+                ),
+              )
+            ],
+          )),
+        ),
       ),
     );
   }
@@ -583,7 +586,7 @@ class AudioRecorderState extends State<AudioRecorder> {
 
     return Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
         builder: (context) => Container(
-              color: Color(0xff7a7c99),
+              color: Theme.of(context).backgroundColor,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

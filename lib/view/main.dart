@@ -170,7 +170,7 @@ class _MyAppState extends State<MyApp> {
         ],
         child: Consumer<SwitchModel>(builder: (context, switchModels, child) {
           return GetMaterialApp(
-            theme: switchModels.isSwitchControl == false
+            theme: switchModels.isSwitchControl == true
                 ? MyTheme.darkTheme
                 : MyTheme.lightTheme,
             title: 'LOKO MEDIA',

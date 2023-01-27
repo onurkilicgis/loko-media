@@ -392,8 +392,8 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
     );
   }
 
-  List<Widget> createAlbumCards() {
-    String isDark = 'dark';
+  List<Widget> createAlbumCards(themeStatus) {
+    String isDark = themeStatus==true?'dark':'light';
     List<Widget> cards = [];
     for (int i = 0; i < filteredAlbumList.length; i++) {
       var album = filteredAlbumList[i];
@@ -556,7 +556,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                         decoration: BoxDecoration(
                           borderRadius:
                               BorderRadius.only(topRight: Radius.circular(18)),
-                          color: Color(0xff26334d),
+                          color: Theme.of(context).drawerTheme.backgroundColor,
                         ),
                         accountName: Text(user['name']),
                         accountEmail: Text(user['mail']),
@@ -595,7 +595,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                                 child: ListTile(
                               leading: Icon(
                                 FontAwesomeIcons.moon,
-                                color: Colors.lightGreen,
+                                color: Theme.of(context).listTileTheme.iconColor,
                               ),
                               title: Text(
                                 'Gece Modu',
@@ -608,17 +608,18 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                                 return Switch(
                                     value: switchModel.isSwitchControl,
                                     //tetikleyici
-                                    activeTrackColor: Colors.lightGreen,
-                                    activeColor: Colors.green,
+
+                                    activeTrackColor: Color(0XFF79D6FD),
+                                    activeColor: Theme.of(context).listTileTheme.iconColor,
                                     inactiveTrackColor: Colors.grey,
                                     // inactiveThumbColor: Colors.black,
                                     onChanged: (bool data) async {
                                       if (data == true) {
                                         await MyLocal.setStringData(
-                                            'theme', 'light');
+                                            'theme', 'dark');
                                       } else {
                                         await MyLocal.setStringData(
-                                            'theme', 'dark');
+                                            'theme', 'light');
                                       }
 
                                       switchModel
@@ -636,7 +637,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                                 child: ListTile(
                               leading: Icon(
                                 FontAwesomeIcons.arrowRightFromBracket,
-                                color: Colors.lightGreen,
+                                color: Theme.of(context).listTileTheme.iconColor,
                               ),
                               title: Text(
                                 'Çıkış',
@@ -680,10 +681,10 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                       },
                       labelStyle: TextStyle(fontSize: 14),
                       unselectedLabelStyle: TextStyle(fontSize: 12),
-                      indicatorColor: Color(0xff0e91ce),
+                      indicatorColor: Theme.of(context).accentColor,
                       controller: controller,
-                      labelColor: Color(0xff0e91ce),
-                      unselectedLabelColor: Color(0xff697a9b),
+                      labelColor: Theme.of(context).tabBarTheme.labelColor,
+                      unselectedLabelColor: Theme.of(context).tabBarTheme.unselectedLabelColor,
                       tabs: [
                         Tab(
                           child: Text(
@@ -721,40 +722,52 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                       : NeverScrollableScrollPhysics(),
                   children: [
                     Paylasimlar(id: tiklananAlbum),
-                    Column(
-                      children: [
-                        APP_VM.getAramaKutusu(
-                          context,
-                          this,
-                          album,
-                        ),
-                        Expanded(
-                          child: cardType == 'GFCard'
-                              ? GridView(
-                                  padding: EdgeInsets.all(12),
-                                  shrinkWrap: false,
-                                  scrollDirection: Axis.vertical,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                  ),
-                                  children: createAlbumCards(),
+                    Container(
+                      color: Theme.of(context).backgroundColor,
+                      child: Column(
+                        children: [
+                          APP_VM.getAramaKutusu(
+                            context,
+                            this,
+                            album,
+                          ),
+                          Consumer<SwitchModel>(
+                            builder: (context, switchModel, child) {
+                              return Expanded(
+                                child: cardType == 'GFCard'
+                                    ? GridView(
+                                    padding: EdgeInsets.all(12),
+                                    shrinkWrap: false,
+                                    scrollDirection: Axis.vertical,
+                                    gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                    ),
+                                    children:createAlbumCards(switchModel.isSwitchControl)
                                 )
-                              : ListView(
+                                    : ListView(
                                   shrinkWrap: true,
                                   padding: const EdgeInsets.all(8),
                                   scrollDirection: Axis.vertical,
-                                  children: createAlbumCards(),
+                                  children: createAlbumCards(switchModel.isSwitchControl),
                                 ),
-                        ),
-                      ],
+                              );
+                            }),
+
+                        ],
+                      ),
                     ),
-                    Medya(
-                      id: tiklananAlbum,
+                    Container(
+                      color: Theme.of(context).backgroundColor,
+                      child: Medya(
+                        id: tiklananAlbum,
+                      ),
                     ),
                     Harita(id: tiklananAlbum, type: 'album') //xxx
                   ]),
               bottomNavigationBar: BottomNavigationBar(
+                selectedItemColor: Theme.of(context).tabBarTheme.labelColor,
+                unselectedItemColor: Theme.of(context).tabBarTheme.unselectedLabelColor,
                 key: scaffoldState,
                 currentIndex: currentIndex,
                 onTap: (index) async {
@@ -896,7 +909,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
 
   Widget listMenuItems(IconData icon, String title, Function callback) {
     return ListTile(
-        leading: Icon(icon, color: Colors.lightGreen),
+        leading: Icon(icon, color: Theme.of(context).listTileTheme.iconColor),
         title: Text(title,
             style: TextStyle(
               fontSize: 14,

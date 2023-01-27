@@ -74,19 +74,22 @@ class _PaylasimlarState extends State<Paylasimlar> {
                 case 'image':
                   {
                     //drive.getAFile(media['url']);
-                    return Container(
-                      height: 250,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                          border: Border.all(
-                            color: Colors.black,
-                            width: 1,
-                          ),
-                          image: DecorationImage(
-                            image: NetworkImage(mediaURL),
-                            fit: BoxFit.cover,
-                          ),
-                          color: Colors.black54),
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 4, right: 4),
+                      child: Container(
+                        height: 250,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            border: Border.all(
+                              color: Colors.black12,
+                              width: 1,
+                            ),
+                            image: DecorationImage(
+                              image: NetworkImage(mediaURL),
+                              fit: BoxFit.cover,
+                            ),
+                            color: Theme.of(context).bannerTheme.backgroundColor),
+                      ),
                     );
                   }
                 default:
@@ -139,25 +142,25 @@ class _PaylasimlarState extends State<Paylasimlar> {
     iconlar.add(IconButton(
       //padding:EdgeInsets.only(top:0,bottom: 0),
       onPressed: () {},
-      icon: Icon(Icons.favorite_border),
+      icon: Icon(Icons.favorite_border,color: Theme.of(context).tabBarTheme.unselectedLabelColor,),
     ));
     iconlar.add(IconButton(
       onPressed: () {},
-      icon: Icon(Icons.mode_comment_outlined),
+      icon: Icon(Icons.mode_comment_outlined,color: Theme.of(context).tabBarTheme.unselectedLabelColor),
     ));
     if (item['point'] != null) {
       iconlar.add(IconButton(
         onPressed: () {},
-        icon: Icon(Icons.map),
+        icon: Icon(Icons.map,color: Theme.of(context).tabBarTheme.unselectedLabelColor),
       ));
       iconlar.add(IconButton(
         onPressed: () {},
-        icon: Icon(Icons.navigation_outlined),
+        icon: Icon(Icons.navigation_outlined,color: Theme.of(context).tabBarTheme.unselectedLabelColor),
       ));
     }
     iconlar.add(IconButton(
       onPressed: () {},
-      icon: Icon(Icons.share),
+      icon: Icon(Icons.share,color: Theme.of(context).tabBarTheme.unselectedLabelColor),
     ));
     return Container(
       // color: Colors.lightBlue,
@@ -171,7 +174,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
             child: IconButton(
               padding: EdgeInsets.only(top: 0, bottom: 0),
               onPressed: () {},
-              icon: Icon(Icons.delete),
+              icon: Icon(Icons.delete,color: Theme.of(context).tabBarTheme.unselectedLabelColor),
             ),
           ),
         ],
@@ -255,7 +258,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
             ? Container()
             : SafeArea(
                 child: Container(
-                  color: Colors.black54,
+                  color: Theme.of(context).primaryColor,
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
