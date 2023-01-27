@@ -767,8 +767,8 @@ class _AlbumShareState extends State<AlbumShare> {
 
   paylas() async {
     List<dynamic> fileList = [];
-    Bulut2 cloud = Bulut2();
-    await cloud.ready();
+    //Bulut2 cloud = Bulut2();
+    //await cloud.ready();
     int yuklenmesiGerekenSayi = 0;
     int yuklenenGerekenSayi = 0;
     for (var i = 0; i < uploads.length; i++) {
