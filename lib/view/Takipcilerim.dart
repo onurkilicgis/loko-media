@@ -77,7 +77,9 @@ class _TakipcilerimState extends State<Takipcilerim> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         title: Text('Takipçi Listem: ${takipciler.length} Kişi'),
       ),
       body: SafeArea(
@@ -97,18 +99,18 @@ class _TakipcilerimState extends State<Takipcilerim> {
                 maxLines: 1,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Color(0xff1e2c49),
+                  fillColor: Theme.of(context).appBarTheme.backgroundColor,
                   contentPadding: EdgeInsets.all(8),
                   hintText: 'Listede Ara... ',
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(7),
                     borderSide: BorderSide(
-                      color: Color(0xff017eba),
+                      color: Theme.of(context).listTileTheme.iconColor!,
                     ),
                   ),
-                  focusedBorder: const OutlineInputBorder(
+                  focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Color(0xff017eba),
+                      color: Theme.of(context).listTileTheme.iconColor!,
                     ),
                   ),
                 ),

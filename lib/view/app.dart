@@ -215,8 +215,6 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
   int currentIndex = 0;
 
   Card createCard(album, image, durum) {
-    //xxx
-
     return Card(
       child: ListTile(
         onTap: () {
@@ -246,12 +244,12 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
           height: 32,
           width: 32,
           decoration: ShapeDecoration(
-            color: Color(0xff202b40),
+            color: Theme.of(context).badgeTheme.backgroundColor,
             shape: CircleBorder(),
           ),
           child: IconButton(
             iconSize: 16,
-            icon: Icon(icon, color: Color(0xff017eba)),
+            icon: Icon(icon, color: Theme.of(context).listTileTheme.iconColor),
             color: Colors.white,
             onPressed: () {
               onTap();
@@ -338,11 +336,13 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                           style: TextStyle(
                             fontSize: 14,
                             shadows: <Shadow>[
-                              Shadow(
-                                offset: Offset(1.0, 1.0),
-                                blurRadius: 4.0,
-                                color: Color.fromARGB(255, 0, 0, 0),
-                              ),
+                              isDark == 'dark'
+                                  ? Shadow(
+                                      offset: Offset(1.0, 1.0),
+                                      blurRadius: 4.0,
+                                      color: Color.fromARGB(255, 0, 0, 0),
+                                    )
+                                  : Shadow()
                             ],
                           ),
                         ),
@@ -353,11 +353,13 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                         style: TextStyle(
                           fontSize: 10,
                           shadows: <Shadow>[
-                            Shadow(
-                              offset: Offset(1.0, 1.0),
-                              blurRadius: 4.0,
-                              color: Color.fromARGB(255, 0, 0, 0),
-                            ),
+                            isDark == 'dark'
+                                ? Shadow(
+                                    offset: Offset(1.0, 1.0),
+                                    blurRadius: 4.0,
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                  )
+                                : Shadow()
                           ],
                         ),
                       )
@@ -393,7 +395,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
   }
 
   List<Widget> createAlbumCards(themeStatus) {
-    String isDark = themeStatus==true?'dark':'light';
+    String isDark = themeStatus == true ? 'dark' : 'light';
     List<Widget> cards = [];
     for (int i = 0; i < filteredAlbumList.length; i++) {
       var album = filteredAlbumList[i];
@@ -595,7 +597,8 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                                 child: ListTile(
                               leading: Icon(
                                 FontAwesomeIcons.moon,
-                                color: Theme.of(context).listTileTheme.iconColor,
+                                color:
+                                    Theme.of(context).listTileTheme.iconColor,
                               ),
                               title: Text(
                                 'Gece Modu',
@@ -610,7 +613,9 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                                     //tetikleyici
 
                                     activeTrackColor: Color(0XFF79D6FD),
-                                    activeColor: Theme.of(context).listTileTheme.iconColor,
+                                    activeColor: Theme.of(context)
+                                        .listTileTheme
+                                        .iconColor,
                                     inactiveTrackColor: Colors.grey,
                                     // inactiveThumbColor: Colors.black,
                                     onChanged: (bool data) async {
@@ -637,7 +642,8 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                                 child: ListTile(
                               leading: Icon(
                                 FontAwesomeIcons.arrowRightFromBracket,
-                                color: Theme.of(context).listTileTheme.iconColor,
+                                color:
+                                    Theme.of(context).listTileTheme.iconColor,
                               ),
                               title: Text(
                                 'Çıkış',
@@ -684,7 +690,8 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                       indicatorColor: Theme.of(context).accentColor,
                       controller: controller,
                       labelColor: Theme.of(context).tabBarTheme.labelColor,
-                      unselectedLabelColor: Theme.of(context).tabBarTheme.unselectedLabelColor,
+                      unselectedLabelColor:
+                          Theme.of(context).tabBarTheme.unselectedLabelColor,
                       tabs: [
                         Tab(
                           child: Text(
@@ -723,7 +730,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                   children: [
                     Paylasimlar(id: tiklananAlbum),
                     Container(
-                      color: Theme.of(context).backgroundColor,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       child: Column(
                         children: [
                           APP_VM.getAramaKutusu(
@@ -732,28 +739,28 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                             album,
                           ),
                           Consumer<SwitchModel>(
-                            builder: (context, switchModel, child) {
-                              return Expanded(
-                                child: cardType == 'GFCard'
-                                    ? GridView(
-                                    padding: EdgeInsets.all(12),
-                                    shrinkWrap: false,
-                                    scrollDirection: Axis.vertical,
-                                    gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
+                              builder: (context, switchModel, child) {
+                            return Expanded(
+                              child: cardType == 'GFCard'
+                                  ? GridView(
+                                      padding: EdgeInsets.all(12),
+                                      shrinkWrap: false,
+                                      scrollDirection: Axis.vertical,
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                      ),
+                                      children: createAlbumCards(
+                                          switchModel.isSwitchControl))
+                                  : ListView(
+                                      shrinkWrap: true,
+                                      padding: const EdgeInsets.all(8),
+                                      scrollDirection: Axis.vertical,
+                                      children: createAlbumCards(
+                                          switchModel.isSwitchControl),
                                     ),
-                                    children:createAlbumCards(switchModel.isSwitchControl)
-                                )
-                                    : ListView(
-                                  shrinkWrap: true,
-                                  padding: const EdgeInsets.all(8),
-                                  scrollDirection: Axis.vertical,
-                                  children: createAlbumCards(switchModel.isSwitchControl),
-                                ),
-                              );
-                            }),
-
+                            );
+                          }),
                         ],
                       ),
                     ),
@@ -763,11 +770,17 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                         id: tiklananAlbum,
                       ),
                     ),
-                    Harita(id: tiklananAlbum, type: 'album') //xxx
+                    Harita(id: tiklananAlbum, type: 'album')
                   ]),
               bottomNavigationBar: BottomNavigationBar(
-                selectedItemColor: Theme.of(context).tabBarTheme.labelColor,
-                unselectedItemColor: Theme.of(context).tabBarTheme.unselectedLabelColor,
+                backgroundColor:
+                    Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+                selectedItemColor: Theme.of(context)
+                    .bottomNavigationBarTheme
+                    .selectedItemColor,
+                unselectedItemColor: Theme.of(context)
+                    .bottomNavigationBarTheme
+                    .unselectedItemColor,
                 key: scaffoldState,
                 currentIndex: currentIndex,
                 onTap: (index) async {
@@ -927,6 +940,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
   Future<void> BottomSheetItems(IconData icon, String title, IconData icon1,
       String title1, Function callback) {
     return showModalBottomSheet(
+        backgroundColor: Theme.of(context).cardColor,
         useRootNavigator: true,
         context: context,
         builder: (context) => Column(
@@ -976,7 +990,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                     decoration: InputDecoration(
                       focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.white)),
-                      labelStyle: TextStyle(color: Colors.white),
+                      // labelStyle: TextStyle(color: Colors.white),
                       labelText: 'Albüm Adını Giriniz',
                     ),
                     onChanged: (value) {},

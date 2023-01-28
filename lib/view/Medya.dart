@@ -6,6 +6,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
 import 'package:loko_media/providers/MedyaProvider.dart';
+import 'package:loko_media/providers/SwitchProvider.dart';
 import 'package:loko_media/services/utils.dart';
 import 'package:loko_media/view/PlayMedya.dart';
 import 'package:loko_media/view_model/layout.dart';
@@ -13,8 +14,6 @@ import 'package:loko_media/view_model/media_view_model.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
-
-import '../services/MyLocal.dart';
 
 class Medya extends StatefulWidget {
   int? id;
@@ -39,13 +38,9 @@ class MedyaState extends State<Medya> {
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
   late MediaProvider _mediaProvider;
   late String isDark;
-  findTheme() async {
-    isDark = await MyLocal.getStringData('theme');
-  }
 
   @override
   void initState() {
-    findTheme();
     _mediaProvider = Provider.of<MediaProvider>(context, listen: false);
     _mediaProvider.getFileList(widget.id!);
 
@@ -83,8 +78,8 @@ class MedyaState extends State<Medya> {
     });
   }
 
-  textCard(Medias medias) {
-    if (isDark == 'dark') {
+  textCard(Medias medias, themeStatus) {
+    if (themeStatus == true) {
       return Stack(
           fit: StackFit.expand,
           alignment: Alignment.center,
@@ -92,7 +87,6 @@ class MedyaState extends State<Medya> {
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Container(
-                color: Colors.black45,
                 child: Image.asset(
                   'assets/images/txt_dark.png',
                   fit: BoxFit.cover,
@@ -107,27 +101,28 @@ class MedyaState extends State<Medya> {
           ]);
     } else {
       return Stack(alignment: Alignment.center, children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            color: Colors.white,
-            child: Image.asset(
-              'assets/images/txt_light.png',
-              fit: BoxFit.cover,
-            ),
-          ),
+        Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Color(0x8fb7bdc6),
+              image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/images/txt_light.png'))),
         ),
         Padding(
           padding: const EdgeInsets.all(4.0),
-          child: Text(medias.name!,
-              style: TextStyle(fontSize: 7), textAlign: TextAlign.center),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Text(medias.name!,
+                style: TextStyle(fontSize: 7), textAlign: TextAlign.center),
+          ),
         ),
       ]);
     }
   }
 
-  audioCard(Medias medias) {
-    if (isDark == 'dark') {
+  audioCard(Medias medias, bool themeStatus) {
+    if (themeStatus == true) {
       return Stack(
           fit: StackFit.expand,
           alignment: Alignment.center,
@@ -135,10 +130,9 @@ class MedyaState extends State<Medya> {
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Container(
-                color: Colors.black45,
                 child: Image.asset(
                   'assets/images/audio_dark.png',
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fill,
                 ),
               ),
             ),
@@ -151,21 +145,22 @@ class MedyaState extends State<Medya> {
           ]);
     } else {
       return Stack(alignment: Alignment.center, children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            color: Colors.white,
-            child: Image.asset(
-              'assets/images/audio_light.png',
-              fit: BoxFit.cover,
-            ),
-          ),
+        Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Color(0x8fb7bdc6),
+              image: DecorationImage(
+                  fit: BoxFit.contain,
+                  image: AssetImage('assets/images/audio_light.png'))),
         ),
         Icon(Icons.play_circle_fill, color: Colors.white),
         Padding(
           padding: const EdgeInsets.all(4.0),
-          child: Text(medias.name!,
-              style: TextStyle(fontSize: 7), textAlign: TextAlign.center),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Text(medias.name!,
+                style: TextStyle(fontSize: 7), textAlign: TextAlign.center),
+          ),
         ),
       ]);
     }
@@ -199,7 +194,8 @@ class MedyaState extends State<Medya> {
     ]);
   }
 
-  mediaCardBuilder(Medias medias, int index, MedyaState model) {
+  mediaCardBuilder(
+      Medias medias, int index, MedyaState model, bool isSwitchControl) {
     Widget? media;
     bool secilimi = selectedMedias.indexOf(medias.id!) == -1 ? false : true;
 
@@ -218,15 +214,19 @@ class MedyaState extends State<Medya> {
         }
       case 'audio':
         {
-          media = audioCard(medias);
+          media = audioCard(medias, isSwitchControl);
+
           break;
         }
+
       case 'txt':
         {
-          media = textCard(medias);
+          media = textCard(medias, isSwitchControl);
+
           break;
         }
     }
+
     return InkWell(
       onTap: () {
         if (selectionMode == true) {
@@ -245,7 +245,7 @@ class MedyaState extends State<Medya> {
         Media_VM.openMediaLongPDialog(context, this, medias);
       },
       child: Container(
-        color:Theme.of(context).backgroundColor,
+        color: Theme.of(context).scaffoldBackgroundColor,
         margin: EdgeInsets.all(margin),
         child: Stack(
           fit: StackFit.expand,
@@ -295,134 +295,162 @@ class MedyaState extends State<Medya> {
             }
           },
           child: Scaffold(
-            floatingActionButton: SpeedDial(
-              openCloseDial: isDialOpen,
-              activeIcon: Icons.cancel,
-              tooltip: 'Seçilenler',
-              overlayColor: Colors.transparent,
-              overlayOpacity: 0,
-              icon: Icons.more_vert,
-              //animatedIcon: AnimatedIcons.menu_close,
-              backgroundColor: Color(0xff017eba),
-              activeBackgroundColor: Colors.red,
-              activeForegroundColor: Colors.white,
-              closeManually: true,
-              children: [
-                SpeedDialChild(
-                  onTap: () {},
-                  child: Icon(Icons.map),
-                  label: 'Seçilenleri Haritalandır',
-                  backgroundColor: Color(0xff26334d),
-                  labelBackgroundColor: Color(0xff26334d),
-                ),
-                SpeedDialChild(
-                  onTap: () {
-                    // seçilen Medyaları obje olarak almak için boş bir dizi oluşturduk
-                    List<Medias> secilenMedyalar = [];
-                    // Listedeki tüm medyaların sadece seçilenleri yukarıdaki diziye eklemek için for ile döndük.
-                    for (int i = 0; i < fileList.length; i++) {
-                      Medias item = fileList[i];
-                      if (selecteds.indexOf(item.id!) != -1) {
-                        secilenMedyalar.add(item);
-                      }
-                    }
-                    // artık Seçili medyaları Medias objesi olarak listeleyip almış olduk
-                    Media_VM.getMedyaShareDialog(context, secilenMedyalar);
-                    setState(() {
-                      selectedMedias.clear();
-                      selectionMode = false;
-                    });
-                  },
-                  child: Icon(Icons.share),
-                  label: 'Seçilenleri Paylaş',
-                  backgroundColor: Color(0xff26334d),
-                  labelBackgroundColor: Color(0xff26334d),
-                ),
-                SpeedDialChild(
-                  onTap: () {
-                    setState(() {
-                      selectedMedias.clear();
-                      selectionMode = false;
-                    });
-                  },
-                  child: Icon(Icons.cancel),
-                  label: 'Seçimi İptal Et',
-                  backgroundColor: Color(0xff26334d),
-                  labelBackgroundColor: Color(0xff26334d),
-                ),
-                SpeedDialChild(
-                  onTap: () async {
-                    Util.evetHayir(context, 'Toplu Medya Silme İşlemi',
-                        '${selecteds.length} Adet medya öğesini silmek istediğinize emin misiniz?',
-                        (cevap) async {
-                      if (cevap == true) {
-                        int silinenDosyaSayisi =
-                            await AlbumDataBase.mediaMultiDelete(
-                          selecteds,
-                        );
-
-                        SBBildirim.bilgi(
-                            '${silinenDosyaSayisi} Adet medya silinmiştir.');
-                        setState(() {
-                          deleteMediasFromList(selecteds);
-                        });
-                      }
-                    });
-                    setState(() {
-                      selectionMode = false;
-
-                      // getFileList(widget.id!);
-                    });
-                  },
-                  child: Icon(Icons.delete),
-                  label: 'Seçilenleri Sil',
-                  backgroundColor: Color(0xff26334d),
-                  labelBackgroundColor: Color(0xff26334d),
-                ),
-                SpeedDialChild(
-                  child: Icon(Icons.check),
-                  onTap: () async {
-                    List<int> listem = [];
-
-                    for (int i = 0; i < medyaProvider.fileList.length; i++) {
-                      int allList = medyaProvider.fileList[i].id!;
-                      listem.add(allList);
-                    }
-                    setState(() {
-                      selectedMedias = listem;
-                    });
-                  },
-                  label: 'Hepsini Seç',
-                  backgroundColor: Color(0xff26334d),
-                  labelBackgroundColor: Color(0xff26334d),
-                ),
-              ],
-            ),
-            body: SafeArea(
-              child: Container(
-                color: Theme.of(context).backgroundColor,
-                child: GridView.builder(
-                    itemCount: medyaProvider.fileList.length,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 10,
+              floatingActionButton: SpeedDial(
+                openCloseDial: isDialOpen,
+                activeIcon: Icons.cancel,
+                tooltip: 'Seçilenler',
+                overlayColor: Colors.transparent,
+                overlayOpacity: 0,
+                icon: Icons.more_vert,
+                //animatedIcon: AnimatedIcons.menu_close,
+                backgroundColor: Theme.of(context).listTileTheme.iconColor,
+                activeBackgroundColor: Colors.red,
+                activeForegroundColor: Colors.white,
+                closeManually: true,
+                children: [
+                  SpeedDialChild(
+                    onTap: () {},
+                    child: Icon(
+                      Icons.map,
+                      color: Theme.of(context).listTileTheme.iconColor,
                     ),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        mainAxisExtent: context.dynamicWidth(5),
-                        crossAxisCount: 5),
-                    itemBuilder: (BuildContext context, int index) {
-                      return mediaCardBuilder(
-                          medyaProvider.fileList[index], index, this);
-                    }),
+                    label: 'Seçilenleri Haritalandır',
+                    backgroundColor:
+                        Theme.of(context).badgeTheme.backgroundColor,
+                    labelBackgroundColor:
+                        Theme.of(context).badgeTheme.backgroundColor,
+                  ),
+                  SpeedDialChild(
+                    onTap: () {
+                      // seçilen Medyaları obje olarak almak için boş bir dizi oluşturduk
+                      List<Medias> secilenMedyalar = [];
+                      // Listedeki tüm medyaların sadece seçilenleri yukarıdaki diziye eklemek için for ile döndük.
+                      for (int i = 0; i < fileList.length; i++) {
+                        Medias item = fileList[i];
+                        if (selecteds.indexOf(item.id!) != -1) {
+                          secilenMedyalar.add(item);
+                        }
+                      }
+                      // artık Seçili medyaları Medias objesi olarak listeleyip almış olduk
+                      Media_VM.getMedyaShareDialog(context, secilenMedyalar);
+                      setState(() {
+                        selectedMedias.clear();
+                        selectionMode = false;
+                      });
+                    },
+                    child: Icon(
+                      Icons.share,
+                      color: Theme.of(context).listTileTheme.iconColor,
+                    ),
+                    label: 'Seçilenleri Paylaş',
+                    backgroundColor:
+                        Theme.of(context).badgeTheme.backgroundColor,
+                    labelBackgroundColor:
+                        Theme.of(context).badgeTheme.backgroundColor,
+                  ),
+                  SpeedDialChild(
+                    onTap: () {
+                      setState(() {
+                        selectedMedias.clear();
+                        selectionMode = false;
+                      });
+                    },
+                    child: Icon(
+                      Icons.cancel,
+                      color: Theme.of(context).listTileTheme.iconColor,
+                    ),
+                    label: 'Seçimi İptal Et',
+                    backgroundColor:
+                        Theme.of(context).badgeTheme.backgroundColor,
+                    labelBackgroundColor:
+                        Theme.of(context).badgeTheme.backgroundColor,
+                  ),
+                  SpeedDialChild(
+                    onTap: () async {
+                      Util.evetHayir(context, 'Toplu Medya Silme İşlemi',
+                          '${selecteds.length} Adet medya öğesini silmek istediğinize emin misiniz?',
+                          (cevap) async {
+                        if (cevap == true) {
+                          int silinenDosyaSayisi =
+                              await AlbumDataBase.mediaMultiDelete(
+                            selecteds,
+                          );
+
+                          SBBildirim.bilgi(
+                              '${silinenDosyaSayisi} Adet medya silinmiştir.');
+                          setState(() {
+                            deleteMediasFromList(selecteds);
+                          });
+                        }
+                      });
+                      setState(() {
+                        selectionMode = false;
+
+                        // getFileList(widget.id!);
+                      });
+                    },
+                    child: Icon(
+                      Icons.delete,
+                      color: Theme.of(context).listTileTheme.iconColor,
+                    ),
+                    label: 'Seçilenleri Sil',
+                    backgroundColor:
+                        Theme.of(context).badgeTheme.backgroundColor,
+                    labelBackgroundColor:
+                        Theme.of(context).badgeTheme.backgroundColor,
+                  ),
+                  SpeedDialChild(
+                    child: Icon(
+                      Icons.check,
+                      color: Theme.of(context).listTileTheme.iconColor,
+                    ),
+                    onTap: () async {
+                      List<int> listem = [];
+
+                      for (int i = 0; i < medyaProvider.fileList.length; i++) {
+                        int allList = medyaProvider.fileList[i].id!;
+                        listem.add(allList);
+                      }
+                      setState(() {
+                        selectedMedias = listem;
+                      });
+                    },
+                    label: 'Hepsini Seç',
+                    backgroundColor:
+                        Theme.of(context).badgeTheme.backgroundColor,
+                    labelBackgroundColor:
+                        Theme.of(context).badgeTheme.backgroundColor,
+                  ),
+                ],
               ),
-            ),
-          ),
+              body:
+                  Consumer<SwitchModel>(builder: (context, switchModel, child) {
+                return SafeArea(
+                  child: Container(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    child: GridView.builder(
+                        itemCount: medyaProvider.fileList.length,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            mainAxisExtent: context.dynamicWidth(5),
+                            crossAxisCount: 5),
+                        itemBuilder: (BuildContext context, int index) {
+                          return mediaCardBuilder(medyaProvider.fileList[index],
+                              index, this, switchModel.isSwitchControl);
+                        }),
+                  ),
+                );
+              })),
         );
       } else {
         return Scaffold(
-          body: SafeArea(
+            body: Consumer<SwitchModel>(builder: (context, switchModel, child) {
+          return SafeArea(
             child: Container(
-              color:Theme.of(context).backgroundColor,
+              color: Theme.of(context).scaffoldBackgroundColor,
               child: GridView.builder(
                 itemCount: medyaProvider.fileList.length,
                 padding: const EdgeInsets.symmetric(
@@ -434,13 +462,13 @@ class MedyaState extends State<Medya> {
                   crossAxisCount: 5,
                 ),
                 itemBuilder: (BuildContext context, int index) {
-                  return mediaCardBuilder(
-                      medyaProvider.fileList[index], index, this);
+                  return mediaCardBuilder(medyaProvider.fileList[index], index,
+                      this, switchModel.isSwitchControl);
                 },
               ),
             ),
-          ),
-        );
+          );
+        }));
       }
     });
   }
@@ -456,7 +484,7 @@ class MedyaState extends State<Medya> {
   openImage(Medias medias) {
     return Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => Container(
-        color:Theme.of(context).backgroundColor,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: PhotoView(
           imageProvider: FileImage(
             ioo.File(medias.path.toString()),
@@ -466,7 +494,6 @@ class MedyaState extends State<Medya> {
               BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
           loadingBuilder: (context, event) => Center(
             child: Container(
-              color: Theme.of(context).backgroundColor,
               width: 30.0,
               height: 30.0,
               child: CircularProgressIndicator(color: Colors.white),

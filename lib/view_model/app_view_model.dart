@@ -63,7 +63,8 @@ class APP_VM {
                                 icon: Icon(
                                   Icons.apps,
                                   size: context.dynamicWidth(24),
-                                  color: Color(0xff017eba),
+                                  color:
+                                      Theme.of(context).listTileTheme.iconColor,
                                 )),
                           ),
                           SizedBox(
@@ -77,7 +78,8 @@ class APP_VM {
                                 icon: Icon(
                                   Icons.sort,
                                   size: context.dynamicWidth(24),
-                                  color: Color(0xff017eba),
+                                  color:
+                                      Theme.of(context).listTileTheme.iconColor,
                                 )),
                           ),
                           Padding(
@@ -96,27 +98,29 @@ class APP_VM {
                                   icon: Icon(
                                     Icons.filter_alt,
                                     size: context.dynamicWidth(24),
-                                    color: Color(0xff017eba),
+                                    color: Theme.of(context)
+                                        .listTileTheme
+                                        .iconColor,
                                   )),
                             ),
                           )
                         ]),
                     prefixIcon: Icon(
                       Icons.search,
-                      color: Color(0xff017eba),
+                      color: Theme.of(context).listTileTheme.iconColor,
                       size: 18,
                     ),
                     labelText: 'Albüm Arama',
                     labelStyle: TextStyle(
-                        color: Color(0xff017eba),
+                        color: Theme.of(context).listTileTheme.iconColor,
                         fontSize: context.dynamicWidth(28)),
                     focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                      color: Color(0xff017eba),
+                      color: Theme.of(context).listTileTheme.iconColor!,
                     )),
                     enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                      color: Color(0xff017eba),
+                      color: Theme.of(context).listTileTheme.iconColor!,
                     ))),
                 onChanged: (value) {
                   app.albumArama(value);

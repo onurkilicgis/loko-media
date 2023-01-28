@@ -2,9 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/public/flutter_sound_player.dart';
+import 'package:provider/provider.dart';
 
 import '../models/Album.dart';
-import '../services/MyLocal.dart';
+import '../providers/SwitchProvider.dart';
 import 'AudioRecorder.dart';
 
 class AudioView extends StatefulWidget {
@@ -25,13 +26,9 @@ class _AudioViewState extends State<AudioView> {
   Duration ilaveBilgi = Duration.zero;
   bool playGostersinmi = true;
   String isDark = 'dark';
-  findTheme() async {
-    isDark = await MyLocal.getStringData('theme');
-  }
 
   @override
   void initState() {
-    findTheme();
     openPlayer();
     super.initState();
   }
@@ -46,16 +43,18 @@ class _AudioViewState extends State<AudioView> {
               title: Text('Ses Dinleme Paneli'),
             )
           : null,
-      body: SafeArea(child: buildCenter()),
+      body: Consumer<SwitchModel>(builder: (context, switchModel, child) {
+        return SafeArea(child: buildCenter(switchModel.isSwitchControl));
+      }),
     );
   }
 
-  Widget buildCenter() {
+  Widget buildCenter(themeStatus) {
     dynamic settings = json.decode(widget.medias.settings.toString());
     duration = Duration(milliseconds: settings['duration']);
     ilaveBilgi = Duration(milliseconds: settings['duration']);
     return Container(
-      color:Theme.of(context).backgroundColor,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: Center(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -63,7 +62,7 @@ class _AudioViewState extends State<AudioView> {
           Stack(alignment: Alignment.topCenter, children: [
             Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: isDark == 'dark'
+                child: themeStatus == 'dark'
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Container(
@@ -97,8 +96,8 @@ class _AudioViewState extends State<AudioView> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Slider(
-              activeColor: Color(0xff31376a),
-              inactiveColor: Color(0xBEFFFFFF),
+              activeColor: Theme.of(context).canvasColor,
+              inactiveColor: Theme.of(context).tabBarTheme.unselectedLabelColor,
               min: 0,
               max: duration.inMilliseconds.toDouble(),
               value: position.inMilliseconds.toDouble(),
@@ -128,7 +127,7 @@ class _AudioViewState extends State<AudioView> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: CircleAvatar(
-              backgroundColor: Color(0xff31376a),
+              backgroundColor: Theme.of(context).canvasColor,
               radius: 35,
               child: IconButton(
                 icon: Icon(

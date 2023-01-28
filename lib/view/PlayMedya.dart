@@ -37,13 +37,15 @@ class _PlayMedyaState extends State<PlayMedya> {
     List<Medias> myfileList = mediaProvider.fileList;
 
     return Scaffold(
-        appBar: AppBar(title: Text('Albümün İçindekiler')),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AppBar(
+          title: Text('Albümün İçindekiler'),
+          centerTitle: true,
+        ),
         body: SafeArea(
           child: Container(
-            color:Theme.of(context).backgroundColor,
             child: Center(
               child: Container(
-                color: Theme.of(context).backgroundColor,
                   padding: EdgeInsets.all(0),
                   child: CarouselSlider.builder(
                       itemCount: myfileList.length,
@@ -67,12 +69,16 @@ class _PlayMedyaState extends State<PlayMedya> {
                             }
                           case 'video':
                             {
-                              return widget.model.openVideo(mymedia, false);
+                              return Container(
+                                  child:
+                                      widget.model.openVideo(mymedia, false));
                             }
                           case 'audio':
                             {
                               // AudioRecorderState recorder = AudioRecorderState();
                               return Container(
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
                                 child: AudioView(
                                     medias: mymedia, appbarstatus: false),
                               );
