@@ -73,49 +73,6 @@ class _LoginPageState extends State<LoginPage> {
         dynamic user = json.decode(userString);
         firebaseLogin(user['mail'], user['id'], user['name']);
         Loading.close();
-        /*dynamic data = await API.postRequest('api/v1/user/tokenControl', {});
-        if (data?['status'] == true) {
-          dynamic usr = data['data'];
-          await saveUserInfo(
-              usr['id'], usr['uid'], usr['mail'], usr['name'], usr['token']);
-          setState(() {
-            Loading.close();
-            tokenControl = true;
-            loginControl = true;
-          });
-        } else {
-          //Loading.close();
-          if (data?['message'] != null) {
-            SBBildirim.hata(data?['message']);
-            Loading.close();
-            String userString = await MyLocal.getStringData('user');
-            dynamic user = json.decode(userString);
-            switch (data['errCode']) {
-              case 'err9':
-                {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => VerifyScreen(
-                                email: user['mail'],
-                                uid: user['uid'],
-                              )));
-                  break;
-                }
-              case 'err12':
-                {
-                  await MyLocal.removeKey('token');
-                  await MyLocal.removeKey('user');
-                  setState(() {
-                    Loading.close();
-                    tokenControl = true;
-                    loginControl = false;
-                  });
-                  break;
-                }
-            }
-          }
-        }*/
       } else {
         String userString = await MyLocal.getStringData('user');
         dynamic user = json.decode(userString);

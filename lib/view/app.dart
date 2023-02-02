@@ -663,7 +663,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                 ),
               ),
               appBar: AppBar(
-                centerTitle: false,
+                centerTitle: true,
                 title: getAppController(),
                 backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
                 foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
@@ -927,14 +927,9 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
             style: TextStyle(
               fontSize: 14,
             )),
-        //trailing: Text(trailing),
         onTap: () {
           callback();
-          //Navigator.pop(context);
-        }
-        //  Navigator.pushNamed(context, routeName);
-
-        );
+        });
   }
 
   Future<void> BottomSheetItems(IconData icon, String title, IconData icon1,

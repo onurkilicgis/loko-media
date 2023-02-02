@@ -218,15 +218,16 @@ class AudioRecorderState extends State<AudioRecorder> {
       ),
       body: SafeArea(
         child: Container(
-          color:Theme.of(context).backgroundColor,
+          color: Theme.of(context).scaffoldBackgroundColor,
           child: Center(
               child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               StreamBuilder<RecordingDisposition>(
                 builder: (context, snapshot) {
-                  duration =
-                      snapshot.hasData ? snapshot.data!.duration : Duration.zero;
+                  duration = snapshot.hasData
+                      ? snapshot.data!.duration
+                      : Duration.zero;
                   currentDuration = duration;
                   String twoDigits(int n) => n.toString().padLeft(2, '0');
                   final twoDigitMinutes =
@@ -239,7 +240,7 @@ class AudioRecorderState extends State<AudioRecorder> {
                       backgroundColor: Colors.white,
                       child: CircleAvatar(
                           radius: 90,
-                          backgroundColor: Color(0xff31376a),
+                          backgroundColor: Theme.of(context).canvasColor,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -279,8 +280,9 @@ class AudioRecorderState extends State<AudioRecorder> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Slider(
-                        activeColor: Color(0xff31376a),
-                        inactiveColor: Color(0xBEFFFFFF),
+                        activeColor: Theme.of(context).canvasColor,
+                        inactiveColor:
+                            Theme.of(context).tabBarTheme.unselectedLabelColor,
                         min: 0,
                         max: duration.inMilliseconds.toDouble(),
                         value: position.inMilliseconds.toDouble(),
@@ -307,7 +309,7 @@ class AudioRecorderState extends State<AudioRecorder> {
                     ),
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       CircleAvatar(
-                        backgroundColor: Color(0xff31376a),
+                        backgroundColor: Theme.of(context).canvasColor,
                         radius: 35,
                         child: IconButton(
                           icon: Icon(Icons.delete, color: Color(0xBEFFFFFF)),
@@ -330,7 +332,7 @@ class AudioRecorderState extends State<AudioRecorder> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: CircleAvatar(
-                          backgroundColor: Color(0xff31376a),
+                          backgroundColor: Theme.of(context).canvasColor,
                           radius: 35,
                           child: IconButton(
                             icon: Icon(
@@ -361,7 +363,7 @@ class AudioRecorderState extends State<AudioRecorder> {
                         ),
                       ),
                       CircleAvatar(
-                        backgroundColor: Color(0xff31376a),
+                        backgroundColor: Theme.of(context).canvasColor,
                         radius: 35,
                         child: IconButton(
                           icon: Icon(Icons.save, color: Color(0xBEFFFFFF)),

@@ -144,7 +144,7 @@ class APP_VM {
                 Theme.of(context).bottomNavigationBarTheme.backgroundColor,
             title: Text('Albüm Silme İşlemi'),
             content: Text(
-                '"${album.name}" Adlı albümü silmeyek istediğinize emin misiniz?',
+                '"${album.name}" Adlı albümü silmek istediğinize emin misiniz?',
                 style: TextStyle(fontSize: 14)),
             actions: [
               Row(
@@ -200,7 +200,7 @@ class APP_VM {
                   ),
                   ListTile(
                       leading: Icon(Icons.list_alt),
-                      title: Text(' İçindekileri Listele'),
+                      title: Text('İçindekileri Listele'),
                       onTap: () async {
                         app.albumMedyalariniAc(album.id);
                         Navigator.pop(context);
@@ -390,7 +390,7 @@ class APP_VM {
                     }),
                 ListTile(
                     title: Text(
-                      'Bana En Yakın Mediaya Göre Listele',
+                      'Bana En Yakın Medyaya Göre Listele',
                       style: TextStyle(fontSize: 15),
                     ),
                     onTap: () async {

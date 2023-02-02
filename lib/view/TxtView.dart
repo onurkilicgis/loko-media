@@ -39,54 +39,72 @@ class _TxtViewState extends State<TxtView> {
                   child: Container(
                     height: 430,
                     decoration: BoxDecoration(
-                        color: Color(0xff2B3553),
+                        color: Theme.of(context).badgeTheme.backgroundColor,
                         borderRadius: BorderRadius.circular(10)),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Başlık :',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Slabo27px',
-                              fontSize: 17,
-                              color: Color(0xff747d9c),
+                          child: Opacity(
+                            opacity: 0.7,
+                            child: Text(
+                              'Başlık :',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Slabo27px',
+                                fontSize: 17,
+                                color:
+                                    Theme.of(context).listTileTheme.iconColor,
+                              ),
                             ),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            widget.medias.name!,
-                            style: TextStyle(
-                              fontFamily: 'Slabo27px',
-                              fontSize: 14,
-                              color: Color(0xffbabdc6),
+                          child: Opacity(
+                            opacity: 0.8,
+                            child: Text(
+                              widget.medias.name!,
+                              style: TextStyle(
+                                  fontFamily: 'Slabo27px',
+                                  fontSize: 14,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .headline5!
+                                      .color),
                             ),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'İçerik :',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w200,
-                              fontFamily: 'Slabo27px',
-                              fontSize: 17,
-                              color: Color(0xff747d9c),
+                          child: Opacity(
+                            opacity: 0.7,
+                            child: Text(
+                              'İçerik :',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w200,
+                                fontFamily: 'Slabo27px',
+                                fontSize: 17,
+                                color:
+                                    Theme.of(context).listTileTheme.iconColor,
+                              ),
                             ),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            '${snapshot.data}',
-                            style: TextStyle(
-                              fontFamily: 'Slabo27px',
-                              fontSize: 14,
-                              color: Color(0xffbabdc6),
+                          child: Opacity(
+                            opacity: 0.7,
+                            child: Text(
+                              '${snapshot.data}',
+                              style: TextStyle(
+                                  fontFamily: 'Slabo27px',
+                                  fontSize: 14,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .headline5!
+                                      .color),
                             ),
                           ),
                         )

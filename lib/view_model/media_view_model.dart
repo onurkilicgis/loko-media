@@ -157,7 +157,6 @@ class Media_VM {
               borderRadius: BorderRadius.all(Radius.circular(14.0))),
           backgroundColor:
               Theme.of(context).bottomNavigationBarTheme.backgroundColor,
-          // content: Text('albüm adını giriniz'),
           actions: [
             Column(
               children: [

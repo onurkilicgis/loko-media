@@ -40,6 +40,7 @@ class _AudioViewState extends State<AudioView> {
     return Scaffold(
       appBar: widget.appbarstatus == true
           ? AppBar(
+              centerTitle: true,
               title: Text('Ses Dinleme Paneli'),
             )
           : null,

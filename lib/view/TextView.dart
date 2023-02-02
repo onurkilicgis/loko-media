@@ -44,11 +44,12 @@ class _TextViewState extends State<TextView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text('Yazı Giriş Paneli'),
       ),
       body: SafeArea(
         child: Container(
-          color:Theme.of(context).backgroundColor,
+          color: Theme.of(context).scaffoldBackgroundColor,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -57,22 +58,22 @@ class _TextViewState extends State<TextView> {
                 child: TextField(
                   controller: _textTitleController,
                   keyboardType: TextInputType.text,
-                  cursorColor: Colors.white,
+                  cursorColor: Theme.of(context).textTheme.headline5!.color,
                   textCapitalization: TextCapitalization.words,
                   maxLines: 2,
                   decoration: InputDecoration(
                       filled: true,
-                      fillColor: Color(0xff1e2c49),
+                      fillColor: Theme.of(context).appBarTheme.backgroundColor,
                       contentPadding: EdgeInsets.all(8),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(7),
                         borderSide: BorderSide(
-                          color: Color(0xff017eba),
+                          color: Theme.of(context).listTileTheme.iconColor!,
                         ),
                       ),
-                      focusedBorder: const OutlineInputBorder(
+                      focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Color(0xff017eba),
+                          color: Theme.of(context).listTileTheme.iconColor!,
                         ),
                       ),
                       // border: InputBorder.none,
@@ -82,7 +83,7 @@ class _TextViewState extends State<TextView> {
                       )),*/
                       labelText: 'Başlık ',
                       labelStyle: TextStyle(
-                        color: Color(0xff017eba),
+                        color: Theme.of(context).listTileTheme.iconColor!,
                       )),
                 ),
               ),
@@ -91,22 +92,22 @@ class _TextViewState extends State<TextView> {
                 child: TextField(
                   controller: _textController,
                   keyboardType: TextInputType.text,
-                  cursorColor: Colors.white,
+                  cursorColor: Theme.of(context).textTheme.headline5!.color,
                   textCapitalization: TextCapitalization.words,
                   maxLines: 5,
                   decoration: InputDecoration(
                       filled: true,
-                      fillColor: Color(0xff1e2c49),
+                      fillColor: Theme.of(context).appBarTheme.backgroundColor,
                       contentPadding: EdgeInsets.all(8),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(7),
                         borderSide: BorderSide(
-                          color: Color(0xff017eba),
+                          color: Theme.of(context).listTileTheme.iconColor!,
                         ),
                       ),
-                      focusedBorder: const OutlineInputBorder(
+                      focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Color(0xff017eba),
+                          color: Theme.of(context).listTileTheme.iconColor!,
                         ),
                       ),
                       // border: InputBorder.none,
@@ -114,9 +115,9 @@ class _TextViewState extends State<TextView> {
                           borderSide: BorderSide(
                         color: Color(0xff017eba),
                       )),*/
-                      labelText: 'İçerik ',
+                      labelText: 'İçerik',
                       labelStyle: TextStyle(
-                        color: Color(0xff017eba),
+                        color: Theme.of(context).listTileTheme.iconColor!,
                       )),
                 ),
               ),
@@ -137,7 +138,8 @@ class _TextViewState extends State<TextView> {
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xff017eba),
+                        backgroundColor:
+                            Theme.of(context).listTileTheme.iconColor!,
                       ),
                       child: Text(
                         'Kaydet',

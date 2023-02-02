@@ -356,15 +356,6 @@ class _RegisterState extends State<Register> {
                                   }
                                 }
                               }
-
-                              /* _authService
-                                  .createPerson(
-                                      _nameController.text,
-                                      _emailController.text,
-                                      _passwordController.text)
-                                  .then((value) {
-                                return;
-                              });*/
                             },
                           ),
                         ),

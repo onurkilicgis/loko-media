@@ -8,7 +8,6 @@ import 'package:loko_media/services/utils.dart';
 
 import '../models/Album.dart';
 import '../services/API2.dart';
-import '../services/FileDrive.dart';
 import '../services/MyLocal.dart';
 
 class AlbumShare extends StatefulWidget {
@@ -112,6 +111,7 @@ class _AlbumShareState extends State<AlbumShare> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+          centerTitle: true,
           title: widget.type == 'album'
               ? Text('Albüm Paylaşma Paneli')
               : Text('Medya Paylaşma Paneli')),
@@ -134,22 +134,22 @@ class _AlbumShareState extends State<AlbumShare> {
               controller: _albumNameController,
               textAlign: TextAlign.left,
               keyboardType: TextInputType.text,
-              cursorColor: Colors.white,
+              cursorColor: Theme.of(context).textTheme.headline5!.color,
               textCapitalization: TextCapitalization.words,
               maxLines: 1,
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Color(0xff1e2c49),
+                fillColor: Theme.of(context).appBarTheme.backgroundColor,
                 contentPadding: EdgeInsets.all(8),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(7),
                   borderSide: BorderSide(
-                    color: Color(0xff017eba),
+                    color: Theme.of(context).listTileTheme.iconColor!,
                   ),
                 ),
-                focusedBorder: const OutlineInputBorder(
+                focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Color(0xff017eba),
+                    color: Theme.of(context).listTileTheme.iconColor!,
                   ),
                 ),
               ),
@@ -169,22 +169,22 @@ class _AlbumShareState extends State<AlbumShare> {
             child: TextField(
               controller: _albumIcerikController,
               keyboardType: TextInputType.text,
-              cursorColor: Colors.white,
+              cursorColor: Theme.of(context).textTheme.headline5!.color,
               textCapitalization: TextCapitalization.words,
               maxLines: 4,
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Color(0xff1e2c49),
+                fillColor: Theme.of(context).appBarTheme.backgroundColor,
                 contentPadding: EdgeInsets.all(8),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(7),
                   borderSide: BorderSide(
-                    color: Color(0xff017eba),
+                    color: Theme.of(context).listTileTheme.iconColor!,
                   ),
                 ),
-                focusedBorder: const OutlineInputBorder(
+                focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Color(0xff017eba),
+                    color: Theme.of(context).listTileTheme.iconColor!,
                   ),
                 ),
               ),
@@ -199,7 +199,7 @@ class _AlbumShareState extends State<AlbumShare> {
             children: [
               Expanded(
                 child: RadioListTile(
-                    tileColor: Color(0xff192132),
+                    tileColor: Theme.of(context).scaffoldBackgroundColor,
                     title: Text('Evet Paylaş', style: TextStyle(fontSize: 13)),
                     activeColor: Color(0xff0e91ce),
                     value: 1,
@@ -212,7 +212,7 @@ class _AlbumShareState extends State<AlbumShare> {
               ),
               Expanded(
                 child: RadioListTile(
-                    tileColor: Color(0xff192132),
+                    tileColor: Theme.of(context).scaffoldBackgroundColor,
                     title:
                         Text('Hayır Paylaşma', style: TextStyle(fontSize: 13)),
                     activeColor: Color(0xff0e91ce),
@@ -234,7 +234,7 @@ class _AlbumShareState extends State<AlbumShare> {
             children: [
               Expanded(
                 child: RadioListTile(
-                    tileColor: Color(0xff192132),
+                    tileColor: Theme.of(context).scaffoldBackgroundColor,
                     title: Text('Süresiz', style: TextStyle(fontSize: 13)),
                     activeColor: Color(0xff0e91ce),
                     value: 1,
@@ -248,7 +248,7 @@ class _AlbumShareState extends State<AlbumShare> {
               ),
               Expanded(
                 child: RadioListTile(
-                    tileColor: Color(0xff192132),
+                    tileColor: Theme.of(context).scaffoldBackgroundColor,
                     title: Text('Süreli', style: TextStyle(fontSize: 13)),
                     activeColor: Color(0xff0e91ce),
                     value: 2,
@@ -278,8 +278,9 @@ class _AlbumShareState extends State<AlbumShare> {
                     Container(
                       width: 250,
                       child: Slider(
-                        activeColor: Color(0xff0e91ce),
-                        inactiveColor: Color(0xBEFFFFFF),
+                        activeColor: Theme.of(context).canvasColor,
+                        inactiveColor:
+                            Theme.of(context).tabBarTheme.unselectedLabelColor,
                         min: 1,
                         max: rangeMax.toDouble(),
                         value: currentValue.toDouble(),
@@ -298,18 +299,20 @@ class _AlbumShareState extends State<AlbumShare> {
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
-                      color: Color(0xff26334d),
+                      color: Theme.of(context).badgeTheme.backgroundColor,
                     ),
                     child: DropdownButtonFormField<String>(
                       decoration: InputDecoration.collapsed(hintText: ''),
                       value: dropdownValue,
-                      dropdownColor: Color(0xffc2c9d6),
-                      iconEnabledColor: Color(0xff0e91ce),
+                      dropdownColor:
+                          Theme.of(context).badgeTheme.backgroundColor,
+                      iconEnabledColor:
+                          Theme.of(context).listTileTheme.iconColor,
                       isDense: true,
                       icon: const Icon(Icons.arrow_drop_down),
                       elevation: 16,
-                      style: const TextStyle(
-                        color: Color(0xff0e91ce),
+                      style: TextStyle(
+                        color: Theme.of(context).listTileTheme.iconColor,
                       ),
                       onChanged: (String? value) {
                         for (int i = 0; i < selections.length; i++) {
@@ -411,23 +414,24 @@ class _AlbumShareState extends State<AlbumShare> {
                       },
                       controller: _kisiNameController,
                       keyboardType: TextInputType.text,
-                      cursorColor: Colors.white,
+                      cursorColor: Theme.of(context).textTheme.headline5!.color,
                       textCapitalization: TextCapitalization.words,
                       maxLines: 1,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Color(0xff1e2c49),
+                        fillColor:
+                            Theme.of(context).appBarTheme.backgroundColor,
                         contentPadding: EdgeInsets.all(8),
                         hintText: 'Kişi Ara... ',
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(7),
                           borderSide: BorderSide(
-                            color: Color(0xff017eba),
+                            color: Theme.of(context).listTileTheme.iconColor!,
                           ),
                         ),
-                        focusedBorder: const OutlineInputBorder(
+                        focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                            color: Color(0xff017eba),
+                            color: Theme.of(context).listTileTheme.iconColor!,
                           ),
                         ),
                       ),
