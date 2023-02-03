@@ -116,3 +116,14 @@ class AlertBildirim {
     );
   }
 }
+
+class Utils {
+  static String getComplexLanguage(String text, dynamic replaceProps) {
+    replaceProps.forEach((k, v) {
+      while (text.indexOf('{{${k}}}') != -1) {
+        text = text.replaceAll('{{${k}}}', v.toString());
+      }
+    });
+    return text;
+  }
+}

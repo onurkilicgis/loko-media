@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:get/get.dart';
 //import 'package:loko_media/services/MyLocal.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
 import 'package:loko_media/services/Loader.dart';
-import 'package:loko_media/services/utils.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 
 class Harita extends StatefulWidget {
@@ -25,7 +25,7 @@ class _HaritaState extends State<Harita> {
   late InAppWebViewController _controller;
   bool pageLoad = false;
 
-  navigasyonKur(dynamic data) async{
+  navigasyonKur(dynamic data) async {
     MapsLauncher.launchCoordinates(data['latitude'], data['longitude']);
   }
 
@@ -57,8 +57,14 @@ class _HaritaState extends State<Harita> {
           'miniName': item.miniName,
           'fileType': item.fileType,
           'isPublic': item.isPublic,
-          'path':'http://127.0.0.1:1991/album-'+item.album_id.toString()+'/'+item.name.toString(),
-          'mini_image_url':'http://127.0.0.1:1991/album-'+item.album_id.toString()+'/'+item.miniName.toString(),
+          'path': 'http://127.0.0.1:1991/album-' +
+              item.album_id.toString() +
+              '/' +
+              item.name.toString(),
+          'mini_image_url': 'http://127.0.0.1:1991/album-' +
+              item.album_id.toString() +
+              '/' +
+              item.miniName.toString(),
           'url': item.url,
           'api_id': item.api_id,
           'date': item.date,
@@ -68,14 +74,14 @@ class _HaritaState extends State<Harita> {
           'altitude': item.altitude,
           'settings': json.decode(item.settings.toString()),
         };
-        if(item.fileType=='audio'){
-          part['mini_image_url']='./img/audio.png';
+        if (item.fileType == 'audio') {
+          part['mini_image_url'] = './img/audio.png';
         }
-        if(item.fileType=='video'){
+        if (item.fileType == 'video') {
           //part['mini_image_url']='./img/audio.png';
         }
-        if(item.fileType=='txt'){
-          part['mini_image_url']='./img/txt.png';
+        if (item.fileType == 'txt') {
+          part['mini_image_url'] = './img/txt.png';
         }
         list.add(part);
       }
@@ -109,7 +115,7 @@ class _HaritaState extends State<Harita> {
   @override
   void initState() {
     getMedias();
-    Loading.waiting('Harita Yükleniyor');
+    Loading.waiting('a108'.tr);
     // TODO: implement initState
     super.initState();
   }
@@ -119,7 +125,7 @@ class _HaritaState extends State<Harita> {
     if (items.length == 0) {
       //Loading.close();
       return Container(
-        child: Text('Bomboş'),
+        child: Text('a109'.tr),
       );
     } else {
       return Container(
@@ -127,10 +133,7 @@ class _HaritaState extends State<Harita> {
           androidOnGeolocationPermissionsShowPrompt:
               (InAppWebViewController controller, String origin) async {
             return GeolocationPermissionShowPromptResponse(
-                origin: origin,
-                allow: true,
-                retain: true
-            );
+                origin: origin, allow: true, retain: true);
           },
           initialUrlRequest:
               URLRequest(url: Uri.parse("http://localhost:1990")),
@@ -155,11 +158,12 @@ class _HaritaState extends State<Harita> {
                         });
                         break;
                       }
-                    case 'navigasyon':{
-                      dynamic dat = request[0]['data'];
-                      navigasyonKur(dat);
-                      break;
-                    }
+                    case 'navigasyon':
+                      {
+                        dynamic dat = request[0]['data'];
+                        navigasyonKur(dat);
+                        break;
+                      }
                   }
                 });
           },

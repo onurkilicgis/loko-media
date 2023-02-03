@@ -95,15 +95,15 @@ class _VerifyScreenState extends State<VerifyScreen> {
                     maxLength: 6,
                     validator: (veri) {
                       if (veri!.isEmpty) {
-                        return 'Lütfen onay kodunu giriniz.';
+                        return '164'.tr;
                       }
 
                       if (veri.isNum == false) {
-                        return 'onay kodu sadece rakamlardan oluşmalıdır';
+                        return '165'.tr;
                       }
 
                       if (veri.length < 6 || veri.length > 6) {
-                        return 'onay kodu  6 haneli olmalıdır.';
+                        return '166'.tr;
                       }
                       return null;
                     },
@@ -125,7 +125,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           Icons.key,
                           color: Color(0xff7C9099),
                         ),
-                        hintText: 'Onay kodu giriş alanı',
+                        hintText: '167'.tr,
                         hintStyle: TextStyle(color: Color(0xff7C9099))),
                   ),
                 ),
@@ -138,7 +138,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                     height: ekranYuksekligi / 18,
                     child: ElevatedButton(
                       child: Text(
-                        'Girilen Kodu Onayla',
+                        '168'.tr,
                         style: TextStyle(
                             color: Color(0xff000200),
                             fontSize: 17,
@@ -157,13 +157,12 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           String token = data['token'];
                           await MyLocal.setStringData('user', user);
                           await MyLocal.setStringData('token', token);
-                          SBBildirim.onay(
-                              'Mailiniz onaylanmıştır. Hoşgeldiniz sayın ${data['name']}.');
+                          SBBildirim.onay(Utils.getComplexLanguage(
+                              '169'.tr, {'name': data['name']}));
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) => App()));
                         } else {
-                          SBBildirim.uyari(
-                              'Onay kodu geçerli değil ya da eski bir zamana ait. Lütfen yeni kod alınız.');
+                          SBBildirim.uyari('170'.tr);
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -185,7 +184,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                     height: ekranYuksekligi / 18,
                     child: ElevatedButton(
                       child: Text(
-                        'Mail Adresime Tekrar \n Onay Kodu Gönder',
+                        'a171'.tr,
                         style: TextStyle(
                             color: Color(0xff000200),
                             fontSize: 17,
@@ -194,10 +193,9 @@ class _VerifyScreenState extends State<VerifyScreen> {
                       onPressed: () async {
                         Util.evetHayir(
                             context,
-                            'Onay Kodu Gönderme',
-                            'Belirtmiş olduğunuz ' +
-                                widget.email +
-                                ' mail adresine yeni bir onay kodu göndermek istediğinize emin misinz?',
+                            'a172'.tr,
+                            Utils.getComplexLanguage(
+                                'a173'.tr, {'mail': widget.email}),
                             (cevap) async {
                           if (cevap == true) {
                             dynamic userApiControl = await API.postRequest(
@@ -205,10 +203,11 @@ class _VerifyScreenState extends State<VerifyScreen> {
                                 {'mail': widget.email});
                             if (userApiControl['status'] == true) {
                               SBBildirim.bilgi(
-                                  '${widget.email} adresine tekrar onay kodunu gönderdik.lütfen kontrol ediniz');
+                                Utils.getComplexLanguage(
+                                    'a174'.tr, {'mail': widget.email}),
+                              );
                             } else {
-                              SBBildirim.hata(
-                                  'Maalesef onay kodu gönderemedik. Daha sonra tekrar deneyiniz');
+                              SBBildirim.hata('a175'.tr);
                             }
                           }
                         });
@@ -233,7 +232,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                       child: Align(
                         alignment: Alignment.center,
                         child: Text(
-                          'Üyeliğiniz Yok Mu?',
+                          'a176'.tr,
                           style: TextStyle(
                               color: Color(0xff7C9099),
                               fontSize: 16,

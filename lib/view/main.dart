@@ -123,11 +123,9 @@ Future<void> main() async {
   await Permission.microphone.request(); //ok
   await Permission.storage.request(); //ok buna gerek yok gibi
   await Permission.location.request(); //ok
-  //await Permission.locationAlways.request(); //ok
 
   await Firebase.initializeApp();
   await localhostServer.start();
-  //HttpOverrides.global = MyHttpOverrides();
 
   runApp(MyApp(isDark: isDark));
 }
@@ -147,7 +145,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  //SwitchModel switchModels = SwitchModel();
   String isDark;
 
   _MyAppState({required this.isDark});

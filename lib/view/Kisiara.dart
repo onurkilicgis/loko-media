@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../models/Album.dart';
 import '../services/API2.dart';
@@ -30,8 +31,8 @@ class _KisiaraState extends State<Kisiara> {
   //
 
   cikart(dynamic user) {
-    Util.evetHayir(context, 'Takibi Bırakma',
-        '${user['name']} adlı kişiyi takibi bırakmak ister misiniz?',
+    Util.evetHayir(context, 'a110'.tr,
+        Utils.getComplexLanguage('a111'.tr, {'name': user['name']}),
         (cevap) async {
       if (cevap == true) {
         //
@@ -39,19 +40,20 @@ class _KisiaraState extends State<Kisiara> {
             'api/lokomedia/removeFriend', {'uid': user['id'].toString()});
         if (cevap['status'] == true) {
           SBBildirim.bilgi(
-              "${user['name']} adlı kişiyi artık takip etmiyorsunuz.");
+              Utils.getComplexLanguage('a112'.tr, {'name': user['name']}));
           searchUser(_kisiNameController.text);
         } else {
           SBBildirim.uyari(
-              '${user['name']} adlı kişiyi zaten takip etmiyorsunuz.');
+            Utils.getComplexLanguage('a113'.tr, {'name': user['name']}),
+          );
         }
       }
     });
   }
 
   iptal(dynamic user) {
-    Util.evetHayir(context, 'Takip İsteği İptal Etme',
-        '${user['name']} adlı kişiye gönderdiğiniz takip isteğini iptal etmek ister misiniz?',
+    Util.evetHayir(context, 'a114'.tr,
+        Utils.getComplexLanguage('a115'.tr, {'name': user['name']}),
         (cevap) async {
       if (cevap == true) {
         //
@@ -59,19 +61,21 @@ class _KisiaraState extends State<Kisiara> {
             'api/lokomedia/removeFriend', {'uid': user['id'].toString()});
         if (cevap['status'] == true) {
           SBBildirim.bilgi(
-              "${user['name']} adlı kişiye gönderilen takip isteği iptal edildi.");
+            Utils.getComplexLanguage('a116'.tr, {'name': user['name']}),
+          );
           searchUser(_kisiNameController.text);
         } else {
           SBBildirim.uyari(
-              '${user['name']} adlı kişiye gönderilen takip isteği iptal edilemedi.');
+            Utils.getComplexLanguage('a117'.tr, {'name': user['name']}),
+          );
         }
       }
     });
   }
 
   takipEt(dynamic user) {
-    Util.evetHayir(context, 'Kişi Takip Etme',
-        '${user['name']} adlı kişiyi takip etmek istediğinize emin misiniz?',
+    Util.evetHayir(context, 'a118',
+        Utils.getComplexLanguage('a119'.tr, {'name': user['name']}),
         (cevap) async {
       if (cevap == true) {
         //
@@ -79,11 +83,13 @@ class _KisiaraState extends State<Kisiara> {
             'api/lokomedia/addFriend', {'uid': user['id'].toString()});
         if (cevap['status'] == true) {
           SBBildirim.bilgi(
-              "${user['name']} adlı kişiye takip isteği gönderilmiştir. Lütfen kabul etmesini bekleyiniz.");
+            Utils.getComplexLanguage('a120'.tr, {'name': user['name']}),
+          );
           searchUser(_kisiNameController.text);
         } else {
           SBBildirim.uyari(
-              '${user['name']} adlı kişiye daha önce istek göndermişsiniz. Lütfen kabul etmesini bekleyiniz.');
+            Utils.getComplexLanguage('a121'.tr, {'name': user['name']}),
+          );
         }
       }
     });
@@ -101,7 +107,7 @@ class _KisiaraState extends State<Kisiara> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        title: Text('Kişi Arama'),
+        title: Text('a122'.tr),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -123,7 +129,7 @@ class _KisiaraState extends State<Kisiara> {
                   filled: true,
                   fillColor: Theme.of(context).appBarTheme.backgroundColor,
                   contentPadding: EdgeInsets.all(8),
-                  hintText: 'Kişi Ara : Ad Soyad, Mail... ',
+                  hintText: 'a123'.tr,
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(7),
                     borderSide: BorderSide(
@@ -152,7 +158,7 @@ class _KisiaraState extends State<Kisiara> {
                         takipEt(kisiler[index]);
                       },
                       child: Text(
-                        'Takip Et',
+                        'a124'.tr,
                         style: TextStyle(color: Color(0xff8bc34a)),
                       ));
                   if (isMyFriend == true) {
@@ -161,7 +167,7 @@ class _KisiaraState extends State<Kisiara> {
                           cikart(kisiler[index]);
                         },
                         child: Text(
-                          'Çıkart',
+                          'a125'.tr,
                           style: TextStyle(color: Color(0xffffda15)),
                         ));
                   }
@@ -171,7 +177,7 @@ class _KisiaraState extends State<Kisiara> {
                           iptal(kisiler[index]);
                         },
                         child: Text(
-                          'İptal Et',
+                          'a126'.tr,
                           style: TextStyle(color: Color(0xffff7373)),
                         ));
                   }

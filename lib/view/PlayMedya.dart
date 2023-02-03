@@ -3,6 +3,7 @@ import 'dart:io' as ioo;
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:loko_media/view/Medya.dart';
 import 'package:loko_media/view/TxtView.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +40,7 @@ class _PlayMedyaState extends State<PlayMedya> {
     return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
-          title: Text('Albümün İçindekiler'),
+          title: Text('a138'.tr),
           centerTitle: true,
         ),
         body: SafeArea(

@@ -82,7 +82,7 @@ class _RegisterState extends State<Register> {
                             controller: _nameController,
                             validator: (veri) {
                               if (veri!.isEmpty) {
-                                return 'Ad Soyad Zorunludur';
+                                return 'a26'.tr;
                               }
                               return null;
                             },
@@ -159,11 +159,11 @@ class _RegisterState extends State<Register> {
                                 controller: _passwordController,
                                 validator: (veri) {
                                   if (veri!.isEmpty) {
-                                    return 'Lütfen şifre giriniz.';
+                                    return 'a25'.tr;
                                   }
 
                                   if (veri.length < 6) {
-                                    return 'şifreniz en az 6 haneli olmalıdır.';
+                                    return 'a23'.tr;
                                   }
                                   return null;
                                 },
@@ -253,7 +253,7 @@ class _RegisterState extends State<Register> {
                               },
                               child: Align(
                                 alignment: Alignment.center,
-                                child: Text('Lütfen koşulları okuyunuz',
+                                child: Text('a28'.tr,
                                     style: TextStyle(
                                         color: Color(0xff7C9099),
                                         fontSize: 16,
@@ -296,31 +296,29 @@ class _RegisterState extends State<Register> {
                               String password = _passwordController.text;
 
                               if (name.isEmpty) {
-                                SBBildirim.uyari('Lütfen Ad Soyad giriniz');
+                                SBBildirim.uyari('a29'.tr);
                                 return null;
                               }
 
                               if (mail.isEmpty) {
-                                SBBildirim.uyari('Lütfen E-mail giriniz');
+                                SBBildirim.uyari('a30'.tr);
                                 return null;
                               }
                               if (mail.isEmail == false) {
-                                SBBildirim.uyari('Bu mail geçerli değildir.');
+                                SBBildirim.uyari('a31'.tr);
                                 return null;
                               }
                               if (password.isEmpty) {
-                                SBBildirim.uyari('Lütfen Şifre giriniz');
+                                SBBildirim.uyari('a25'.tr);
                                 return null;
                               }
                               if (password.length < 6) {
-                                SBBildirim.uyari(
-                                    'Şifreniz Minimum 6 karakterden oluşmalıdır.');
+                                SBBildirim.uyari('a23'.tr);
                                 return null;
                               }
 
                               if (checkKosullar == false) {
-                                SBBildirim.uyari(
-                                    'lütfen koşulları onaylayınız.');
+                                SBBildirim.uyari('a32'.tr);
                                 return null;
                               }
 
@@ -344,8 +342,7 @@ class _RegisterState extends State<Register> {
                                     'name': name
                                   });
                                   if (dbUser['status'] == true) {
-                                    SBBildirim.bilgi(mail +
-                                        ' mail adresinize aktivasyon kodu gönderilmiştir. Lüyfen kodunuzu aşağıdaki alana giriniz.');
+                                    SBBildirim.bilgi(mail + 'a33'.tr);
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(

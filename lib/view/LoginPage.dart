@@ -68,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       bool internetStatus = await InternetConnectionChecker().hasConnection;
       if (internetStatus == true) {
-        Loading.waiting('Giriş Kontrol Ediliyor');
+        Loading.waiting('a19'.tr);
         String userString = await MyLocal.getStringData('user');
         dynamic user = json.decode(userString);
         firebaseLogin(user['mail'], user['id'], user['name']);
@@ -103,8 +103,7 @@ class _LoginPageState extends State<LoginPage> {
               'name': name
             });
             if (dbUser['status'] == true) {
-              SBBildirim.bilgi(email +
-                  ' mail adresinize aktivasyon kodu gönderilmiştir. Lüyfen kodunuzu aşağıdaki alana giriniz.');
+              SBBildirim.bilgi(email + 'a20'.tr);
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -134,7 +133,8 @@ class _LoginPageState extends State<LoginPage> {
       String token = data['token'];
       await MyLocal.setStringData('user', user);
       await MyLocal.setStringData('token', token);
-      SBBildirim.onay('Hoşgeldiniz sayın ${data['name']}.');
+      SBBildirim.onay(
+          Utils.getComplexLanguage('a21'.tr, {'isim': '${data['name']}.'}));
       Navigator.push(context, MaterialPageRoute(builder: (context) => App()));
     }
   }
@@ -282,11 +282,11 @@ class _LoginPageState extends State<LoginPage> {
         controller: _passwordController,
         validator: (veri) {
           if (veri!.isEmpty) {
-            return 'Lütfen şifre giriniz.';
+            return 'a22'.tr;
           }
 
           if (veri.length < 6) {
-            return 'şifreniz en az 6 haneli olmalıdır.';
+            return 'a23'.tr;
           }
           return null;
         },
@@ -327,11 +327,11 @@ class _LoginPageState extends State<LoginPage> {
         }
 
         if (_emailController.text == '') {
-          SBBildirim.uyari('Lütfen Mail Adresinizi Giriniz');
+          SBBildirim.uyari('a24'.tr);
           return null;
         }
         if (_passwordController.text == '') {
-          SBBildirim.uyari('Lütfen Şifrenizi Giriniz');
+          SBBildirim.uyari('a25'.tr);
           return null;
         }
 
@@ -433,7 +433,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(width: 20),
             Text(
-              ' Lütfen Bekleyiniz...',
+              'a26'.tr,
               style: TextStyle(
                 color: Color(0xff000200),
               ),

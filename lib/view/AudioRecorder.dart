@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:get/get.dart';
 import 'package:loko_media/view/app.dart';
 import 'package:loko_media/view_model/folder_model.dart';
 import 'package:loko_media/view_model/layout.dart';
@@ -128,7 +129,7 @@ class AudioRecorderState extends State<AudioRecorder> {
           });
         },
         icon: Icon(Icons.refresh),
-        label: Text('İptal Et ve Tekrar Kayıda Başla'));
+        label: Text('a95'.tr));
   }
 
   Widget bitirButonu() {
@@ -213,7 +214,7 @@ class AudioRecorderState extends State<AudioRecorder> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ses Kayıt Paneli'),
+        title: Text('a96'.tr),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -316,12 +317,11 @@ class AudioRecorderState extends State<AudioRecorder> {
                           tooltip: 'Kaydı Sil',
                           iconSize: 30,
                           onPressed: () async {
-                            Util.evetHayir(context, 'Kayıt Silme İşlemi',
-                                'Bu medya öğesini silmek istediğinize emin misiniz?',
+                            Util.evetHayir(context, 'a97'.tr, 'a98'.tr,
                                 (cevap) async {
                               if (cevap == true) {
                                 await deleteRecord(filePath);
-                                SBBildirim.bilgi("Bu Medya Öğesi Silinmiştir.");
+                                SBBildirim.bilgi('a99'.tr);
                               }
                             });
 
@@ -345,7 +345,7 @@ class AudioRecorderState extends State<AudioRecorder> {
                                             : Icons.play_arrow,
                                 color: Color(0xBEFFFFFF)),
                             iconSize: 30,
-                            tooltip: 'Dinle',
+                            tooltip: 'a100'.tr,
                             onPressed: () async {
                               if (player.isPaused) {
                                 await resumePlay();
@@ -367,7 +367,7 @@ class AudioRecorderState extends State<AudioRecorder> {
                         radius: 35,
                         child: IconButton(
                           icon: Icon(Icons.save, color: Color(0xBEFFFFFF)),
-                          tooltip: 'Kaydet',
+                          tooltip: 'a101'.tr,
                           iconSize: 30,
                           onPressed: () {
                             getAudioDialog();
@@ -392,7 +392,7 @@ class AudioRecorderState extends State<AudioRecorder> {
     try {
       if (filePath == null) return;
       if (filePath != null) {
-        Loading.waiting('Ses Kayıt Yükleniyor');
+        Loading.waiting('102'.tr);
       }
 
       dynamic positions = await GPS.getGPSPosition();
@@ -448,7 +448,7 @@ class AudioRecorderState extends State<AudioRecorder> {
         return AlertDialog(
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
-          title: Text('Ses Kayıt'),
+          title: Text('a103'.tr),
           backgroundColor:
               Theme.of(context).bottomNavigationBarTheme.backgroundColor,
           actions: [
@@ -468,7 +468,7 @@ class AudioRecorderState extends State<AudioRecorder> {
                       focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.white)),
                       labelStyle: TextStyle(color: Colors.white),
-                      labelText: 'Ses Kayıt Adı Giriniz',
+                      labelText: 'a104'.tr,
                     ),
                     onChanged: (value) {},
                   ),
@@ -476,7 +476,7 @@ class AudioRecorderState extends State<AudioRecorder> {
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   TextButton(
                     child: Text(
-                      'İptal',
+                      'a83'.tr,
                       style: TextStyle(color: Color(0xffe55656), fontSize: 17),
                     ),
                     onPressed: () {
@@ -494,7 +494,7 @@ class AudioRecorderState extends State<AudioRecorder> {
                             //MedyaState.audioCard();
                           }
                         },
-                        child: Text('Tamam',
+                        child: Text('a84'.tr,
                             style: TextStyle(
                                 color: Color(0xff80C783), fontSize: 17))),
                   )
@@ -588,7 +588,7 @@ class AudioRecorderState extends State<AudioRecorder> {
 
     return Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
         builder: (context) => Container(
-              color: Theme.of(context).backgroundColor,
+              color: Theme.of(context).scaffoldBackgroundColor,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -671,7 +671,7 @@ class AudioRecorderState extends State<AudioRecorder> {
                                         : Icons.play_arrow,
                             color: Color(0xBEFFFFFF)),
                         iconSize: 30,
-                        tooltip: 'Dinle',
+                        tooltip: 'a100'.tr,
                         onPressed: () async {
                           if (player.isPaused) {
                             await resumePlay();

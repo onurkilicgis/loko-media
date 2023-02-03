@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
+import 'package:loko_media/services/utils.dart';
 import 'package:loko_media/view/AlbumShare.dart';
 import 'package:loko_media/view_model/layout.dart';
 import 'package:share_plus/share_plus.dart';
@@ -43,7 +45,7 @@ class APP_VM {
                             height: 36,
                             width: 30,
                             child: IconButton(
-                                tooltip: 'Albüm Görünüm Değiştirme',
+                                tooltip: 'a177'.tr,
                                 onPressed: () async {
                                   if (app.cardType == 'GFCard') {
                                     await MyLocal.setStringData(
@@ -71,7 +73,7 @@ class APP_VM {
                             height: 36,
                             width: 30,
                             child: IconButton(
-                                tooltip: 'Albüm Sıralama',
+                                tooltip: 'a178'.tr,
                                 onPressed: () {
                                   getSiralamaDialog(context, app, album);
                                 },
@@ -88,7 +90,7 @@ class APP_VM {
                               height: 36,
                               width: 30,
                               child: IconButton(
-                                  tooltip: 'Albüm Filtreleme',
+                                  tooltip: 'a179'.tr,
                                   onPressed: () {
                                     getFiltrelemeDialog(
                                       context,
@@ -110,7 +112,7 @@ class APP_VM {
                       color: Theme.of(context).listTileTheme.iconColor,
                       size: 18,
                     ),
-                    labelText: 'Albüm Arama',
+                    labelText: 'a180'.tr,
                     labelStyle: TextStyle(
                         color: Theme.of(context).listTileTheme.iconColor,
                         fontSize: context.dynamicWidth(28)),
@@ -142,9 +144,9 @@ class APP_VM {
                 borderRadius: BorderRadius.all(Radius.circular(12))),
             backgroundColor:
                 Theme.of(context).bottomNavigationBarTheme.backgroundColor,
-            title: Text('Albüm Silme İşlemi'),
+            title: Text('a181'.tr),
             content: Text(
-                '"${album.name}" Adlı albümü silmek istediğinize emin misiniz?',
+                Utils.getComplexLanguage('a182'.tr, {'name': album.name}),
                 style: TextStyle(fontSize: 14)),
             actions: [
               Row(
@@ -157,7 +159,7 @@ class APP_VM {
 
                         silmeSonrasi();
                       },
-                      child: Text('Evet',
+                      child: Text('a183'.tr,
                           style: TextStyle(
                             fontSize: 16,
                             color: Color(0xfffd7e7e),
@@ -166,7 +168,7 @@ class APP_VM {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text('Hayır',
+                      child: Text('a184'.tr,
                           style: TextStyle(
                             fontSize: 16,
                             color: Color(0xff80C783),
@@ -192,7 +194,7 @@ class APP_VM {
                 children: [
                   ListTile(
                     leading: Icon(Icons.check),
-                    title: Text('Albümü Aktif Et'),
+                    title: Text('a185'.tr),
                     onTap: () async {
                       app.albumAktifEt(album);
                       Navigator.pop(context);
@@ -200,21 +202,21 @@ class APP_VM {
                   ),
                   ListTile(
                       leading: Icon(Icons.list_alt),
-                      title: Text('İçindekileri Listele'),
+                      title: Text('a186'.tr),
                       onTap: () async {
                         app.albumMedyalariniAc(album.id);
                         Navigator.pop(context);
                       }),
                   ListTile(
                       leading: Icon(FontAwesomeIcons.mapLocation),
-                      title: Text('Haritada Göster'),
+                      title: Text('a187'.tr),
                       onTap: () async {
                         app.albumuHaritadaGoster(album);
                         Navigator.pop(context);
                       }),
                   ListTile(
                       leading: Icon(Icons.share),
-                      title: Text('Albümü Paylaş'),
+                      title: Text('a188'.tr),
                       onTap: () {
                         Navigator.pop(context);
                         getShareDialog(context, album);
@@ -223,7 +225,7 @@ class APP_VM {
                     leading: Icon(
                       Icons.delete,
                     ),
-                    title: Text('Albümü Sil'),
+                    title: Text('a189'.tr),
                     onTap: () {
                       albumSilmeDialog(context, album, app, () {
                         Navigator.pop(context);
@@ -253,7 +255,7 @@ class APP_VM {
               children: [
                 ListTile(
                   leading: Icon(Icons.person),
-                  title: Text('Kişiye Paylaş'),
+                  title: Text('a190'.tr),
                   onTap: () async {
                     List<Medias> listShare =
                         await AlbumDataBase.getFiles(album.id!);
@@ -275,7 +277,7 @@ class APP_VM {
                   leading: Icon(
                     Icons.people,
                   ),
-                  title: Text('Herkesle Paylaş'),
+                  title: Text('a191'.tr),
                   onTap: () async {
                     List<Medias> listShare =
                         await AlbumDataBase.getFiles(album.id!);
@@ -299,7 +301,7 @@ class APP_VM {
                     onTap: () {}),*/
                 ListTile(
                     leading: Icon(Icons.mail),
-                    title: Text('Diğer Uygulamalarda Paylaş'),
+                    title: Text('a192'.tr),
                     onTap: () async {
                       List<XFile> files = [];
                       List<Medias> medias =
@@ -333,7 +335,7 @@ class APP_VM {
               children: [
                 ListTile(
                   title: Text(
-                    'En Çok Medya Olanı Listele',
+                    'a193'.tr,
                     style: TextStyle(fontSize: 15),
                   ),
                   onTap: () {
@@ -348,7 +350,7 @@ class APP_VM {
                 ),
                 ListTile(
                     title: Text(
-                      'En Az Medya Olanı Listele',
+                      'a194'.tr,
                       style: TextStyle(fontSize: 15),
                     ),
                     onTap: () {
@@ -362,7 +364,7 @@ class APP_VM {
                     }),
                 ListTile(
                     title: Text(
-                      'Son Oluşturma Tarihine Göre Listele',
+                      'a195'.tr,
                       style: TextStyle(fontSize: 15),
                     ),
                     onTap: () {
@@ -376,7 +378,7 @@ class APP_VM {
                     }),
                 ListTile(
                     title: Text(
-                      'İlk Oluşturma Tarihine Göre Listele',
+                      'a196'.tr,
                       style: TextStyle(fontSize: 15),
                     ),
                     onTap: () {
@@ -390,7 +392,7 @@ class APP_VM {
                     }),
                 ListTile(
                     title: Text(
-                      'Bana En Yakın Medyaya Göre Listele',
+                      'a197'.tr,
                       style: TextStyle(fontSize: 15),
                     ),
                     onTap: () async {
@@ -421,7 +423,7 @@ class APP_VM {
             Column(
               children: [
                 ListTile(
-                  title: Text('Paylaşılmış Albümleri Göster'),
+                  title: Text('a198'.tr),
                   onTap: () {},
                 ),
                 /* ListTile(
@@ -429,7 +431,7 @@ class APP_VM {
                     onTap: () {}),*/
                 ListTile(
                     title: Text(
-                      'Resimli Albümleri Göster',
+                      'a199'.tr,
                       style: TextStyle(fontSize: 15),
                     ),
                     onTap: () async {
@@ -442,7 +444,7 @@ class APP_VM {
                     }),
                 ListTile(
                   title: Text(
-                    'Videolu Albümleri Göster',
+                    'a200'.tr,
                     style: TextStyle(fontSize: 15),
                   ),
                   onTap: () async {
@@ -456,7 +458,7 @@ class APP_VM {
                 ),
                 ListTile(
                   title: Text(
-                    'Sesli Albümleri Göster',
+                    'a201'.tr,
                     style: TextStyle(fontSize: 15),
                   ),
                   onTap: () async {
@@ -470,7 +472,7 @@ class APP_VM {
                 ),
                 ListTile(
                   title: Text(
-                    'Dökümanlı Albümleri Göster',
+                    'a202'.tr,
                     style: TextStyle(fontSize: 15),
                   ),
                   onTap: () async {
@@ -484,7 +486,7 @@ class APP_VM {
                 ),
                 ListTile(
                   title: Text(
-                    'Boş Albümleri Göster',
+                    'a203'.tr,
                     style: TextStyle(fontSize: 15),
                   ),
                   onTap: () {

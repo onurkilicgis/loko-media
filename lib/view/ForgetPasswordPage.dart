@@ -98,8 +98,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                       child: ElevatedButton.icon(
                           onPressed: () {
                             if (emailcontroller.text == '') {
-                              SBBildirim.uyari(
-                                  'Lütfen Mail Adresinizi Giriniz');
+                              SBBildirim.uyari('a24'.tr);
                               return null;
                             }
 
@@ -116,10 +115,10 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                                             emailcontroller.text)
                                         .then((a) => {
                                               SBBildirim.uyari(
-                                                'Girdiğiniz ' +
-                                                    emailcontroller.text +
-                                                    ' Mail Adresine Bir Mail Gönderdik Lütfen Kontrol Ediniz',
-                                              ),
+                                                  Utils.getComplexLanguage(
+                                                      'a106'.tr, {
+                                                'mail': emailcontroller.text
+                                              })),
                                               Navigator.of(context).pop()
                                             });
 
@@ -127,16 +126,13 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                                   }
                                 case 'user-not-found':
                                   {
-                                    SBBildirim.uyari(emailcontroller.text +
-                                        ' Mail adresine ait bir kullanıcı bulunamadı. Lütfen Kayıt Olunuz');
+                                    SBBildirim.uyari(Utils.getComplexLanguage(
+                                        'a107'.tr,
+                                        {'mail': emailcontroller.text}));
                                     break;
                                   }
                               }
                             });
-
-                            //emailcontroller.text
-
-                            //SBBildirim.bilgi('a19'.tr);
                           },
                           icon: Icon(
                             Icons.email_outlined,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../models/Album.dart';
 import '../services/API2.dart';
@@ -48,8 +49,8 @@ class _TakipcilerimState extends State<Takipcilerim> {
   }
 
   cikart(dynamic user) {
-    Util.evetHayir(context, 'Takipçini Çıkarma',
-        '${user['name']} adlı kişinin sizi takip etmesini istemiyor musunuz?',
+    Util.evetHayir(context, '145'.tr,
+        Utils.getComplexLanguage('a146'.tr, {'name': user['name']}),
         (cevap) async {
       if (cevap == true) {
         //
@@ -57,11 +58,13 @@ class _TakipcilerimState extends State<Takipcilerim> {
             'api/lokomedia/removeMe', {'uid': user['id'].toString()});
         if (cevap['status'] == true) {
           SBBildirim.bilgi(
-              "${user['name']} adlı kişi sizi artık takip edemez.");
+            Utils.getComplexLanguage('a147'.tr, {'name': user['name']}),
+          );
           await getMyFriends();
         } else {
           SBBildirim.uyari(
-              '${user['name']} adlı kişi sizi zaten takip etmiyor.');
+            Utils.getComplexLanguage('a148'.tr, {'name': user['name']}),
+          );
         }
       }
     });
@@ -80,7 +83,9 @@ class _TakipcilerimState extends State<Takipcilerim> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        title: Text('Takipçi Listem: ${takipciler.length} Kişi'),
+        title: Text(
+          Utils.getComplexLanguage('a149'.tr, {'sayi': takipciler.length}),
+        ),
       ),
       body: SafeArea(
         child: ListView(
@@ -101,7 +106,7 @@ class _TakipcilerimState extends State<Takipcilerim> {
                   filled: true,
                   fillColor: Theme.of(context).appBarTheme.backgroundColor,
                   contentPadding: EdgeInsets.all(8),
-                  hintText: 'Listede Ara... ',
+                  hintText: 'a150'.tr,
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(7),
                     borderSide: BorderSide(
@@ -137,7 +142,7 @@ class _TakipcilerimState extends State<Takipcilerim> {
                               cikart(filtered[index]);
                             },
                             child: Text(
-                              'Çıkart',
+                              'a125'.tr,
                               style: TextStyle(color: Color(0xffffda15)),
                             )),
                       ),

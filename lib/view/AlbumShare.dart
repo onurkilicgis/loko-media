@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/services/utils.dart';
 
@@ -112,19 +113,16 @@ class _AlbumShareState extends State<AlbumShare> {
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,
-          title: widget.type == 'album'
-              ? Text('Albüm Paylaşma Paneli')
-              : Text('Medya Paylaşma Paneli')),
+          title: widget.type == 'album' ? Text('a34'.tr) : Text('a35'.tr)),
       body: SafeArea(
         child: ListView(controller: _controller, children: [
           Padding(
               padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
               child: widget.type == 'album'
-                  ? Text('Albüm Adı Giriniz', style: TextStyle(fontSize: 16))
+                  ? Text('a36'.tr, style: TextStyle(fontSize: 16))
                   : widget.type == 'medya'
-                      ? Text('Medya Adı Giriniz',
-                          style: TextStyle(fontSize: 16))
-                      : Text('Başlık Giriniz')),
+                      ? Text('a37'.tr, style: TextStyle(fontSize: 16))
+                      : Text('a38'.tr)),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
@@ -158,12 +156,10 @@ class _AlbumShareState extends State<AlbumShare> {
           Padding(
               padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
               child: widget.type == 'album'
-                  ? Text('Albüm Açıklaması Giriniz',
-                      style: TextStyle(fontSize: 16))
+                  ? Text('a39'.tr, style: TextStyle(fontSize: 16))
                   : widget.type == 'medya'
-                      ? Text('Medya Açıklaması Giriniz',
-                          style: TextStyle(fontSize: 16))
-                      : Text('Açıklama Giriniz')),
+                      ? Text('a40'.tr, style: TextStyle(fontSize: 16))
+                      : Text('a41'.tr)),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
@@ -192,7 +188,7 @@ class _AlbumShareState extends State<AlbumShare> {
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
-            child: Text('Konum Paylaşımı', style: TextStyle(fontSize: 16)),
+            child: Text('a42'.tr, style: TextStyle(fontSize: 16)),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -200,7 +196,7 @@ class _AlbumShareState extends State<AlbumShare> {
               Expanded(
                 child: RadioListTile(
                     tileColor: Theme.of(context).scaffoldBackgroundColor,
-                    title: Text('Evet Paylaş', style: TextStyle(fontSize: 13)),
+                    title: Text('a43'.tr, style: TextStyle(fontSize: 13)),
                     activeColor: Color(0xff0e91ce),
                     value: 1,
                     groupValue: radioValueLocation,
@@ -213,8 +209,7 @@ class _AlbumShareState extends State<AlbumShare> {
               Expanded(
                 child: RadioListTile(
                     tileColor: Theme.of(context).scaffoldBackgroundColor,
-                    title:
-                        Text('Hayır Paylaşma', style: TextStyle(fontSize: 13)),
+                    title: Text('a44'.tr, style: TextStyle(fontSize: 13)),
                     activeColor: Color(0xff0e91ce),
                     value: 2,
                     groupValue: radioValueLocation,
@@ -228,14 +223,14 @@ class _AlbumShareState extends State<AlbumShare> {
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20, bottom: 0, left: 8),
-            child: Text('Paylaşım Süresi', style: TextStyle(fontSize: 16)),
+            child: Text('a45'.tr, style: TextStyle(fontSize: 16)),
           ),
           Row(
             children: [
               Expanded(
                 child: RadioListTile(
                     tileColor: Theme.of(context).scaffoldBackgroundColor,
-                    title: Text('Süresiz', style: TextStyle(fontSize: 13)),
+                    title: Text('a46'.tr, style: TextStyle(fontSize: 13)),
                     activeColor: Color(0xff0e91ce),
                     value: 1,
                     groupValue: radioValueShare,
@@ -249,7 +244,7 @@ class _AlbumShareState extends State<AlbumShare> {
               Expanded(
                 child: RadioListTile(
                     tileColor: Theme.of(context).scaffoldBackgroundColor,
-                    title: Text('Süreli', style: TextStyle(fontSize: 13)),
+                    title: Text('a47'.tr, style: TextStyle(fontSize: 13)),
                     activeColor: Color(0xff0e91ce),
                     value: 2,
                     groupValue: radioValueShare,
@@ -345,7 +340,8 @@ class _AlbumShareState extends State<AlbumShare> {
                   Padding(
                     padding: const EdgeInsets.only(top: 20, bottom: 5, left: 8),
                     child: Text(
-                        'Paylaşılan Kişiler : ${selectedUsersId.length} Kişi',
+                        Utils.getComplexLanguage(
+                            'a48'.tr, {'sayi': selectedUsers.length}),
                         style: TextStyle(fontSize: 16)),
                   ),
                   selectedUsersId.length > 0
@@ -474,7 +470,7 @@ class _AlbumShareState extends State<AlbumShare> {
                                               });
                                             },
                                             child: Text(
-                                              'Ekle',
+                                              'a49'.tr,
                                               style: TextStyle(
                                                   color: Color(0xff0e91ce)),
                                             )),
@@ -498,8 +494,7 @@ class _AlbumShareState extends State<AlbumShare> {
                     Padding(
                       padding:
                           const EdgeInsets.only(top: 0, bottom: 0, left: 8),
-                      child: Text('Paylaşılacak Öğeler',
-                          style: TextStyle(fontSize: 16)),
+                      child: Text('a50'.tr, style: TextStyle(fontSize: 16)),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -513,7 +508,7 @@ class _AlbumShareState extends State<AlbumShare> {
                               }
                               setState(() {});
                             },
-                            child: Text('Tümünü İptal Et',
+                            child: Text('a51'.tr,
                                 style: TextStyle(
                                     color: Theme.of(context)
                                         .textTheme
@@ -528,7 +523,7 @@ class _AlbumShareState extends State<AlbumShare> {
                               }
                               setState(() {});
                             },
-                            child: Text('Tümünü Seç',
+                            child: Text('a52'.tr,
                                 style: TextStyle(
                                     color: Theme.of(context)
                                         .textTheme
@@ -565,7 +560,7 @@ class _AlbumShareState extends State<AlbumShare> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
                     child: Text(
-                      'Paylaş',
+                      'a53'.tr,
                       style: TextStyle(fontSize: 18),
                     ))),
           )
@@ -734,7 +729,7 @@ class _AlbumShareState extends State<AlbumShare> {
                               },
                             ),
                             selectedKapak == medyaid
-                                ? Text('Albüm Kapağı')
+                                ? Text('a54'.tr)
                                 : Container()
                           ],
                         ),
@@ -850,13 +845,13 @@ class _AlbumShareState extends State<AlbumShare> {
         'data': apiDataString,
       });
       if (islem['status'] == true) {
-        SBBildirim.onay('Başarılı bir şekilde paylaşıldı');
+        SBBildirim.onay('a55'.tr);
         Navigator.pop(context);
       } else {
-        SBBildirim.hata('Maalesef paylaşma işlemi başarısız oldu');
+        SBBildirim.hata('a56'.tr);
       }
     } else {
-      SBBildirim.uyari('Yüklenmesi gereken öğeler yüklenemedi');
+      SBBildirim.uyari('a57'.tr);
     }
   }
 }

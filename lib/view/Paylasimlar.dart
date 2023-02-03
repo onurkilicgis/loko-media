@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:loko_media/services/MyLocal.dart';
 
 import '../services/API2.dart';
@@ -88,7 +89,8 @@ class _PaylasimlarState extends State<Paylasimlar> {
                               image: NetworkImage(mediaURL),
                               fit: BoxFit.cover,
                             ),
-                            color: Theme.of(context).bannerTheme.backgroundColor),
+                            color:
+                                Theme.of(context).bannerTheme.backgroundColor),
                       ),
                     );
                   }
@@ -142,25 +144,32 @@ class _PaylasimlarState extends State<Paylasimlar> {
     iconlar.add(IconButton(
       //padding:EdgeInsets.only(top:0,bottom: 0),
       onPressed: () {},
-      icon: Icon(Icons.favorite_border,color: Theme.of(context).tabBarTheme.unselectedLabelColor,),
+      icon: Icon(
+        Icons.favorite_border,
+        color: Theme.of(context).tabBarTheme.unselectedLabelColor,
+      ),
     ));
     iconlar.add(IconButton(
       onPressed: () {},
-      icon: Icon(Icons.mode_comment_outlined,color: Theme.of(context).tabBarTheme.unselectedLabelColor),
+      icon: Icon(Icons.mode_comment_outlined,
+          color: Theme.of(context).tabBarTheme.unselectedLabelColor),
     ));
     if (item['point'] != null) {
       iconlar.add(IconButton(
         onPressed: () {},
-        icon: Icon(Icons.map,color: Theme.of(context).tabBarTheme.unselectedLabelColor),
+        icon: Icon(Icons.map,
+            color: Theme.of(context).tabBarTheme.unselectedLabelColor),
       ));
       iconlar.add(IconButton(
         onPressed: () {},
-        icon: Icon(Icons.navigation_outlined,color: Theme.of(context).tabBarTheme.unselectedLabelColor),
+        icon: Icon(Icons.navigation_outlined,
+            color: Theme.of(context).tabBarTheme.unselectedLabelColor),
       ));
     }
     iconlar.add(IconButton(
       onPressed: () {},
-      icon: Icon(Icons.share,color: Theme.of(context).tabBarTheme.unselectedLabelColor),
+      icon: Icon(Icons.share,
+          color: Theme.of(context).tabBarTheme.unselectedLabelColor),
     ));
     return Container(
       // color: Colors.lightBlue,
@@ -174,7 +183,8 @@ class _PaylasimlarState extends State<Paylasimlar> {
             child: IconButton(
               padding: EdgeInsets.only(top: 0, bottom: 0),
               onPressed: () {},
-              icon: Icon(Icons.delete,color: Theme.of(context).tabBarTheme.unselectedLabelColor),
+              icon: Icon(Icons.delete,
+                  color: Theme.of(context).tabBarTheme.unselectedLabelColor),
             ),
           ),
         ],
@@ -215,7 +225,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
     int likes = item['like'];
     if (likes == 0) {
       ekler.add(TextSpan(
-        text: "Beğeni Yok",
+        text: "a136".tr,
         style: TextStyle(color: Colors.white, fontSize: 12),
       ));
     }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:get/get.dart';
 
 import '../models/Album.dart';
 
@@ -24,7 +25,7 @@ class _PdfViewState extends State<PdfView> {
     return Scaffold(
       appBar: widget.appbarstatus == true
           ? AppBar(
-              title: Text('Pdf Dosya İçeriği'),
+              title: Text('a137'.tr),
             )
           : null,
       body: SafeArea(

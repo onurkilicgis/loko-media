@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/services/utils.dart';
 import 'package:share_plus/share_plus.dart';
@@ -14,14 +15,14 @@ import '../view/TxtView.dart';
 class Media_VM {
   static openMediaLongPDialog(context, model, Medias media) {
     String acmaAdi = media.fileType == 'image'
-        ? 'Göster'
+        ? 'a204'.tr
         : media.fileType == 'video'
-            ? 'İzle'
+            ? 'a205'.tr
             : media.fileType == 'audio'
-                ? 'Dinle'
+                ? 'a206'.tr
                 : media.fileType == 'txt'
-                    ? 'Oku'
-                    : 'Aç';
+                    ? 'a207'.tr
+                    : 'a208'.tr;
 
     showDialog(
       context: context,
@@ -35,7 +36,7 @@ class Media_VM {
             Column(
               children: [
                 ListTile(
-                  title: Text('Seç'),
+                  title: Text('a209'.tr),
                   onTap: () {
                     model.selectMedia(media);
 
@@ -46,8 +47,30 @@ class Media_VM {
                     title: Text(acmaAdi),
                     onTap: () {
                       Navigator.pop(context);
-                      switch (acmaAdi) {
-                        case 'Göster':
+                      if (acmaAdi == 'a204'.tr) {
+                        model.openImage(media);
+                      } else if (acmaAdi == 'a205'.tr) {
+                        model.openLongVideo(media);
+                      } else if (acmaAdi == 'a206'.tr) {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                AudioView(medias: media, appbarstatus: true)));
+                      } else if (acmaAdi == 'a207'.tr) {
+                        dynamic tip = json.decode(media.settings!);
+                        if (tip['type'] == 'txt') {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  TxtView(medias: media, appbarstatus: true)));
+                        } else {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  PdfView(medias: media, appbarstatus: true)));
+                        }
+                      }
+                      ;
+
+                      /* switch (acmaAdi) {
+                        case goster:
                           {
                             model.openImage(media);
                             break;
@@ -79,10 +102,10 @@ class Media_VM {
                             }
                             break;
                           }
-                      }
+                      }*/
                     }),
                 ListTile(
-                    title: Text('Kişiye Paylaş'),
+                    title: Text('a190'.tr),
                     onTap: () async {
                       Navigator.push(
                           context,
@@ -99,7 +122,7 @@ class Media_VM {
                                       ])));
                     }),
                 ListTile(
-                    title: Text('Herkesle Paylaş'),
+                    title: Text('a191'.tr),
                     onTap: () async {
                       Navigator.push(
                           context,
@@ -115,7 +138,7 @@ class Media_VM {
                                   )));
                     }),
                 ListTile(
-                    title: Text('Sosyal Medyada Paylaş'),
+                    title: Text('a210'.tr),
                     onTap: () async {
                       await Share.shareXFiles([XFile(media.path!)]);
                       Navigator.pop(context);
@@ -123,16 +146,15 @@ class Media_VM {
                 ListTile(
                     title: Text('Sil'),
                     onTap: () async {
-                      Util.evetHayir(context, 'Medya Silme İşlemi',
-                          'Bu medya öğesini silmek istediğinize emin misiniz?',
+                      Util.evetHayir(context, 'a211'.tr, 'a212'.tr,
                           (cevap) async {
                         if (cevap == true) {
                           List<int> tekSilinen = [];
                           tekSilinen.add(media.id!);
                           int silinenDosyaSayisi =
                               await AlbumDataBase.mediaMultiDelete(tekSilinen);
-                          SBBildirim.bilgi(
-                              '${silinenDosyaSayisi} Adet medya silinmiştir.');
+                          SBBildirim.bilgi(Utils.getComplexLanguage(
+                              'a213'.tr, {'sayi': silinenDosyaSayisi}));
                           model.setState(() {
                             model.deleteMediasFromList(tekSilinen);
                           });
@@ -164,7 +186,7 @@ class Media_VM {
                   leading: Icon(
                     Icons.people,
                   ),
-                  title: Text('Kişiye Paylaş'),
+                  title: Text('a190'.tr),
                   onTap: () {
                     Navigator.push(
                         context,
@@ -179,7 +201,7 @@ class Media_VM {
                   leading: Icon(
                     Icons.people,
                   ),
-                  title: Text('Herkesle Paylaş'),
+                  title: Text('a191'.tr),
                   onTap: () {
                     Navigator.push(
                         context,
@@ -196,22 +218,21 @@ class Media_VM {
                 ),
                 ListTile(
                     leading: Icon(Icons.link),
-                    title: Text('Bağlantıyı Paylaş'),
+                    title: Text('a214'.tr),
                     onTap: () {}),
                 ListTile(
                     leading: Icon(Icons.mail),
-                    title: Text('Kullanıcıya Gönder'),
+                    title: Text('a214'.tr),
                     onTap: () {}),
                 ListTile(
                     leading: Icon(Icons.mail),
-                    title: Text('Sosyal Medyada Paylaş'),
+                    title: Text('a210'.tr),
                     onTap: () async {
                       List<XFile> secilenler = [];
                       for (int i = 0; i < seciliMedias.length; i++) {
                         secilenler.add(XFile(seciliMedias[i].path!));
                       }
-                      await Share.shareXFiles(secilenler,
-                          text: 'LokoMedia Tarafından Paylaşılan Dosyalar');
+                      await Share.shareXFiles(secilenler, text: 'a216'.tr);
                       Navigator.pop(context);
                     }),
               ],

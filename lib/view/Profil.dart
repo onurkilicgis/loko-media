@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../services/API2.dart';
 
@@ -77,7 +78,7 @@ class _ProfilState extends State<Profil> {
                                       Icon(
                                         Icons.person_remove_outlined,
                                       ),
-                                      Text('Arkadaşlıktan Çıkart'),
+                                      Text('a139'.tr),
                                     ],
                                   ),
                                   value: 1,
@@ -88,7 +89,7 @@ class _ProfilState extends State<Profil> {
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
                                       Icon(Icons.settings),
-                                      Text('Bilgilerimi Düzenle'),
+                                      Text('a140'.tr),
                                     ],
                                   ),
                                   value: 2,
@@ -130,7 +131,7 @@ class _ProfilState extends State<Profil> {
                       child: Opacity(
                         opacity: 0.5,
                         child: Text(
-                          'Paylaşımlar',
+                          'a141'.tr,
                           style: TextStyle(
                             fontWeight: FontWeight.w400,
                           ),
@@ -149,7 +150,7 @@ class _ProfilState extends State<Profil> {
                     child: Opacity(
                       opacity: 0.5,
                       child: Text(
-                        'Takipçi',
+                        'a142'.tr,
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
                         ),
@@ -167,7 +168,7 @@ class _ProfilState extends State<Profil> {
                     child: Opacity(
                       opacity: 0.5,
                       child: Text(
-                        'Takip Edilenler',
+                        '143'.tr,
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
                         ),
@@ -188,7 +189,7 @@ class _ProfilState extends State<Profil> {
                           height: 50,
                           child: ElevatedButton(
                             onPressed: () {},
-                            child: Text('Takip Et'),
+                            child: Text('a124'.tr),
                             style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -201,17 +202,6 @@ class _ProfilState extends State<Profil> {
                     ),
                   )
                 : Container(),
-            /* GridView.builder(
-                itemCount: 4,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 10,
-                ),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisExtent: 200, crossAxisCount: 4),
-                itemBuilder: (BuildContext context, int index) {
-                  return Image.asset('assets/images/audio_dark.png');
-                }),*/
           ],
         ),
       );
@@ -221,7 +211,7 @@ class _ProfilState extends State<Profil> {
         children: [
           Container(
             child: Text(
-              'Sayfa Yüklenemedi',
+              'a144'.tr,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),

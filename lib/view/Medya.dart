@@ -3,6 +3,7 @@ import 'dart:io' as ioo;
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:get/get.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
 import 'package:loko_media/models/Album.dart';
 import 'package:loko_media/providers/MedyaProvider.dart';
@@ -298,7 +299,7 @@ class MedyaState extends State<Medya> {
               floatingActionButton: SpeedDial(
                 openCloseDial: isDialOpen,
                 activeIcon: Icons.cancel,
-                tooltip: 'Seçilenler',
+                tooltip: 'a127'.tr,
                 overlayColor: Colors.transparent,
                 overlayOpacity: 0,
                 icon: Icons.more_vert,
@@ -314,7 +315,7 @@ class MedyaState extends State<Medya> {
                       Icons.map,
                       color: Theme.of(context).listTileTheme.iconColor,
                     ),
-                    label: 'Seçilenleri Haritalandır',
+                    label: 'a128'.tr,
                     backgroundColor:
                         Theme.of(context).badgeTheme.backgroundColor,
                     labelBackgroundColor:
@@ -342,7 +343,7 @@ class MedyaState extends State<Medya> {
                       Icons.share,
                       color: Theme.of(context).listTileTheme.iconColor,
                     ),
-                    label: 'Seçilenleri Paylaş',
+                    label: 'a129'.tr,
                     backgroundColor:
                         Theme.of(context).badgeTheme.backgroundColor,
                     labelBackgroundColor:
@@ -359,7 +360,7 @@ class MedyaState extends State<Medya> {
                       Icons.cancel,
                       color: Theme.of(context).listTileTheme.iconColor,
                     ),
-                    label: 'Seçimi İptal Et',
+                    label: 'a130'.tr,
                     backgroundColor:
                         Theme.of(context).badgeTheme.backgroundColor,
                     labelBackgroundColor:
@@ -367,8 +368,11 @@ class MedyaState extends State<Medya> {
                   ),
                   SpeedDialChild(
                     onTap: () async {
-                      Util.evetHayir(context, 'Toplu Medya Silme İşlemi',
-                          '${selecteds.length} Adet medya öğesini silmek istediğinize emin misiniz?',
+                      Util.evetHayir(
+                          context,
+                          'a131'.tr,
+                          Utils.getComplexLanguage(
+                              'a132'.tr, {'sayi': selecteds.length}),
                           (cevap) async {
                         if (cevap == true) {
                           int silinenDosyaSayisi =
@@ -377,7 +381,9 @@ class MedyaState extends State<Medya> {
                           );
 
                           SBBildirim.bilgi(
-                              '${silinenDosyaSayisi} Adet medya silinmiştir.');
+                            Utils.getComplexLanguage(
+                                'a133'.tr, {'sayi': silinenDosyaSayisi}),
+                          );
                           setState(() {
                             deleteMediasFromList(selecteds);
                           });
@@ -393,7 +399,7 @@ class MedyaState extends State<Medya> {
                       Icons.delete,
                       color: Theme.of(context).listTileTheme.iconColor,
                     ),
-                    label: 'Seçilenleri Sil',
+                    label: 'a134'.tr,
                     backgroundColor:
                         Theme.of(context).badgeTheme.backgroundColor,
                     labelBackgroundColor:
@@ -415,7 +421,7 @@ class MedyaState extends State<Medya> {
                         selectedMedias = listem;
                       });
                     },
-                    label: 'Hepsini Seç',
+                    label: 'a135'.tr,
                     backgroundColor:
                         Theme.of(context).badgeTheme.backgroundColor,
                     labelBackgroundColor:

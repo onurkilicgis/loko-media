@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:loko_media/services/utils.dart';
 
 import '../models/Album.dart';
@@ -22,7 +23,7 @@ class _TxtViewState extends State<TxtView> {
       appBar: widget.appbarstatus == true
           ? AppBar(
               title: Text(
-                'Dosya İçeriği',
+                '161'.tr,
                 style: TextStyle(fontSize: 23),
               ),
               centerTitle: true,
@@ -49,7 +50,7 @@ class _TxtViewState extends State<TxtView> {
                           child: Opacity(
                             opacity: 0.7,
                             child: Text(
-                              'Başlık :',
+                              'a162'.tr,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'Slabo27px',
@@ -81,7 +82,7 @@ class _TxtViewState extends State<TxtView> {
                           child: Opacity(
                             opacity: 0.7,
                             child: Text(
-                              'İçerik :',
+                              'a163'.tr,
                               style: TextStyle(
                                 fontWeight: FontWeight.w200,
                                 fontFamily: 'Slabo27px',

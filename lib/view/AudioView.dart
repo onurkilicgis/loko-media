@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/public/flutter_sound_player.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../models/Album.dart';
@@ -41,7 +42,7 @@ class _AudioViewState extends State<AudioView> {
       appBar: widget.appbarstatus == true
           ? AppBar(
               centerTitle: true,
-              title: Text('Ses Dinleme Paneli'),
+              title: Text('a105'.tr),
             )
           : null,
       body: Consumer<SwitchModel>(builder: (context, switchModel, child) {
@@ -141,7 +142,7 @@ class _AudioViewState extends State<AudioView> {
                                 : Icons.play_arrow,
                     color: Color(0xBEFFFFFF)),
                 iconSize: 30,
-                tooltip: 'Dinle',
+                tooltip: 'a100'.tr,
                 onPressed: () async {
                   if (player.isPaused) {
                     await resumePlay();

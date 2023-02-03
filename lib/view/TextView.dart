@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:loko_media/view/app.dart';
 import 'package:loko_media/view_model/layout.dart';
 import 'package:provider/provider.dart';
@@ -45,7 +46,7 @@ class _TextViewState extends State<TextView> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Yazı Giriş Paneli'),
+        title: Text('156'.tr),
       ),
       body: SafeArea(
         child: Container(
@@ -81,7 +82,7 @@ class _TextViewState extends State<TextView> {
                           borderSide: BorderSide(
                         color: Color(0xff017eba),
                       )),*/
-                      labelText: 'Başlık ',
+                      labelText: 'a157'.tr,
                       labelStyle: TextStyle(
                         color: Theme.of(context).listTileTheme.iconColor!,
                       )),
@@ -115,7 +116,7 @@ class _TextViewState extends State<TextView> {
                           borderSide: BorderSide(
                         color: Color(0xff017eba),
                       )),*/
-                      labelText: 'İçerik',
+                      labelText: '158'.tr,
                       labelStyle: TextStyle(
                         color: Theme.of(context).listTileTheme.iconColor!,
                       )),
@@ -142,7 +143,7 @@ class _TextViewState extends State<TextView> {
                             Theme.of(context).listTileTheme.iconColor!,
                       ),
                       child: Text(
-                        'Kaydet',
+                        'a101'.tr,
                         style: TextStyle(fontSize: 15),
                       )),
                 ),
@@ -162,7 +163,7 @@ class _TextViewState extends State<TextView> {
     try {
       if (filePath == null) return;
       if (filePath != null) {
-        Loading.waiting('Notunuz Yükleniyor');
+        Loading.waiting('159'.tr);
       }
 
       dynamic positions = await GPS.getGPSPosition();
@@ -191,7 +192,7 @@ class _TextViewState extends State<TextView> {
       });
 
       Loading.close();
-      SBBildirim.bilgi('Notunuz Kaydedilmiştir');
+      SBBildirim.bilgi('160'.tr);
       if (widget.aktifTabIndex == 2) {
         _mediaProvider.addMedia(dbText);
       }

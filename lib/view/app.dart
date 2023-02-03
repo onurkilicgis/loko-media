@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter_sound/public/flutter_sound_player.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loko_media/database/AlbumDataBase.dart';
@@ -86,7 +87,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         final image = await ImagePicker().pickImage(source: source);
         if (image == null) return;
         if (image != null) {
-          Loading.waiting('Çektiğiniz Fotoğraf Yükleniyor');
+          Loading.waiting('a58'.tr);
         }
 
         await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
@@ -143,7 +144,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         if (video == null) {
           return;
         } else {
-          Loading.waiting('Çektiğiniz Video Yükleniyor');
+          Loading.waiting('a59'.tr);
         }
 
         await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
@@ -222,7 +223,9 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         },
         leading: image,
         title: Text(album.name),
-        subtitle: Text('Öğe Sayısı : ${album.itemCount} Durum : ${durum}',
+        subtitle: Text(
+            Utils.getComplexLanguage(
+                'a60'.tr, {'sayi': album.itemCount, 'durum': durum}),
             style: TextStyle(fontSize: 11)),
         trailing: IconButton(
             onPressed: () {
@@ -272,7 +275,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
       aktifalbum = album.id;
     });
     MyLocal.setIntData('aktifalbum', album.id);
-    SBBildirim.bilgi("${album.name} adlı albüm aktif edildi");
+    SBBildirim.bilgi(Utils.getComplexLanguage('a61'.tr, {'name': album.name}));
     getAlbumList();
   }
 
@@ -290,7 +293,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
       });
       tabChange(3);
     } else {
-      SBBildirim.uyari('Haritada gösterilecek bir media öğesi bulunamadı');
+      SBBildirim.uyari('a62'.tr);
     }
   }
 
@@ -348,7 +351,8 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                         ),
                       ),
                       Text(
-                        "Öğe Sayısı : ${album.itemCount.toString()}, Durum : ${durum}",
+                        Utils.getComplexLanguage('a60'.tr,
+                            {'sayi': album.itemCount, 'durum': durum}),
                         textAlign: TextAlign.left,
                         style: TextStyle(
                           fontSize: 10,
@@ -601,7 +605,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                                     Theme.of(context).listTileTheme.iconColor,
                               ),
                               title: Text(
-                                'Gece Modu',
+                                'a63'.tr,
                                 style: TextStyle(
                                   fontSize: 14,
                                 ),
@@ -646,7 +650,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                                     Theme.of(context).listTileTheme.iconColor,
                               ),
                               title: Text(
-                                'Çıkış',
+                                'a64'.tr,
                                 style: TextStyle(fontSize: 14),
                               ),
                               onTap: () async {
@@ -695,25 +699,25 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                       tabs: [
                         Tab(
                           child: Text(
-                            'Ahali',
+                            'a65'.tr,
                           ),
                           //icon: Icon(Icons.list_alt),
                         ),
                         Tab(
                           child: Text(
-                            'Albümler',
+                            'a66'.tr,
                           ),
                           //icon: Icon(Icons.list_alt),
                         ),
                         Tab(
                           child: Text(
-                            'Medya',
+                            'a67'.tr,
                           ),
                           //icon: Icon(Icons.media_bluetooth_off),
                         ),
                         Tab(
                           child: Text(
-                            'Harita',
+                            'a68'.tr,
                           ),
                           //icon: Icon(Icons.map)
                         ),
@@ -785,11 +789,8 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                 currentIndex: currentIndex,
                 onTap: (index) async {
                   if (index == 0) {
-                    return BottomSheetItems(
-                        Icons.camera_alt_outlined,
-                        'Fotoğraf Çek ve Yükle',
-                        Icons.image_outlined,
-                        'Galiriden Fotoğraf Yükle', (num) {
+                    return BottomSheetItems(Icons.camera_alt_outlined, 'a69'.tr,
+                        Icons.image_outlined, 'a70'.tr, (num) {
                       switch (num) {
                         case 0:
                           {
@@ -808,11 +809,8 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                   }
                   ;
                   if (index == 1) {
-                    return BottomSheetItems(
-                        Icons.video_camera_back,
-                        'Video Kaydet ve Yükle',
-                        Icons.video_collection,
-                        'Galiriden Video Yükle', (num) {
+                    return BottomSheetItems(Icons.video_camera_back, 'a71'.tr,
+                        Icons.video_collection, 'a72'.tr, (num) {
                       switch (num) {
                         case 0:
                           {
@@ -830,10 +828,8 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                   ;
                   if (index == 2) {
                     return BottomSheetItems(
-                        Icons.mic,
-                        'Anlık Ses Kaydet ve Yükle',
-                        Icons.audio_file,
-                        'Mevcut Bir Ses Kaydını Ekle', (num) async {
+                        Icons.mic, 'a73'.tr, Icons.audio_file, 'a74'.tr,
+                        (num) async {
                       switch (num) {
                         case 0:
                           {
@@ -850,11 +846,8 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                   }
                   ;
                   if (index == 3) {
-                    return BottomSheetItems(
-                        Icons.text_snippet_sharp,
-                        'Not Yaz Ve Kaydet',
-                        Icons.insert_drive_file_rounded,
-                        'Mevcut Bir Text Dosyası Yükle', (num) async {
+                    return BottomSheetItems(Icons.text_snippet_sharp, 'a75'.tr,
+                        Icons.insert_drive_file_rounded, 'a76'.tr, (num) async {
                       switch (num) {
                         case 0:
                           {
@@ -882,19 +875,19 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                 items: [
                   BottomNavigationBarItem(
                     icon: Icon(Icons.camera_alt),
-                    label: 'Fotoğraf Ekle',
+                    label: 'a77'.tr,
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.video_camera_back),
-                    label: 'Video Ekle',
+                    label: 'a78'.tr,
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.mic),
-                    label: 'Ses Ekle',
+                    label: 'a79'.tr,
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.wysiwyg),
-                    label: 'Yazı Ekle',
+                    label: 'a80'.tr,
                   ),
                 ],
               ),
@@ -968,7 +961,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         return AlertDialog(
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
-          title: Text('Albüm Adı'),
+          title: Text('a81'.tr),
           backgroundColor:
               Theme.of(context).bottomNavigationBarTheme.backgroundColor,
           actions: [
@@ -986,7 +979,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                       focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.white)),
                       // labelStyle: TextStyle(color: Colors.white),
-                      labelText: 'Albüm Adını Giriniz',
+                      labelText: 'a82'.tr,
                     ),
                     onChanged: (value) {},
                   ),
@@ -994,7 +987,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   TextButton(
                     child: Text(
-                      'İptal',
+                      'a83'.tr,
                       style: TextStyle(color: Color(0xffe55656), fontSize: 17),
                     ),
                     onPressed: () {
@@ -1018,7 +1011,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                             getAlbumList();
                           }
                         },
-                        child: Text('Tamam',
+                        child: Text('a84'.tr,
                             style: TextStyle(
                                 color: Color(0xff80C783), fontSize: 17))),
                   )
@@ -1035,22 +1028,22 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
     switch (controller.index) {
       case 0:
         {
-          return Text('Medya Paylaşımları', style: TextStyle());
+          return Text('a85'.tr, style: TextStyle());
         }
 
       case 1:
         {
-          return Text('Oluşturulmuş Albümler', style: TextStyle());
+          return Text('a86'.tr, style: TextStyle());
         }
 
       case 2:
         {
-          return Text('Albümün Medyaları', style: TextStyle());
+          return Text('a87'.tr, style: TextStyle());
         }
 
       case 3:
         {
-          return Text('Albümün Haritası', style: TextStyle());
+          return Text('a88'.tr, style: TextStyle());
         }
     }
   }
@@ -1058,7 +1051,8 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
   // aktif olan albümü silme
   deleteAAlbum(int album_id) async {
     Album? silinecekAlbum = await AlbumDataBase.getAAlbum(album_id);
-    Loading.waiting('${silinecekAlbum?.name} Adlı Albüm Siliniyor...');
+    Loading.waiting(
+        Utils.getComplexLanguage('a89'.tr, {'name': silinecekAlbum?.name}));
     List<dynamic> files = [];
     files = await AlbumDataBase.getFiles(album_id);
     for (int i = 0; i < files.length; i++) {
@@ -1072,11 +1066,17 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
     if (aktifalbum == album_id) {
       int lastAlbumId = await AlbumDataBase.getLastAlbum();
       await MyLocal.setIntData('aktifalbum', lastAlbumId);
-      SBBildirim.bilgi(
-          '${silinenMediaSayisi} Adet medya öğesi ve ${silinenAlbumSayisi} adet, ${silinecekAlbum?.name} adlı albüm silindi. Son albüm tekrar aktif edilmiştir.');
+      SBBildirim.bilgi(Utils.getComplexLanguage('a90'.tr, {
+        'medyasayi': silinenMediaSayisi,
+        'albumsayi': silinenAlbumSayisi,
+        'name': silinecekAlbum?.name
+      }));
     } else {
-      SBBildirim.bilgi(
-          '${silinenMediaSayisi} Adet medya öğesi ve ${silinenAlbumSayisi} adet, ${silinecekAlbum?.name} adlı albüm silindi.');
+      SBBildirim.bilgi(Utils.getComplexLanguage('a91'.tr, {
+        'medyasayi': silinenMediaSayisi,
+        'albumsayi': silinenAlbumSayisi,
+        'name': silinecekAlbum?.name
+      }));
     }
 
     getAlbumList();
@@ -1119,7 +1119,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
 
           audioFile = File(pickedFile!.path!);
 
-          Loading.waiting('Seçtiğiniz Ses Dosyası Yükleniyor...');
+          Loading.waiting('a92'.tr);
 
           await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
 
@@ -1187,7 +1187,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
 
           final textFile2 = File(pickedFile!.path!);
 
-          Loading.waiting('Seçtiğiniz Yazı Dosyası Yükleniyor...');
+          Loading.waiting('a93'.tr);
 
           await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
 
@@ -1225,7 +1225,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
           });
 
           Loading.close();
-          SBBildirim.bilgi('Mevcut Dosyanız Yüklendi');
+          SBBildirim.bilgi('a94'.tr);
           if (aktifTabIndex == 2) {
             _mediaProvider.addMedia(dbText);
           }
