@@ -9,7 +9,7 @@ Map<String, String> trLang = {
   'a8': 'Kayıt Formu',
   'a9': 'Lütfen Aşağıdaki Tüm Bilgileri Doldurunuz',
   'a10': 'Ad Soyad',
-  'a11': 'Şartları Ve Koşulları Okudum Kabul Ediyorum',
+  'a11': 'Şartları Ve Koşulları Okudum. Kabul Ediyorum',
   'a12': 'KAYIT',
   'a13': 'Google İle Kayıt Yapınız',
   'a14': 'Zaten Üye Misiniz?',
