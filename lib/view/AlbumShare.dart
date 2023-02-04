@@ -197,7 +197,7 @@ class _AlbumShareState extends State<AlbumShare> {
                 child: RadioListTile(
                     tileColor: Theme.of(context).scaffoldBackgroundColor,
                     title: Text('a43'.tr, style: TextStyle(fontSize: 13)),
-                    activeColor: Color(0xff0e91ce),
+                    activeColor: Theme.of(context).listTileTheme.iconColor,
                     value: 1,
                     groupValue: radioValueLocation,
                     onChanged: (int? veri) {
@@ -210,7 +210,7 @@ class _AlbumShareState extends State<AlbumShare> {
                 child: RadioListTile(
                     tileColor: Theme.of(context).scaffoldBackgroundColor,
                     title: Text('a44'.tr, style: TextStyle(fontSize: 13)),
-                    activeColor: Color(0xff0e91ce),
+                    activeColor: Theme.of(context).listTileTheme.iconColor,
                     value: 2,
                     groupValue: radioValueLocation,
                     onChanged: (int? veri) {
@@ -231,7 +231,7 @@ class _AlbumShareState extends State<AlbumShare> {
                 child: RadioListTile(
                     tileColor: Theme.of(context).scaffoldBackgroundColor,
                     title: Text('a46'.tr, style: TextStyle(fontSize: 13)),
-                    activeColor: Color(0xff0e91ce),
+                    activeColor: Theme.of(context).listTileTheme.iconColor,
                     value: 1,
                     groupValue: radioValueShare,
                     onChanged: (int? veri) {
@@ -245,7 +245,7 @@ class _AlbumShareState extends State<AlbumShare> {
                 child: RadioListTile(
                     tileColor: Theme.of(context).scaffoldBackgroundColor,
                     title: Text('a47'.tr, style: TextStyle(fontSize: 13)),
-                    activeColor: Color(0xff0e91ce),
+                    activeColor: Theme.of(context).listTileTheme.iconColor,
                     value: 2,
                     groupValue: radioValueShare,
                     onChanged: (int? veri) {
@@ -472,7 +472,10 @@ class _AlbumShareState extends State<AlbumShare> {
                                             child: Text(
                                               'a49'.tr,
                                               style: TextStyle(
-                                                  color: Color(0xff0e91ce)),
+                                                color: Theme.of(context)
+                                                    .listTileTheme
+                                                    .iconColor,
+                                              ),
                                             )),
                                       ),
                                     ),
@@ -721,7 +724,8 @@ class _AlbumShareState extends State<AlbumShare> {
                             Radio(
                               value: medyaid,
                               groupValue: selectedKapak,
-                              activeColor: Color(0xff0e91ce),
+                              activeColor:
+                                  Theme.of(context).listTileTheme.iconColor,
                               onChanged: (int? value) {
                                 setState(() {
                                   selectedKapak = value!;
@@ -739,7 +743,8 @@ class _AlbumShareState extends State<AlbumShare> {
                         width: 40,
                         child: Checkbox(
                           value: medyaCheck,
-                          activeColor: Color(0xff0e91ce),
+                          activeColor:
+                              Theme.of(context).listTileTheme.iconColor,
                           onChanged: (bool? value) {
                             itemCheckBox(index, value!);
                           },
@@ -750,7 +755,8 @@ class _AlbumShareState extends State<AlbumShare> {
             ),
             LinearProgressIndicator(
                 color: Color(0xff2b792f),
-                backgroundColor: Color(0xff405d79),
+                backgroundColor:
+                    Theme.of(context).tabBarTheme.unselectedLabelColor,
                 value: mediaProggresValue)
           ],
         ),

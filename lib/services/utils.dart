@@ -5,28 +5,28 @@ class SBBildirim {
   static void hata(String icerik) {
     String zaman = 'static';
     Color renk = Color(0xfff44336);
-    String baslik = 'Önemli Uyarı!';
+    String baslik = 'a232'.tr;
     run(baslik, icerik, zaman, renk);
   }
 
   static void uyari(String icerik) {
     String zaman = 'auto';
     Color renk = Color(0xffffc107);
-    String baslik = 'Önemli Uyarı!';
+    String baslik = 'a232'.tr;
     run(baslik, icerik, zaman, renk);
   }
 
   static void onay(String icerik) {
     String zaman = 'auto';
     Color renk = Color(0xff8bc34a);
-    String baslik = 'Başarılı İşlem!';
+    String baslik = 'a233'.tr;
     run(baslik, icerik, zaman, renk);
   }
 
   static void bilgi(String icerik) {
     String zaman = 'auto';
     Color renk = Color(0xff00bcd4);
-    String baslik = 'Önemli Bilgilendirme!';
+    String baslik = 'a234'.tr;
     run(baslik, icerik, zaman, renk);
   }
 
@@ -58,25 +58,25 @@ class SBBildirim {
 class AlertBildirim {
   static void hata(String icerik, List<Widget> butonlar) {
     Color renk = Color(0xfff44336);
-    String baslik = 'Önemli Uyarı!';
+    String baslik = 'a232'.tr;
     run(baslik, icerik, renk, butonlar);
   }
 
   static void uyari(String icerik, List<Widget> butonlar) {
     Color renk = Color(0xffffc107);
-    String baslik = 'Önemli Uyarı!';
+    String baslik = 'a232'.tr;
     run(baslik, icerik, renk, butonlar);
   }
 
   static void onay(String icerik, List<Widget> butonlar) {
     Color renk = Color(0xff8bc34a);
-    String baslik = 'Başarılı İşlem!';
+    String baslik = 'a233'.tr;
     run(baslik, icerik, renk, butonlar);
   }
 
   static void bilgi(String icerik, List<Widget> butonlar) {
     Color renk = Color(0xff00bcd4);
-    String baslik = 'Önemli Bilgilendirme!';
+    String baslik = 'a234'.tr;
     run(baslik, icerik, renk, butonlar);
   }
 
@@ -89,12 +89,6 @@ class AlertBildirim {
       middleTextStyle: TextStyle(fontSize: 15, color: renk),
       backgroundColor: Color(0xff1e272b),
       radius: 5,
-      // textCancel: 'kapat',
-      // cancelTextColor: Colors.red,
-      //onCancel: () {},
-      // textConfirm: 'kabul et',
-      // confirmTextColor: Colors.green,
-      // onConfirm: () {},
       actions: butonlar,
       cancel: ElevatedButton(
           onPressed: () {

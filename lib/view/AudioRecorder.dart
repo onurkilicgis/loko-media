@@ -112,7 +112,7 @@ class AudioRecorderState extends State<AudioRecorder> {
           });
         },
         icon: Icon(Icons.mic),
-        label: Text('Başlat'));
+        label: Text('a224'.tr));
   }
 
   Widget iptalEtTekrarBaslaButonu() {
@@ -147,12 +147,12 @@ class AudioRecorderState extends State<AudioRecorder> {
           });
         },
         icon: Icon(Icons.stop),
-        label: Text('Bitir'));
+        label: Text('a225'.tr));
   }
 
   Widget durdurCalistirIconu(bool durum) {
     final icon = durum ? Icons.pause : Icons.play_arrow;
-    final text = durum ? 'Durdur' : 'Devam et';
+    final text = durum ? 'a226'.tr : 'a227'.tr;
     final backgroundColor = durum ? Color(0xffb4a30c) : Color(0xff5ba560);
     final foregroundColor = Colors.black;
 
@@ -256,9 +256,7 @@ class AudioRecorderState extends State<AudioRecorder> {
                               ),
                               SizedBox(),
                               Text(
-                                recorder.isRecording
-                                    ? 'Kayıt  Ediyor...'
-                                    : 'Başlata Basınız.',
+                                recorder.isRecording ? 'a228'.tr : 'a229'.tr,
                                 style: TextStyle(
                                     fontSize: 13, color: Color(0xC3FFFFFF)),
                               ),

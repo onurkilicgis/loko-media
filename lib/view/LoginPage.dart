@@ -159,74 +159,68 @@ class _LoginPageState extends State<LoginPage> {
         final double ekranYuksekligi = ekranBilgisi.size.height;
         final double ekranGenisligi = ekranBilgisi.size.width;
         return Scaffold(
-          body: SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: ekranYuksekligi / 50),
-                      child: SizedBox(
-                          width: ekranGenisligi,
-                          height: ekranYuksekligi / 4,
-                          child: Image.asset('images/korte_logo.png')),
+          body: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                      height: ekranYuksekligi / 6,
+                      child: Image.asset('images/lokomedia-logo.png')),
+                  SizedBox(
+                    height: ekranYuksekligi / 8,
+                  ),
+                  Container(
+                    child: Padding(
+                      padding: EdgeInsets.all(8),
+                      child: buildMailTextFormField(),
                     ),
-                    SizedBox(
-                      height: ekranYuksekligi / 20,
+                  ),
+                  Container(
+                    child: Padding(
+                      padding: EdgeInsets.all(8),
+                      child: buildPasswordTextFormField(),
                     ),
-                    Container(
-                      child: Padding(
-                        padding: EdgeInsets.all(8),
-                        child: buildMailTextFormField(),
-                      ),
-                    ),
-                    Container(
-                      child: Padding(
-                        padding: EdgeInsets.all(8),
-                        child: buildPasswordTextFormField(),
-                      ),
-                    ),
-                    buildPasswordGestureDetector(context, ekranGenisligi),
-                    SizedBox(
-                      height: ekranYuksekligi / 25,
-                    ),
-                    Container(
-                      child: SizedBox(
-                        width: ekranGenisligi / 1.2,
-                        height: ekranYuksekligi / 18,
-                        child: buildEntryElevatedButton(),
-                      ),
-                    ),
-                    SizedBox(height: ekranYuksekligi / 30),
-                    SizedBox(
+                  ),
+                  buildPasswordGestureDetector(context, ekranGenisligi),
+                  SizedBox(
+                    height: ekranYuksekligi / 25,
+                  ),
+                  Container(
+                    child: SizedBox(
                       width: ekranGenisligi / 1.2,
                       height: ekranYuksekligi / 18,
-                      child: buildGoogleElevatedButton(),
+                      child: buildEntryElevatedButton(),
                     ),
-                    SizedBox(
-                      height: ekranYuksekligi / 30,
-                    ),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(left: ekranGenisligi / 5),
-                          child: Container(
-                            child: Text(
-                              'a6'.tr,
-                              style: TextStyle(
-                                  color: Color(0xff7C9099),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
+                  ),
+                  SizedBox(height: ekranYuksekligi / 30),
+                  SizedBox(
+                    width: ekranGenisligi / 1.2,
+                    height: ekranYuksekligi / 18,
+                    child: buildGoogleElevatedButton(),
+                  ),
+                  SizedBox(
+                    height: ekranYuksekligi / 30,
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: ekranGenisligi / 5),
+                        child: Container(
+                          child: Text(
+                            'a6'.tr,
+                            style: TextStyle(
+                                color: Color(0xff7C9099),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
-                        SizedBox(width: ekranGenisligi / 37),
-                        buildSignGestureDetector(context),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                      SizedBox(width: ekranGenisligi / 37),
+                      buildSignGestureDetector(context),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
@@ -336,8 +330,12 @@ class _LoginPageState extends State<LoginPage> {
         }
 
 //
-        User? user = await _authService.signInPerson(
-            _emailController.text, _passwordController.text);
+        User? user = await _authService
+            .signInPerson(_emailController.text, _passwordController.text, () {
+          setState(() {
+            isEntry = false;
+          });
+        });
         firebaseLogin(user!.email.toString(), user.uid.toString(), 'Unnamed');
       },
     );

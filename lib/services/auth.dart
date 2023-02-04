@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loko_media/services/MyLocal.dart';
 import 'package:loko_media/services/utils.dart';
@@ -31,12 +32,14 @@ class AuthService {
   }
 
   // giriş Fonksiyonu
-  Future<User?> signInPerson(String email, String password) async {
+  Future<User?> signInPerson(
+      String email, String password, Function callback) async {
     try {
       var user = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       return user.user;
     } catch (err) {
+      callback();
       errorHandling(err);
     }
   }
@@ -55,7 +58,7 @@ class AuthService {
 
       // Obtain the auth details from the request
       final GoogleSignInAuthentication? googleAuth =
-      await googleUser?.authentication;
+          await googleUser?.authentication;
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
@@ -68,41 +71,39 @@ class AuthService {
     } catch (err) {
       errorHandling(err);
     }
-
   }
 
-  errorHandling(err) {
+  static errorHandling(err) {
     switch (err.code) {
-      case 'sign_in_failed':{
-        SBBildirim.uyari(
-            'Giriş işlemi başarısız oldu. '+err.message.toString());
-        break;
-      }
+      case 'sign_in_failed':
+        {
+          SBBildirim.uyari(Utils.getComplexLanguage(
+              'a235'.tr, {'mesaj': err.message.toString()}));
+          break;
+        }
       case 'email-already-in-use':
         {
-          SBBildirim.uyari(
-              'Bu mail zaten sisteme kayıtlıdır. Lütfen Giriş yapınız.');
+          SBBildirim.uyari('a236'.tr);
           break;
         }
       case 'wrong-password':
         {
-          SBBildirim.uyari(
-              'Parolanız hatalı ya da daha önce hiç şifre belirlemediniz.');
+          SBBildirim.uyari('a237'.tr);
           break;
         }
       case 'user-not-found':
         {
-          SBBildirim.uyari('Böyle bir üye sistemimizde kayıtlı değildir');
+          SBBildirim.uyari('a238'.tr);
           break;
         }
       case 'too-many-requests':
         {
-          SBBildirim.uyari('Çok fazla istek gönderdiniz. Bir süre bekleyiniz.');
+          SBBildirim.uyari('a239'.tr);
           break;
         }
       case 'unknown':
         {
-          SBBildirim.uyari('Lütfen giriş bilgilerinizi kontrol ediniz.');
+          SBBildirim.uyari('a240'.tr);
           break;
         }
     }

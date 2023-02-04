@@ -386,7 +386,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                         albumuHaritadaGoster(album);
                       }),
                       cardBottomButton(
-                          durum == 'Aktif'
+                          durum == 'a218'.tr
                               ? Icons.radio_button_checked
                               : Icons.radio_button_off, () async {
                         albumAktifEt(album);
@@ -403,11 +403,11 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
     List<Widget> cards = [];
     for (int i = 0; i < filteredAlbumList.length; i++) {
       var album = filteredAlbumList[i];
-      String aktifPasif = 'Pasif';
+      String aktifPasif = 'a217'.tr;
       if (album.id == aktifalbum) {
-        aktifPasif = 'Aktif';
+        aktifPasif = 'a218'.tr;
       } else {
-        aktifPasif = 'Pasif';
+        aktifPasif = 'a217'.tr;
       }
       Image image;
       if (album.image == '') {
@@ -546,350 +546,369 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         : DefaultTabController(
             length: 3,
             initialIndex: 0,
-            child: Scaffold(
-              drawer: Container(
-                width: 300,
-                child: Drawer(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(20),
-                        bottomRight: Radius.circular(20)),
-                  ),
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    children: [
-                      UserAccountsDrawerHeader(
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.only(topRight: Radius.circular(18)),
-                          color: Theme.of(context).drawerTheme.backgroundColor,
-                        ),
-                        accountName: Text(user['name']),
-                        accountEmail: Text(user['mail']),
-                        currentAccountPicture: CircleAvatar(
-                          child: ClipOval(
-                            child:
-                                Image.network(user['img'], fit: BoxFit.cover),
+            child: WillPopScope(
+              onWillPop: () {
+                return Util.evetHayir(context, 'a64'.tr, 'a231'.tr,
+                    (cevap) async {
+                  if (cevap == true) {
+                    await _authService.signOut();
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => LoginPage()));
+                  } else {
+                    return false;
+                  }
+                });
+              },
+              child: Scaffold(
+                drawer: Container(
+                  width: 300,
+                  child: Drawer(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(20),
+                          bottomRight: Radius.circular(20)),
+                    ),
+                    child: ListView(
+                      padding: EdgeInsets.zero,
+                      children: [
+                        UserAccountsDrawerHeader(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(18)),
+                            color:
+                                Theme.of(context).drawerTheme.backgroundColor,
                           ),
+                          accountName: Text(user['name']),
+                          accountEmail: Text(user['mail']),
+                          currentAccountPicture: CircleAvatar(
+                            child: ClipOval(
+                              child:
+                                  Image.network(user['img'], fit: BoxFit.cover),
+                            ),
+                          ),
+                          /* onDetailsPressed: () {},
+                      arrowColor: Colors.black,*/
                         ),
-                        /* onDetailsPressed: () {},
-                    arrowColor: Colors.black,*/
-                      ),
-                      listMenuItems(Icons.person, "Profilim", () {
-                        openPage('profil');
-                      }),
-                      listMenuItems(
-                          Icons.event_note, "Albüm Oluştur", getDialog),
-                      listMenuItems(Icons.search, "Kişi Ara", () {
-                        openPage('kisiara');
-                      }),
-                      listMenuItems(
-                          Icons.supervised_user_circle, "Takipçilerim", () {
-                        openPage('takipciler');
-                      }),
-                      listMenuItems(
-                          Icons.supervisor_account_rounded, "Takip Ettiklerim",
-                          () {
-                        openPage('takipettiklerim');
-                      }),
+                        listMenuItems(Icons.person, "a219".tr, () {
+                          openPage('profil');
+                        }),
+                        listMenuItems(Icons.event_note, "a220".tr, getDialog),
+                        listMenuItems(Icons.search, "a221".tr, () {
+                          openPage('kisiara');
+                        }),
+                        listMenuItems(Icons.supervised_user_circle, "a222".tr,
+                            () {
+                          openPage('takipciler');
+                        }),
+                        listMenuItems(
+                            Icons.supervisor_account_rounded, "a223".tr, () {
+                          openPage('takipettiklerim');
+                        }),
 
-                      // SizedBox(height: context.dynamicHeight(3)),
-                      Container(
-                        child: Row(
-                          children: [
-                            Expanded(
-                                child: ListTile(
-                              leading: Icon(
-                                FontAwesomeIcons.moon,
-                                color:
-                                    Theme.of(context).listTileTheme.iconColor,
-                              ),
-                              title: Text(
-                                'a63'.tr,
-                                style: TextStyle(
-                                  fontSize: 14,
+                        // SizedBox(height: context.dynamicHeight(3)),
+                        Container(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                  child: ListTile(
+                                leading: Icon(
+                                  FontAwesomeIcons.moon,
+                                  color:
+                                      Theme.of(context).listTileTheme.iconColor,
                                 ),
-                              ),
-                              trailing: Consumer<SwitchModel>(
-                                  builder: (context, switchModel, child) {
-                                return Switch(
-                                    value: switchModel.isSwitchControl,
-                                    //tetikleyici
+                                title: Text(
+                                  'a63'.tr,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                trailing: Consumer<SwitchModel>(
+                                    builder: (context, switchModel, child) {
+                                  return Switch(
+                                      value: switchModel.isSwitchControl,
+                                      //tetikleyici
 
-                                    activeTrackColor: Color(0XFF79D6FD),
-                                    activeColor: Theme.of(context)
-                                        .listTileTheme
-                                        .iconColor,
-                                    inactiveTrackColor: Colors.grey,
-                                    // inactiveThumbColor: Colors.black,
-                                    onChanged: (bool data) async {
-                                      if (data == true) {
-                                        await MyLocal.setStringData(
-                                            'theme', 'dark');
-                                      } else {
-                                        await MyLocal.setStringData(
-                                            'theme', 'light');
-                                      }
+                                      activeTrackColor: Color(0XFF79D6FD),
+                                      activeColor: Theme.of(context)
+                                          .listTileTheme
+                                          .iconColor,
+                                      inactiveTrackColor: Colors.grey,
+                                      // inactiveThumbColor: Colors.black,
+                                      onChanged: (bool data) async {
+                                        if (data == true) {
+                                          await MyLocal.setStringData(
+                                              'theme', 'dark');
+                                        } else {
+                                          await MyLocal.setStringData(
+                                              'theme', 'light');
+                                        }
 
-                                      switchModel
-                                          .switchChanged(data); // dinleyici
-                                    });
-                              }),
-                            ))
-                          ],
-                        ),
-                      ),
-                      Container(
-                        child: Row(
-                          children: [
-                            Expanded(
-                                child: ListTile(
-                              leading: Icon(
-                                FontAwesomeIcons.arrowRightFromBracket,
-                                color:
-                                    Theme.of(context).listTileTheme.iconColor,
-                              ),
-                              title: Text(
-                                'a64'.tr,
-                                style: TextStyle(fontSize: 14),
-                              ),
-                              onTap: () async {
-                                await _authService.signOut();
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => LoginPage()));
-                              },
-                            ))
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              appBar: AppBar(
-                centerTitle: true,
-                title: getAppController(),
-                backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-                foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
-                bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(40),
-                  child: Material(
-                    color: Theme.of(context).primaryColor,
-                    child: TabBar(
-                      onTap: (tabindex) async {
-                        if (tabindex == 1) {
-                          getAlbumList();
-                        }
-                        if (tabindex == 2) {
-                          controller.index = controller.previousIndex;
-                          albumMedyalariniAc(aktifalbum);
-                        }
-                        if (tabindex == 3) {
-                          controller.index = controller.previousIndex;
-                          albumuHaritadaGoster(aktifAlbumItem);
-                        }
-                      },
-                      labelStyle: TextStyle(fontSize: 14),
-                      unselectedLabelStyle: TextStyle(fontSize: 12),
-                      indicatorColor: Theme.of(context).accentColor,
-                      controller: controller,
-                      labelColor: Theme.of(context).tabBarTheme.labelColor,
-                      unselectedLabelColor:
-                          Theme.of(context).tabBarTheme.unselectedLabelColor,
-                      tabs: [
-                        Tab(
-                          child: Text(
-                            'a65'.tr,
+                                        switchModel
+                                            .switchChanged(data); // dinleyici
+                                      });
+                                }),
+                              ))
+                            ],
                           ),
-                          //icon: Icon(Icons.list_alt),
                         ),
-                        Tab(
-                          child: Text(
-                            'a66'.tr,
+                        Container(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                  child: ListTile(
+                                leading: Icon(
+                                  FontAwesomeIcons.arrowRightFromBracket,
+                                  color:
+                                      Theme.of(context).listTileTheme.iconColor,
+                                ),
+                                title: Text(
+                                  'a64'.tr,
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                onTap: () async {
+                                  await _authService.signOut();
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => LoginPage()));
+                                },
+                              ))
+                            ],
                           ),
-                          //icon: Icon(Icons.list_alt),
-                        ),
-                        Tab(
-                          child: Text(
-                            'a67'.tr,
-                          ),
-                          //icon: Icon(Icons.media_bluetooth_off),
-                        ),
-                        Tab(
-                          child: Text(
-                            'a68'.tr,
-                          ),
-                          //icon: Icon(Icons.map)
-                        ),
+                        )
                       ],
                     ),
                   ),
                 ),
-              ),
-              body: TabBarView(
-                  controller: controller,
-                  physics: aktifTabIndex != 3
-                      ? BouncingScrollPhysics()
-                      : NeverScrollableScrollPhysics(),
-                  children: [
-                    Paylasimlar(id: tiklananAlbum),
-                    Container(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      child: Column(
-                        children: [
-                          APP_VM.getAramaKutusu(
-                            context,
-                            this,
-                            album,
+                appBar: AppBar(
+                  centerTitle: true,
+                  title: getAppController(),
+                  backgroundColor:
+                      Theme.of(context).appBarTheme.backgroundColor,
+                  foregroundColor:
+                      Theme.of(context).appBarTheme.foregroundColor,
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(40),
+                    child: Material(
+                      color: Theme.of(context).primaryColor,
+                      child: TabBar(
+                        onTap: (tabindex) async {
+                          if (tabindex == 1) {
+                            getAlbumList();
+                          }
+                          if (tabindex == 2) {
+                            controller.index = controller.previousIndex;
+                            albumMedyalariniAc(aktifalbum);
+                          }
+                          if (tabindex == 3) {
+                            controller.index = controller.previousIndex;
+                            albumuHaritadaGoster(aktifAlbumItem);
+                          }
+                        },
+                        labelStyle: TextStyle(fontSize: 14),
+                        unselectedLabelStyle: TextStyle(fontSize: 12),
+                        indicatorColor: Theme.of(context).accentColor,
+                        controller: controller,
+                        labelColor: Theme.of(context).tabBarTheme.labelColor,
+                        unselectedLabelColor:
+                            Theme.of(context).tabBarTheme.unselectedLabelColor,
+                        tabs: [
+                          Tab(
+                            child: Text(
+                              'a65'.tr,
+                            ),
+                            //icon: Icon(Icons.list_alt),
                           ),
-                          Consumer<SwitchModel>(
-                              builder: (context, switchModel, child) {
-                            return Expanded(
-                              child: cardType == 'GFCard'
-                                  ? GridView(
-                                      padding: EdgeInsets.all(12),
-                                      shrinkWrap: false,
-                                      scrollDirection: Axis.vertical,
-                                      gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2,
-                                      ),
-                                      children: createAlbumCards(
-                                          switchModel.isSwitchControl))
-                                  : ListView(
-                                      shrinkWrap: true,
-                                      padding: const EdgeInsets.all(8),
-                                      scrollDirection: Axis.vertical,
-                                      children: createAlbumCards(
-                                          switchModel.isSwitchControl),
-                                    ),
-                            );
-                          }),
+                          Tab(
+                            child: Text(
+                              'a66'.tr,
+                            ),
+                            //icon: Icon(Icons.list_alt),
+                          ),
+                          Tab(
+                            child: Text(
+                              'a67'.tr,
+                            ),
+                            //icon: Icon(Icons.media_bluetooth_off),
+                          ),
+                          Tab(
+                            child: Text(
+                              'a68'.tr,
+                            ),
+                            //icon: Icon(Icons.map)
+                          ),
                         ],
                       ),
                     ),
-                    Container(
-                      color: Theme.of(context).backgroundColor,
-                      child: Medya(
-                        id: tiklananAlbum,
+                  ),
+                ),
+                body: TabBarView(
+                    controller: controller,
+                    physics: aktifTabIndex != 3
+                        ? BouncingScrollPhysics()
+                        : NeverScrollableScrollPhysics(),
+                    children: [
+                      Paylasimlar(id: tiklananAlbum),
+                      Container(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        child: Column(
+                          children: [
+                            APP_VM.getAramaKutusu(
+                              context,
+                              this,
+                              album,
+                            ),
+                            Consumer<SwitchModel>(
+                                builder: (context, switchModel, child) {
+                              return Expanded(
+                                child: cardType == 'GFCard'
+                                    ? GridView(
+                                        padding: EdgeInsets.all(12),
+                                        shrinkWrap: false,
+                                        scrollDirection: Axis.vertical,
+                                        gridDelegate:
+                                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2,
+                                        ),
+                                        children: createAlbumCards(
+                                            switchModel.isSwitchControl))
+                                    : ListView(
+                                        shrinkWrap: true,
+                                        padding: const EdgeInsets.all(8),
+                                        scrollDirection: Axis.vertical,
+                                        children: createAlbumCards(
+                                            switchModel.isSwitchControl),
+                                      ),
+                              );
+                            }),
+                          ],
+                        ),
                       ),
+                      Container(
+                        color: Theme.of(context).backgroundColor,
+                        child: Medya(
+                          id: tiklananAlbum,
+                        ),
+                      ),
+                      Harita(id: tiklananAlbum, type: 'album')
+                    ]),
+                bottomNavigationBar: BottomNavigationBar(
+                  backgroundColor: Theme.of(context)
+                      .bottomNavigationBarTheme
+                      .backgroundColor,
+                  selectedItemColor: Theme.of(context)
+                      .bottomNavigationBarTheme
+                      .selectedItemColor,
+                  unselectedItemColor: Theme.of(context)
+                      .bottomNavigationBarTheme
+                      .unselectedItemColor,
+                  key: scaffoldState,
+                  currentIndex: currentIndex,
+                  onTap: (index) async {
+                    if (index == 0) {
+                      return BottomSheetItems(Icons.camera_alt_outlined,
+                          'a69'.tr, Icons.image_outlined, 'a70'.tr, (num) {
+                        switch (num) {
+                          case 0:
+                            {
+                              pickImage(ImageSource.camera);
+
+                              break;
+                            }
+                          case 1:
+                            {
+                              pickImage(ImageSource.gallery);
+
+                              break;
+                            }
+                        }
+                      });
+                    }
+                    ;
+                    if (index == 1) {
+                      return BottomSheetItems(Icons.video_camera_back, 'a71'.tr,
+                          Icons.video_collection, 'a72'.tr, (num) {
+                        switch (num) {
+                          case 0:
+                            {
+                              pickVideo(ImageSource.camera, video);
+                              break;
+                            }
+                          case 1:
+                            {
+                              pickVideo(ImageSource.gallery, video);
+                              break;
+                            }
+                        }
+                      });
+                    }
+                    ;
+                    if (index == 2) {
+                      return BottomSheetItems(
+                          Icons.mic, 'a73'.tr, Icons.audio_file, 'a74'.tr,
+                          (num) async {
+                        switch (num) {
+                          case 0:
+                            {
+                              buildPushAudio(context, this);
+                              break;
+                            }
+                          case 1:
+                            {
+                              await audioFilePicker();
+                              break;
+                            }
+                        }
+                      });
+                    }
+                    ;
+                    if (index == 3) {
+                      return BottomSheetItems(
+                          Icons.text_snippet_sharp,
+                          'a75'.tr,
+                          Icons.insert_drive_file_rounded,
+                          'a76'.tr, (num) async {
+                        switch (num) {
+                          case 0:
+                            {
+                              buildPushText(context, this);
+
+                              break;
+                            }
+                          case 1:
+                            {
+                              await textFilePicker();
+                              break;
+                            }
+                        }
+                      });
+                    }
+
+                    setState(() {
+                      currentIndex = index;
+                    });
+                  },
+                  type: BottomNavigationBarType.fixed,
+                  // iconSize: context.dynamicHeight(50),
+                  selectedFontSize: context.dynamicHeight(65),
+                  unselectedFontSize: context.dynamicHeight(75),
+                  items: [
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.camera_alt),
+                      label: 'a77'.tr,
                     ),
-                    Harita(id: tiklananAlbum, type: 'album')
-                  ]),
-              bottomNavigationBar: BottomNavigationBar(
-                backgroundColor:
-                    Theme.of(context).bottomNavigationBarTheme.backgroundColor,
-                selectedItemColor: Theme.of(context)
-                    .bottomNavigationBarTheme
-                    .selectedItemColor,
-                unselectedItemColor: Theme.of(context)
-                    .bottomNavigationBarTheme
-                    .unselectedItemColor,
-                key: scaffoldState,
-                currentIndex: currentIndex,
-                onTap: (index) async {
-                  if (index == 0) {
-                    return BottomSheetItems(Icons.camera_alt_outlined, 'a69'.tr,
-                        Icons.image_outlined, 'a70'.tr, (num) {
-                      switch (num) {
-                        case 0:
-                          {
-                            pickImage(ImageSource.camera);
-
-                            break;
-                          }
-                        case 1:
-                          {
-                            pickImage(ImageSource.gallery);
-
-                            break;
-                          }
-                      }
-                    });
-                  }
-                  ;
-                  if (index == 1) {
-                    return BottomSheetItems(Icons.video_camera_back, 'a71'.tr,
-                        Icons.video_collection, 'a72'.tr, (num) {
-                      switch (num) {
-                        case 0:
-                          {
-                            pickVideo(ImageSource.camera, video);
-                            break;
-                          }
-                        case 1:
-                          {
-                            pickVideo(ImageSource.gallery, video);
-                            break;
-                          }
-                      }
-                    });
-                  }
-                  ;
-                  if (index == 2) {
-                    return BottomSheetItems(
-                        Icons.mic, 'a73'.tr, Icons.audio_file, 'a74'.tr,
-                        (num) async {
-                      switch (num) {
-                        case 0:
-                          {
-                            buildPushAudio(context, this);
-                            break;
-                          }
-                        case 1:
-                          {
-                            await audioFilePicker();
-                            break;
-                          }
-                      }
-                    });
-                  }
-                  ;
-                  if (index == 3) {
-                    return BottomSheetItems(Icons.text_snippet_sharp, 'a75'.tr,
-                        Icons.insert_drive_file_rounded, 'a76'.tr, (num) async {
-                      switch (num) {
-                        case 0:
-                          {
-                            buildPushText(context, this);
-
-                            break;
-                          }
-                        case 1:
-                          {
-                            await textFilePicker();
-                            break;
-                          }
-                      }
-                    });
-                  }
-
-                  setState(() {
-                    currentIndex = index;
-                  });
-                },
-                type: BottomNavigationBarType.fixed,
-                // iconSize: context.dynamicHeight(50),
-                selectedFontSize: context.dynamicHeight(65),
-                unselectedFontSize: context.dynamicHeight(75),
-                items: [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.camera_alt),
-                    label: 'a77'.tr,
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.video_camera_back),
-                    label: 'a78'.tr,
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.mic),
-                    label: 'a79'.tr,
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.wysiwyg),
-                    label: 'a80'.tr,
-                  ),
-                ],
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.video_camera_back),
+                      label: 'a78'.tr,
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.mic),
+                      label: 'a79'.tr,
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.wysiwyg),
+                      label: 'a80'.tr,
+                    ),
+                  ],
+                ),
               ),
             ),
           );

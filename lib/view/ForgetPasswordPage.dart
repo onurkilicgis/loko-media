@@ -104,7 +104,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
 
                             _authService
                                 .signInPerson(emailcontroller.text,
-                                    'aşkdsjşaldbfKŞJQWBKJABDVKBqhuew')
+                                    'aşkdsjşaldbfKŞJQWBKJABDVKBqhuew', () {})
                                 .then((value) => null)
                                 .catchError((onError) {
                               switch (onError.code.toString()) {

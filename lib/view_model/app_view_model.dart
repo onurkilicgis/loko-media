@@ -257,6 +257,7 @@ class APP_VM {
                   leading: Icon(Icons.person),
                   title: Text('a190'.tr),
                   onTap: () async {
+                    Navigator.pop(context);
                     List<Medias> listShare =
                         await AlbumDataBase.getFiles(album.id!);
                     Navigator.push(
@@ -279,6 +280,7 @@ class APP_VM {
                   ),
                   title: Text('a191'.tr),
                   onTap: () async {
+                    Navigator.pop(context);
                     List<Medias> listShare =
                         await AlbumDataBase.getFiles(album.id!);
                     Navigator.push(
@@ -303,6 +305,7 @@ class APP_VM {
                     leading: Icon(Icons.mail),
                     title: Text('a192'.tr),
                     onTap: () async {
+                      Navigator.pop(context);
                       List<XFile> files = [];
                       List<Medias> medias =
                           await AlbumDataBase.getFiles(album.id!);
