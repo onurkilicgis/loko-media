@@ -215,7 +215,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
 
   int currentIndex = 0;
 
-  Card createCard(album, image, durum) {
+  Card createCard(album, image, durum, isDark) {
     return Card(
       child: ListTile(
         onTap: () {
@@ -224,22 +224,36 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         leading: image,
         title: Text(
           album.name,
-          style: TextStyle(shadows: [
-            BoxShadow(
-                offset: Offset(20.0, 20.0),
-                blurRadius: 8.0,
-                color: Colors.white),
-          ]),
+          style: TextStyle(shadows: <Shadow>[
+            isDark == 'dark'
+                ? Shadow(
+              offset: Offset(0.5, 0.5),
+              blurRadius: 0.1,
+              color: Color.fromARGB(255, 0, 0, 0),
+            )
+                : Shadow(
+              offset: Offset(0.5, 0.5),
+              blurRadius: 0.1,
+              color: Color.fromARGB(255, 255, 255, 255),
+            )
+          ],),
         ),
         subtitle: Text(
             Utils.getComplexLanguage(
                 'a60'.tr, {'sayi': album.itemCount, 'durum': durum}),
-            style: TextStyle(fontSize: 11, shadows: [
-              BoxShadow(
-                  offset: Offset(10.0, 10.0),
-                  blurRadius: 8.0,
-                  color: Colors.white),
-            ])),
+            style: TextStyle(fontSize: 10, shadows: <Shadow>[
+              isDark == 'dark'
+                  ? Shadow(
+                offset: Offset(0.5, 0.5),
+                blurRadius: 0.1,
+                color: Color.fromARGB(255, 0, 0, 0),
+              )
+                  : Shadow(
+                offset: Offset(0.5, 0.5),
+                blurRadius: 0.1,
+                color: Color.fromARGB(255, 255, 255, 255),
+              )
+            ],)),
         trailing: IconButton(
             onPressed: () {
               APP_VM.showAlbumDialog(context, this, album);
@@ -354,11 +368,15 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                             shadows: <Shadow>[
                               isDark == 'dark'
                                   ? Shadow(
-                                      offset: Offset(1.0, 1.0),
-                                      blurRadius: 4.0,
+                                      offset: Offset(0.5, 0.5),
+                                      blurRadius: 0.1,
                                       color: Color.fromARGB(255, 0, 0, 0),
                                     )
-                                  : Shadow()
+                                  : Shadow(
+                                      offset: Offset(0.5, 0.5),
+                                      blurRadius: 0.1,
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                    )
                             ],
                           ),
                         ),
@@ -372,11 +390,15 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                           shadows: <Shadow>[
                             isDark == 'dark'
                                 ? Shadow(
-                                    offset: Offset(1.0, 1.0),
-                                    blurRadius: 4.0,
+                                    offset: Offset(0.5, 0.5),
+                                    blurRadius: 0.1,
                                     color: Color.fromARGB(255, 0, 0, 0),
                                   )
-                                : Shadow()
+                                : Shadow(
+                              offset: Offset(0.5, 0.5),
+                              blurRadius: 0.1,
+                              color: Color.fromARGB(255, 255, 255, 255),
+                            )
                           ],
                         ),
                       )
@@ -457,7 +479,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         Widget card = createCustomCards(album, aktifPasif, isDark);
         cards.add(card);
       } else {
-        Card card = createCard(album, image, aktifPasif);
+        Card card = createCard(album, image, aktifPasif, isDark);
         cards.add(card);
       }
     }
