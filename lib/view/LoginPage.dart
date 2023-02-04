@@ -31,6 +31,7 @@ class _LoginPageState extends State<LoginPage> {
 
   bool verify = false;
   bool isEntry = false;
+  String isDark = 'dark';
 
   final auth = FirebaseAuth.instance;
 
@@ -55,6 +56,7 @@ class _LoginPageState extends State<LoginPage> {
 
   //kullanıcı zaten sisteme girmiş mi diye kontrol için ilk başta çalıştırıyoruz.
   void loginControlState() async {
+    isDark = await MyLocal.getStringData('theme');
     String token = await MyLocal.getStringData('token');
     // token boş ise sisteme giriş yapan yok.
     if (token == '') {
@@ -166,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   SizedBox(
                       height: ekranYuksekligi / 6,
-                      child: Image.asset('images/lokomedia-logo.png')),
+                      child: Image.asset(isDark=='dark'?'images/lokomedia-logo3.png':'images/lokomedia-logo.png')),
                   SizedBox(
                     height: ekranYuksekligi / 8,
                   ),

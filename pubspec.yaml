@@ -116,19 +116,13 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - images/lokomedia-logo.png
-    - assets/.env.production
-    - assets/.env.development
-    - assets/images/album_dark.png
-    - assets/images/album_light.png
+    - images/
+    - assets/
     - assets/harita/
     - assets/harita/css/
     - assets/harita/js/
-    - assets/images/audio_dark.png
-    - assets/images/audio_light.png
     - assets/harita/img/
-    - assets/images/txt_dark.png
-    - assets/images/txt_light.png
+    - assets/images/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

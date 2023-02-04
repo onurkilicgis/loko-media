@@ -294,13 +294,13 @@ class _AlbumShareState extends State<AlbumShare> {
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
-                      color: Theme.of(context).badgeTheme.backgroundColor,
+                      color: Theme.of(context).primaryColor,
                     ),
                     child: DropdownButtonFormField<String>(
                       decoration: InputDecoration.collapsed(hintText: ''),
                       value: dropdownValue,
                       dropdownColor:
-                          Theme.of(context).badgeTheme.backgroundColor,
+                          Theme.of(context).primaryColor,
                       iconEnabledColor:
                           Theme.of(context).listTileTheme.iconColor,
                       isDense: true,

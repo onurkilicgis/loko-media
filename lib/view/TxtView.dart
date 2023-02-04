@@ -40,7 +40,7 @@ class _TxtViewState extends State<TxtView> {
                   child: Container(
                     height: 430,
                     decoration: BoxDecoration(
-                        color: Theme.of(context).badgeTheme.backgroundColor,
+                        color: Theme.of(context).primaryColor,
                         borderRadius: BorderRadius.circular(10)),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

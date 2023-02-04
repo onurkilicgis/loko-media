@@ -65,7 +65,7 @@ Map<String, String> enLang = {
   'a62': 'No media element to be shown on the map was found',
   'a63': 'Night mode',
   'a64': 'Exit',
-  'a65': 'Population',
+  'a65': 'Timeline',
   'a66': 'Albums',
   'a67': 'Media',
   'a68': 'Map',

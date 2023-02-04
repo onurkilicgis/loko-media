@@ -247,7 +247,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
           height: 32,
           width: 32,
           decoration: ShapeDecoration(
-            color: Theme.of(context).badgeTheme.backgroundColor,
+            color: Theme.of(context).primaryColor,
             shape: CircleBorder(),
           ),
           child: IconButton(

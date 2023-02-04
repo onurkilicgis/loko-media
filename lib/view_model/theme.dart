@@ -41,9 +41,6 @@ class MyTheme {
       accentColor: Color(0XFFA3D900),
       listTileTheme: ListTileThemeData(iconColor: Colors.lightGreen),
       bannerTheme: MaterialBannerThemeData(backgroundColor: Color(0xFFEEEEEE)),
-      badgeTheme: BadgeThemeData(
-        backgroundColor: Color(0xffefeded),
-      ),
       canvasColor: Colors.lightGreen);
 
   static ThemeData darkTheme = ThemeData(
@@ -93,9 +90,6 @@ class MyTheme {
       backgroundColor: Color(0xff202b40),
     ),
     backgroundColor: Color(0xff1A2133),
-    badgeTheme: BadgeThemeData(
-      backgroundColor: Color(0xff202b40),
-    ),
     canvasColor: Color(0xff31376a),
   );
 }

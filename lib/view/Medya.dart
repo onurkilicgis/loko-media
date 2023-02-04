@@ -317,9 +317,9 @@ class MedyaState extends State<Medya> {
                     ),
                     label: 'a128'.tr,
                     backgroundColor:
-                        Theme.of(context).badgeTheme.backgroundColor,
+                        Theme.of(context).primaryColor,
                     labelBackgroundColor:
-                        Theme.of(context).badgeTheme.backgroundColor,
+                        Theme.of(context).primaryColor,
                   ),
                   SpeedDialChild(
                     onTap: () {
@@ -345,9 +345,9 @@ class MedyaState extends State<Medya> {
                     ),
                     label: 'a129'.tr,
                     backgroundColor:
-                        Theme.of(context).badgeTheme.backgroundColor,
+                        Theme.of(context).primaryColor,
                     labelBackgroundColor:
-                        Theme.of(context).badgeTheme.backgroundColor,
+                        Theme.of(context).primaryColor,
                   ),
                   SpeedDialChild(
                     onTap: () {
@@ -362,9 +362,9 @@ class MedyaState extends State<Medya> {
                     ),
                     label: 'a130'.tr,
                     backgroundColor:
-                        Theme.of(context).badgeTheme.backgroundColor,
+                        Theme.of(context).primaryColor,
                     labelBackgroundColor:
-                        Theme.of(context).badgeTheme.backgroundColor,
+                        Theme.of(context).primaryColor,
                   ),
                   SpeedDialChild(
                     onTap: () async {
@@ -401,9 +401,9 @@ class MedyaState extends State<Medya> {
                     ),
                     label: 'a134'.tr,
                     backgroundColor:
-                        Theme.of(context).badgeTheme.backgroundColor,
+                        Theme.of(context).primaryColor,
                     labelBackgroundColor:
-                        Theme.of(context).badgeTheme.backgroundColor,
+                        Theme.of(context).primaryColor,
                   ),
                   SpeedDialChild(
                     child: Icon(
@@ -423,9 +423,9 @@ class MedyaState extends State<Medya> {
                     },
                     label: 'a135'.tr,
                     backgroundColor:
-                        Theme.of(context).badgeTheme.backgroundColor,
+                        Theme.of(context).primaryColor,
                     labelBackgroundColor:
-                        Theme.of(context).badgeTheme.backgroundColor,
+                        Theme.of(context).primaryColor,
                   ),
                 ],
               ),
