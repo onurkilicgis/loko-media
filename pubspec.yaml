@@ -118,6 +118,7 @@ flutter:
   assets:
     - images/
     - assets/
+    - assets/ca/
     - assets/harita/
     - assets/harita/css/
     - assets/harita/js/

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -74,9 +75,12 @@ void backgroundCallback(Uri? data) async {
   }
 }
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Workmanager().initialize(callbackDispatcher, isInDebugMode: kDebugMode);
+  ByteData data = await PlatformAssetBundle().load('assets/ca/lets-encrypt-r3.pem');
+  SecurityContext.defaultContext.setTrustedCertificatesBytes(data.buffer.asUint8List());
 
   // localhost:1990/index.html harita dosyalarımızı yayınlanladımız yer.
   InAppLocalhostServer localhostServer = InAppLocalhostServer(
