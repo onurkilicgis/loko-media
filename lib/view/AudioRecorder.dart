@@ -136,7 +136,7 @@ class AudioRecorderState extends State<AudioRecorder> {
     return ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
             minimumSize: Size(100, 50),
-            backgroundColor: Color(0xffa50909),
+            backgroundColor: Color(0xf2ce0b0b),
             foregroundColor: Colors.black,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10))),
@@ -153,7 +153,7 @@ class AudioRecorderState extends State<AudioRecorder> {
   Widget durdurCalistirIconu(bool durum) {
     final icon = durum ? Icons.pause : Icons.play_arrow;
     final text = durum ? 'a226'.tr : 'a227'.tr;
-    final backgroundColor = durum ? Color(0xffb4a30c) : Color(0xff5ba560);
+    final backgroundColor = durum ? Color(0xffdeca14) : Color(0xff5ba560);
     final foregroundColor = Colors.black;
 
     return Padding(
@@ -312,7 +312,7 @@ class AudioRecorderState extends State<AudioRecorder> {
                         radius: 35,
                         child: IconButton(
                           icon: Icon(Icons.delete, color: Color(0xBEFFFFFF)),
-                          tooltip: 'Kaydı Sil',
+                          tooltip: 'a230'.tr,
                           iconSize: 30,
                           onPressed: () async {
                             Util.evetHayir(context, 'a97'.tr, 'a98'.tr,

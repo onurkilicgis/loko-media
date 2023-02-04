@@ -251,5 +251,6 @@ Map<String, String> enLang = {
   'a237': "Your password is incorrect or you have never set a password before.",
   'a238': "Such a member is not registered in our system.",
   'a239': "You have sent too many requests. Please wait for a while.",
-  'a240': "Please check your login information."
+  'a240': "Please check your login information.",
+  'a241': 'Delete',
 };

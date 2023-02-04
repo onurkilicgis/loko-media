@@ -222,11 +222,24 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
           albumMedyalariniAc(album.id);
         },
         leading: image,
-        title: Text(album.name),
+        title: Text(
+          album.name,
+          style: TextStyle(shadows: [
+            BoxShadow(
+                offset: Offset(20.0, 20.0),
+                blurRadius: 8.0,
+                color: Colors.white),
+          ]),
+        ),
         subtitle: Text(
             Utils.getComplexLanguage(
                 'a60'.tr, {'sayi': album.itemCount, 'durum': durum}),
-            style: TextStyle(fontSize: 11)),
+            style: TextStyle(fontSize: 11, shadows: [
+              BoxShadow(
+                  offset: Offset(10.0, 10.0),
+                  blurRadius: 8.0,
+                  color: Colors.white),
+            ])),
         trailing: IconButton(
             onPressed: () {
               APP_VM.showAlbumDialog(context, this, album);

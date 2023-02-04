@@ -299,8 +299,7 @@ class _AlbumShareState extends State<AlbumShare> {
                     child: DropdownButtonFormField<String>(
                       decoration: InputDecoration.collapsed(hintText: ''),
                       value: dropdownValue,
-                      dropdownColor:
-                          Theme.of(context).primaryColor,
+                      dropdownColor: Theme.of(context).primaryColor,
                       iconEnabledColor:
                           Theme.of(context).listTileTheme.iconColor,
                       isDense: true,
@@ -418,7 +417,7 @@ class _AlbumShareState extends State<AlbumShare> {
                         fillColor:
                             Theme.of(context).appBarTheme.backgroundColor,
                         contentPadding: EdgeInsets.all(8),
-                        hintText: 'Kişi Ara... ',
+                        hintText: 'a221'.tr,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(7),
                           borderSide: BorderSide(

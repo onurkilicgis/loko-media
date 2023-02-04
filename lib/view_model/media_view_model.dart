@@ -67,42 +67,6 @@ class Media_VM {
                                   PdfView(medias: media, appbarstatus: true)));
                         }
                       }
-                      ;
-
-                      /* switch (acmaAdi) {
-                        case goster:
-                          {
-                            model.openImage(media);
-                            break;
-                          }
-                        case 'İzle':
-                          {
-                            model.openLongVideo(media);
-                            break;
-                          }
-                        case 'Dinle':
-                          {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => AudioView(
-                                    medias: media, appbarstatus: true)));
-
-                            break;
-                          }
-                        case 'Oku':
-                          {
-                            dynamic tip = json.decode(media.settings!);
-                            if (tip['type'] == 'txt') {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => TxtView(
-                                      medias: media, appbarstatus: true)));
-                            } else {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => PdfView(
-                                      medias: media, appbarstatus: true)));
-                            }
-                            break;
-                          }
-                      }*/
                     }),
                 ListTile(
                     title: Text('a190'.tr),
@@ -144,7 +108,7 @@ class Media_VM {
                       Navigator.pop(context);
                     }),
                 ListTile(
-                    title: Text('Sil'),
+                    title: Text('a241'.tr),
                     onTap: () async {
                       Util.evetHayir(context, 'a211'.tr, 'a212'.tr,
                           (cevap) async {
@@ -222,7 +186,7 @@ class Media_VM {
                     onTap: () {}),
                 ListTile(
                     leading: Icon(Icons.mail),
-                    title: Text('a214'.tr),
+                    title: Text('a215'.tr),
                     onTap: () {}),
                 ListTile(
                     leading: Icon(Icons.mail),

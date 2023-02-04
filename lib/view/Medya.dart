@@ -305,8 +305,9 @@ class MedyaState extends State<Medya> {
                 icon: Icons.more_vert,
                 //animatedIcon: AnimatedIcons.menu_close,
                 backgroundColor: Theme.of(context).listTileTheme.iconColor,
-                activeBackgroundColor: Colors.red,
-                activeForegroundColor: Colors.white,
+                activeBackgroundColor:
+                    Theme.of(context).listTileTheme.iconColor,
+
                 closeManually: true,
                 children: [
                   SpeedDialChild(
@@ -316,10 +317,8 @@ class MedyaState extends State<Medya> {
                       color: Theme.of(context).listTileTheme.iconColor,
                     ),
                     label: 'a128'.tr,
-                    backgroundColor:
-                        Theme.of(context).primaryColor,
-                    labelBackgroundColor:
-                        Theme.of(context).primaryColor,
+                    backgroundColor: Theme.of(context).primaryColor,
+                    labelBackgroundColor: Theme.of(context).primaryColor,
                   ),
                   SpeedDialChild(
                     onTap: () {
@@ -344,10 +343,8 @@ class MedyaState extends State<Medya> {
                       color: Theme.of(context).listTileTheme.iconColor,
                     ),
                     label: 'a129'.tr,
-                    backgroundColor:
-                        Theme.of(context).primaryColor,
-                    labelBackgroundColor:
-                        Theme.of(context).primaryColor,
+                    backgroundColor: Theme.of(context).primaryColor,
+                    labelBackgroundColor: Theme.of(context).primaryColor,
                   ),
                   SpeedDialChild(
                     onTap: () {
@@ -361,10 +358,8 @@ class MedyaState extends State<Medya> {
                       color: Theme.of(context).listTileTheme.iconColor,
                     ),
                     label: 'a130'.tr,
-                    backgroundColor:
-                        Theme.of(context).primaryColor,
-                    labelBackgroundColor:
-                        Theme.of(context).primaryColor,
+                    backgroundColor: Theme.of(context).primaryColor,
+                    labelBackgroundColor: Theme.of(context).primaryColor,
                   ),
                   SpeedDialChild(
                     onTap: () async {
@@ -400,10 +395,8 @@ class MedyaState extends State<Medya> {
                       color: Theme.of(context).listTileTheme.iconColor,
                     ),
                     label: 'a134'.tr,
-                    backgroundColor:
-                        Theme.of(context).primaryColor,
-                    labelBackgroundColor:
-                        Theme.of(context).primaryColor,
+                    backgroundColor: Theme.of(context).primaryColor,
+                    labelBackgroundColor: Theme.of(context).primaryColor,
                   ),
                   SpeedDialChild(
                     child: Icon(
@@ -422,10 +415,8 @@ class MedyaState extends State<Medya> {
                       });
                     },
                     label: 'a135'.tr,
-                    backgroundColor:
-                        Theme.of(context).primaryColor,
-                    labelBackgroundColor:
-                        Theme.of(context).primaryColor,
+                    backgroundColor: Theme.of(context).primaryColor,
+                    labelBackgroundColor: Theme.of(context).primaryColor,
                   ),
                 ],
               ),
