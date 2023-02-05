@@ -46,7 +46,7 @@ class _TextViewState extends State<TextView> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('156'.tr),
+        title: Text('a156'.tr),
       ),
       body: SafeArea(
         child: Container(
@@ -116,7 +116,7 @@ class _TextViewState extends State<TextView> {
                           borderSide: BorderSide(
                         color: Color(0xff017eba),
                       )),*/
-                      labelText: '158'.tr,
+                      labelText: 'a158'.tr,
                       labelStyle: TextStyle(
                         color: Theme.of(context).listTileTheme.iconColor!,
                       )),
@@ -163,7 +163,7 @@ class _TextViewState extends State<TextView> {
     try {
       if (filePath == null) return;
       if (filePath != null) {
-        Loading.waiting('159'.tr);
+        Loading.waiting('a159'.tr);
       }
 
       dynamic positions = await GPS.getGPSPosition();
@@ -192,7 +192,7 @@ class _TextViewState extends State<TextView> {
       });
 
       Loading.close();
-      SBBildirim.bilgi('160'.tr);
+      SBBildirim.bilgi('a160'.tr);
       if (widget.aktifTabIndex == 2) {
         _mediaProvider.addMedia(dbText);
       }

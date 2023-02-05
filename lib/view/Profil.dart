@@ -168,7 +168,7 @@ class _ProfilState extends State<Profil> {
                     child: Opacity(
                       opacity: 0.5,
                       child: Text(
-                        '143'.tr,
+                        'a143'.tr,
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
                         ),

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../models/Album.dart';
 import '../services/API2.dart';
 import '../services/utils.dart';
+import 'Profil.dart';
 
 class Takipcilerim extends StatefulWidget {
   const Takipcilerim({Key? key}) : super(key: key);
@@ -49,7 +50,7 @@ class _TakipcilerimState extends State<Takipcilerim> {
   }
 
   cikart(dynamic user) {
-    Util.evetHayir(context, '145'.tr,
+    Util.evetHayir(context, 'a145'.tr,
         Utils.getComplexLanguage('a146'.tr, {'name': user['name']}),
         (cevap) async {
       if (cevap == true) {
@@ -128,23 +129,32 @@ class _TakipcilerimState extends State<Takipcilerim> {
                 itemBuilder: (BuildContext context, int index) {
                   String img = filtered[index]['img'];
                   String name = filtered[index]['name'];
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                        top: 0, left: 8, right: 8, bottom: 0),
-                    child: Card(
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(img, scale: 1),
+                  String id = filtered[index]['id'];
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Profil(user: {'id': id})));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          top: 0, left: 8, right: 8, bottom: 0),
+                      child: Card(
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(img, scale: 1),
+                          ),
+                          title: Text('${name}'),
+                          trailing: TextButton(
+                              onPressed: () {
+                                cikart(filtered[index]);
+                              },
+                              child: Text(
+                                'a125'.tr,
+                                style: TextStyle(color: Color(0xffffda15)),
+                              )),
                         ),
-                        title: Text('${name}'),
-                        trailing: TextButton(
-                            onPressed: () {
-                              cikart(filtered[index]);
-                            },
-                            child: Text(
-                              'a125'.tr,
-                              style: TextStyle(color: Color(0xffffda15)),
-                            )),
                       ),
                     ),
                   );

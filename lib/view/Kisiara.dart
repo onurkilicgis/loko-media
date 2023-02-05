@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../models/Album.dart';
 import '../services/API2.dart';
 import '../services/utils.dart';
+import 'Profil.dart';
 
 class Kisiara extends StatefulWidget {
   const Kisiara({Key? key}) : super(key: key);
@@ -153,6 +154,7 @@ class _KisiaraState extends State<Kisiara> {
                   String name = kisiler[index]['name'];
                   bool isMyFriend = kisiler[index]['isMyFriend'];
                   bool isRequested = kisiler[index]['isRequested'];
+                  String id = kisiler[index]['id'];
                   TextButton button = TextButton(
                       onPressed: () {
                         takipEt(kisiler[index]);
@@ -181,16 +183,24 @@ class _KisiaraState extends State<Kisiara> {
                           style: TextStyle(color: Color(0xffff7373)),
                         ));
                   }
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                        top: 0, left: 8, right: 8, bottom: 0),
-                    child: Card(
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(img, scale: 1),
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Profil(user: {'id': id})));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          top: 0, left: 8, right: 8, bottom: 0),
+                      child: Card(
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(img, scale: 1),
+                          ),
+                          title: Text('${name}'),
+                          trailing: button,
                         ),
-                        title: Text('${name}'),
-                        trailing: button,
                       ),
                     ),
                   );

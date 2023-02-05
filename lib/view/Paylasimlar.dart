@@ -81,7 +81,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
                       child: Container(
                         height: 250,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
                             border: Border.all(
                               color: Colors.black12,
                               width: 1,
@@ -246,8 +246,8 @@ class _PaylasimlarState extends State<Paylasimlar> {
   }
 
   createItem(dynamic item) {
-    if(item['type']=='album'){
-      if(item['medias'].length>0){
+    if (item['type'] == 'album') {
+      if (item['medias'].length > 0) {
         return Container(
           width: MediaQuery.of(context).size.width,
           color: Theme.of(context).cardColor,
