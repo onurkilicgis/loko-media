@@ -74,7 +74,7 @@ class _KisiaraState extends State<Kisiara> {
   }
 
   takipEt(dynamic user) {
-    Util.evetHayir(context, 'a118',
+    Util.evetHayir(context, 'a118'.tr,
         Utils.getComplexLanguage('a119'.tr, {'name': user['name']}),
         (cevap) async {
       if (cevap == true) {

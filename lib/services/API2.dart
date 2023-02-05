@@ -1,17 +1,14 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:loko_media/services/Loader.dart';
 import 'package:loko_media/services/MyLocal.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class API {
   static Dio dio = Dio();
 
-  static generateStorageFileUrl(String token, String fileId){
+  static generateStorageFileUrl(String token, String fileId) {
     String url = "";
     final systemMode = dotenv.env['MODE'];
     final String? serverUrl = dotenv.env['API_URL'];
@@ -25,12 +22,12 @@ class API {
   }
 
   static dynamic fileUpload(String path, dynamic body) async {
-    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+    /*(dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
         (HttpClient client) {
       client.badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
       return client;
-    };
+    };*/
     final String? serverUrl = dotenv.env['API_URL'];
     final String? localUrl = dotenv.env['API_URL'];
     final systemMode = dotenv.env['MODE'];
@@ -60,18 +57,18 @@ class API {
     dynamic result = response.data;
     if (result['status'] == true) {
       return {'status': true, 'data': result['data']};
-    }else{
+    } else {
       return {'status': false, 'message': 'Dosya Yüklenemedi'};
     }
   }
 
   static dynamic postRequest(String endPoint, dynamic bodyData) async {
-    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+    /* (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
         (HttpClient client) {
       client.badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
       return client;
-    };
+    };*/
     final String? serverUrl = dotenv.env['API_URL'];
     final String? localUrl = dotenv.env['API_URL'];
     final systemMode = dotenv.env['MODE'];

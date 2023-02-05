@@ -224,36 +224,41 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         leading: image,
         title: Text(
           album.name,
-          style: TextStyle(shadows: <Shadow>[
-            isDark == 'dark'
-                ? Shadow(
-              offset: Offset(0.5, 0.5),
-              blurRadius: 0.1,
-              color: Color.fromARGB(255, 0, 0, 0),
-            )
-                : Shadow(
-              offset: Offset(0.5, 0.5),
-              blurRadius: 0.1,
-              color: Color.fromARGB(255, 255, 255, 255),
-            )
-          ],),
+          style: TextStyle(
+            shadows: <Shadow>[
+              isDark == 'dark'
+                  ? Shadow(
+                      offset: Offset(0.5, 0.5),
+                      blurRadius: 0.1,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    )
+                  : Shadow(
+                      offset: Offset(0.5, 0.5),
+                      blurRadius: 0.1,
+                      color: Color.fromARGB(255, 255, 255, 255),
+                    )
+            ],
+          ),
         ),
         subtitle: Text(
             Utils.getComplexLanguage(
                 'a60'.tr, {'sayi': album.itemCount, 'durum': durum}),
-            style: TextStyle(fontSize: 10, shadows: <Shadow>[
-              isDark == 'dark'
-                  ? Shadow(
-                offset: Offset(0.5, 0.5),
-                blurRadius: 0.1,
-                color: Color.fromARGB(255, 0, 0, 0),
-              )
-                  : Shadow(
-                offset: Offset(0.5, 0.5),
-                blurRadius: 0.1,
-                color: Color.fromARGB(255, 255, 255, 255),
-              )
-            ],)),
+            style: TextStyle(
+              fontSize: 10,
+              shadows: <Shadow>[
+                isDark == 'dark'
+                    ? Shadow(
+                        offset: Offset(0.5, 0.5),
+                        blurRadius: 0.1,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      )
+                    : Shadow(
+                        offset: Offset(0.5, 0.5),
+                        blurRadius: 0.1,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                      )
+              ],
+            )),
         trailing: IconButton(
             onPressed: () {
               APP_VM.showAlbumDialog(context, this, album);
@@ -395,10 +400,10 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                                     color: Color.fromARGB(255, 0, 0, 0),
                                   )
                                 : Shadow(
-                              offset: Offset(0.5, 0.5),
-                              blurRadius: 0.1,
-                              color: Color.fromARGB(255, 255, 255, 255),
-                            )
+                                    offset: Offset(0.5, 0.5),
+                                    blurRadius: 0.1,
+                                    color: Color.fromARGB(255, 255, 255, 255),
+                                  )
                           ],
                         ),
                       )
@@ -502,6 +507,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
         aktifTabIndex = controller.index;
       });
     });
+
     super.initState();
   }
 
@@ -579,7 +585,7 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
     return userload == false
         ? Container()
         : DefaultTabController(
-            length: 3,
+            length: 4,
             initialIndex: 0,
             child: WillPopScope(
               onWillPop: () {
@@ -777,9 +783,10 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                 ),
                 body: TabBarView(
                     controller: controller,
-                    physics: aktifTabIndex != 3
+                    physics: NeverScrollableScrollPhysics(),
+                    /*physics: aktifTabIndex != 3
                         ? BouncingScrollPhysics()
-                        : NeverScrollableScrollPhysics(),
+                        : NeverScrollableScrollPhysics(),*/
                     children: [
                       Paylasimlar(id: tiklananAlbum),
                       Container(
@@ -1028,13 +1035,19 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                   child: TextField(
                     controller: albumNameController,
                     keyboardType: TextInputType.text,
-                    cursorColor: Colors.white,
+                    cursorColor: Theme.of(context).textTheme.headline5!.color,
                     decoration: InputDecoration(
-                      focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white)),
-                      // labelStyle: TextStyle(color: Colors.white),
-                      labelText: 'a82'.tr,
-                    ),
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .headline5!
+                                    .color!)),
+                        // labelStyle: TextStyle(color: Colors.white),
+                        labelText: 'a82'.tr,
+                        labelStyle: TextStyle(
+                            color:
+                                Theme.of(context).textTheme.headline5!.color)),
                     onChanged: (value) {},
                   ),
                 ),

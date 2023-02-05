@@ -58,6 +58,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
         child: CarouselSlider.builder(
             itemCount: medyaSayisi,
             options: CarouselOptions(
+              enableInfiniteScroll: false,
               pageSnapping: true,
               aspectRatio: 0.9,
               initialPage: kapakIndex,
