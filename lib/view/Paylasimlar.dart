@@ -246,20 +246,25 @@ class _PaylasimlarState extends State<Paylasimlar> {
   }
 
   createItem(dynamic item) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      color: Theme.of(context).cardColor,
-      margin: EdgeInsets.only(bottom: 5),
-      child: Column(
-        children: [
-          getUserInfo(item),
-          getKapak(item),
-          getIcons(item),
-          getTitleAndComment(item),
-          getLikesAndComments(item),
-        ],
-      ),
-    );
+    if(item['type']=='album'){
+      if(item['medias'].length>0){
+        return Container(
+          width: MediaQuery.of(context).size.width,
+          color: Theme.of(context).cardColor,
+          margin: EdgeInsets.only(bottom: 5),
+          child: Column(
+            children: [
+              getUserInfo(item),
+              getKapak(item),
+              getIcons(item),
+              getTitleAndComment(item),
+              getLikesAndComments(item),
+            ],
+          ),
+        );
+      }
+    }
+    return Container();
   }
 
   @override
