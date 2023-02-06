@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
   final auth = FirebaseAuth.instance;
 
   final TextEditingController _emailController =
-      TextEditingController(text: 'onurkilic.gis@gmail.com');
+      TextEditingController(text: 'simurgonur@gmail.com');
   final TextEditingController _passwordController =
       TextEditingController(text: '123456');
   AuthService _authService = AuthService();

@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loko_media/services/MyLocal.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 
 import '../services/API2.dart';
 
@@ -140,18 +141,34 @@ class _PaylasimlarState extends State<Paylasimlar> {
     );
   }
 
-  getIcons(dynamic item) {
+  getIcons(dynamic item, int index) {
+    bool didILike = item['didILike'];
     List<Widget> iconlar = [];
     iconlar.add(IconButton(
       //padding:EdgeInsets.only(top:0,bottom: 0),
-      onPressed: () {},
+      onPressed: () async{
+        dynamic gelen = await API.postRequest('api/lokomedia/like', {'share_id':item['id']});
+        if(didILike==false){
+          item['didILike']=true;
+          item['like'] = gelen['data']['sayi'];
+        }else{
+          item['didILike']=false;
+          item['like'] = gelen['data']['sayi'];
+        }
+        setState(() {
+          items[index] = item;
+        });
+      },
       icon: Icon(
-        Icons.favorite_border,
-        color: Theme.of(context).tabBarTheme.unselectedLabelColor,
+        didILike==false?Icons.favorite_border:Icons.favorite,
+        color: didILike==false?Theme.of(context).tabBarTheme.unselectedLabelColor:Colors.redAccent,
       ),
     ));
     iconlar.add(IconButton(
-      onPressed: () {},
+      onPressed: () async{
+        dynamic result = await API.postRequest('api/lokomedia/getComments', {'share_id':item['id']});
+        print(result['data']);
+      },
       icon: Icon(Icons.mode_comment_outlined,
           color: Theme.of(context).tabBarTheme.unselectedLabelColor),
     ));
@@ -162,27 +179,32 @@ class _PaylasimlarState extends State<Paylasimlar> {
             color: Theme.of(context).tabBarTheme.unselectedLabelColor),
       ));
       iconlar.add(IconButton(
-        onPressed: () {},
+        onPressed: () {
+          MapsLauncher.launchCoordinates(item['point']['coordinates'][1], item['point']['coordinates'][0]);
+        },
         icon: Icon(Icons.navigation_outlined,
             color: Theme.of(context).tabBarTheme.unselectedLabelColor),
       ));
     }
-    iconlar.add(IconButton(
+    /*iconlar.add(IconButton(
       onPressed: () {},
       icon: Icon(Icons.share,
           color: Theme.of(context).tabBarTheme.unselectedLabelColor),
-    ));
+    ));*/
     return Container(
       // color: Colors.lightBlue,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Row(
-            children: iconlar,
+          Padding(
+            padding: const EdgeInsets.only(left:26.0),
+            child: Row(
+              children: iconlar,
+            ),
           ),
           InkWell(
             child: IconButton(
-              padding: EdgeInsets.only(top: 0, bottom: 0),
+              padding: EdgeInsets.only(top: 0, bottom: 0,right: 36),
               onPressed: () {},
               icon: Icon(Icons.delete,
                   color: Theme.of(context).tabBarTheme.unselectedLabelColor),
@@ -211,7 +233,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
       margin: EdgeInsets.symmetric(
         horizontal: 14,
       ),
-      padding: EdgeInsets.only(bottom: 10),
+      padding: EdgeInsets.only(bottom: 10,left:26,right:22),
       child: RichText(
         softWrap: true,
         overflow: TextOverflow.visible,
@@ -224,10 +246,16 @@ class _PaylasimlarState extends State<Paylasimlar> {
     List<TextSpan> ekler = [];
     List<dynamic> yorumlar = [];
     int likes = item['like'];
+
     if (likes == 0) {
       ekler.add(TextSpan(
         text: "a136".tr,
-        style: TextStyle(color: Colors.white, fontSize: 12),
+        style: TextStyle(color: Colors.white, fontSize: 10),
+      ));
+    }else{
+      ekler.add(TextSpan(
+        text: '${likes} Beğeni',
+        style: TextStyle(color: Colors.white, fontSize: 10),
       ));
     }
     return Container(
@@ -236,7 +264,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
       margin: EdgeInsets.symmetric(
         horizontal: 14,
       ),
-      padding: EdgeInsets.only(bottom: 10),
+      padding: EdgeInsets.only(bottom: 10,left:26,right: 32),
       child: RichText(
         softWrap: true,
         overflow: TextOverflow.visible,
@@ -245,7 +273,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
     );
   }
 
-  createItem(dynamic item) {
+  createItem(dynamic item, int index) {
     if (item['type'] == 'album') {
       if (item['medias'].length > 0) {
         return Container(
@@ -256,7 +284,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
             children: [
               getUserInfo(item),
               getKapak(item),
-              getIcons(item),
+              getIcons(item, index),
               getTitleAndComment(item),
               getLikesAndComments(item),
             ],
@@ -283,7 +311,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
                             physics: NeverScrollableScrollPhysics(),
                             itemCount: items.length,
                             itemBuilder: (ctx, i) {
-                              return createItem(items[i]);
+                              return createItem(items[i],i);
                             })
                       ],
                     ),
