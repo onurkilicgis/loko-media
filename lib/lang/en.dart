@@ -253,4 +253,6 @@ Map<String, String> enLang = {
   'a239': "You have sent too many requests. Please wait for a while.",
   'a240': "Please check your login information.",
   'a241': 'Delete',
+  'a242': 'Like',
+  'a243': 'Likes',
 };

@@ -390,7 +390,7 @@ class AudioRecorderState extends State<AudioRecorder> {
     try {
       if (filePath == null) return;
       if (filePath != null) {
-        Loading.waiting('102'.tr);
+        Loading.waiting('a102'.tr);
       }
 
       dynamic positions = await GPS.getGPSPosition();
@@ -460,13 +460,18 @@ class AudioRecorderState extends State<AudioRecorder> {
                     controller: audioNameController,
                     keyboardType: TextInputType.text,
                     // textAlign: TextAlign.center,
-                    cursorColor: Colors.white,
+                    cursorColor: Theme.of(context).textTheme.headline5!.color!,
 
                     decoration: InputDecoration(
                       focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white)),
-                      labelStyle: TextStyle(color: Colors.white),
+                          borderSide: BorderSide(
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .headline5!
+                                  .color!)),
                       labelText: 'a104'.tr,
+                      labelStyle: TextStyle(
+                          color: Theme.of(context).textTheme.headline5!.color!),
                     ),
                     onChanged: (value) {},
                   ),

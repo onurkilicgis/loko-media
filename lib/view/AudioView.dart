@@ -11,6 +11,7 @@ import 'AudioRecorder.dart';
 
 class AudioView extends StatefulWidget {
   late Medias medias;
+
   late bool appbarstatus;
 
   AudioView({required this.medias, required this.appbarstatus});

@@ -251,5 +251,8 @@ Map<String, String> trLang = {
   'a238': 'Böyle Bir Üye Sistemimizde Kayıtlı Değildir',
   'a239': 'Çok Fazla İstek Gönderdiniz. Bir Süre Bekleyiniz.',
   'a240': 'Lütfen Giriş Bilgilerinizi Kontrol Ediniz.',
-  'a241': 'Sil'
+  'a241': 'Sil',
+  'a242': 'Beğeni',
+  'a243': 'Beğeni',
+  'a244': 'Yorum Ekle...'
 };
