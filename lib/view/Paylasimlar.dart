@@ -31,6 +31,8 @@ class _PaylasimlarState extends State<Paylasimlar> {
 
   List<dynamic> yorumlar = [];
   List<dynamic> yorumEkle = [];
+  //dynamic item;
+  // dynamic result;
 
   Future<void> getUser() async {
     String userString = await MyLocal.getStringData('user');
@@ -58,6 +60,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
     getToken();
     getUser();
     getSharesMedya();
+
     super.initState();
   }
 
@@ -132,8 +135,8 @@ class _PaylasimlarState extends State<Paylasimlar> {
                     return Container(
                       child: Chewie(
                         controller: ChewieController(
-                            videoPlayerController:
-                                VideoPlayerController.file(ioo.File(mediaURL)),
+                            videoPlayerController: VideoPlayerController.file(
+                                ioo.File(media['url'])),
                             autoPlay: false,
                             allowFullScreen: true,
                             //fullScreenByDefault: true,
@@ -377,8 +380,6 @@ class _PaylasimlarState extends State<Paylasimlar> {
   }
 
   getComments(dynamic item) {
-    // List<dynamic> yorumlar = item['comment'];
-
     if (yorumlar.length == 0) {
       return ListTile(
         leading: ClipRRect(

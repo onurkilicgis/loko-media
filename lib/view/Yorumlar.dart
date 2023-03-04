@@ -37,9 +37,9 @@ class _YorumlarState extends State<Yorumlar> {
   void initState() {
     super.initState();
 
-    /*  Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero, () {
       getBottomSheet();
-    });*/
+    });
   }
 
   @override
@@ -50,11 +50,11 @@ class _YorumlarState extends State<Yorumlar> {
         title: Text('Yorumlar'),
         centerTitle: true,
         actions: [
-          Consumer<SwitchModel>(builder: (context, switchModel, child) {
+          Consumer<SwitchModel>(builder: (context, visible, child) {
             return IconButton(
                 onPressed: () {
                   getBottomSheet();
-                  switchModel.isVisible = true;
+                  visible.isVisible = true;
                 },
                 icon: Icon(Icons.add_circle_outline_rounded));
           })
@@ -147,7 +147,7 @@ class _YorumlarState extends State<Yorumlar> {
                       )),
                 );
               }),
-          isVisible == true ? getBottomSheet() : Container()
+          // isVisible == true ? getBottomSheet() : Container()
         ],
       )),
     );
@@ -159,71 +159,75 @@ class _YorumlarState extends State<Yorumlar> {
         isScrollControlled: true,
         context: context,
         builder: (BuildContext context) {
-          return ListTile(
-            tileColor: Theme.of(context).scaffoldBackgroundColor,
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(40),
-              child: Image(
-                image: NetworkImage(widget.user['img']),
-                width: 40,
-                height: 40,
-                fit: BoxFit.cover,
+          return Visibility(
+            visible: isVisible,
+            child: ListTile(
+              tileColor: Theme.of(context).scaffoldBackgroundColor,
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(40),
+                child: Image(
+                  image: NetworkImage(widget.user['img']),
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            title: Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom + 10,
-              ),
-              child: TextField(
-                //scrollPadding: EdgeInsets.only(bottom: .0),
-                onChanged: (value) {
-                  value = commentController.text;
-                },
-                controller: commentController,
-                textAlign: TextAlign.left,
-                keyboardType: TextInputType.text,
-                cursorColor: Theme.of(context).textTheme.headline5!.color,
-                textCapitalization: TextCapitalization.words,
-                maxLines: 1,
-                decoration: InputDecoration(
-                  suffixIcon: Consumer<SwitchModel>(
-                      builder: (context, switchModel, child) {
-                    return TextButton(
-                      onPressed: () async {
-                        dynamic result = await API.postRequest(
-                            'api/lokomedia/addComment', {
-                          'share_id': widget.id,
-                          'comment': commentController.text
-                        });
-                        if (result['status'] == true) {
-                          yorumEkle = result['data']['comments'];
-
-                          switchModel.isVisible = false;
-                        }
-                      },
-                      child: Text(
-                        'Paylaş',
-                        style: TextStyle(
-                            color: Theme.of(context).listTileTheme.iconColor!),
-                      ),
-                    );
-                  }),
-                  labelText: 'a244'.tr,
-                  labelStyle: TextStyle(
-                    color: Theme.of(context).listTileTheme.iconColor!,
-                  ),
-                  filled: true,
-                  fillColor: Theme.of(context).appBarTheme.backgroundColor,
-                  contentPadding: EdgeInsets.all(8),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7),
-                    borderSide: BorderSide(
+              title: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+                ),
+                child: TextField(
+                  //scrollPadding: EdgeInsets.only(bottom: .0),
+                  onChanged: (value) {
+                    value = commentController.text;
+                  },
+                  controller: commentController,
+                  textAlign: TextAlign.left,
+                  keyboardType: TextInputType.text,
+                  cursorColor: Theme.of(context).textTheme.headline5!.color,
+                  textCapitalization: TextCapitalization.words,
+                  maxLines: 1,
+                  decoration: InputDecoration(
+                    suffixIcon: Consumer<SwitchModel>(
+                        builder: (context, visible, child) {
+                      return TextButton(
+                        onPressed: () async {
+                          dynamic result = await API.postRequest(
+                              'api/lokomedia/addComment', {
+                            'share_id': widget.id,
+                            'comment': commentController.text
+                          });
+                          if (result['status'] == true) {
+                            yorumEkle = result['data']['comments'];
+                            commentController.clear();
+                            visible.isVisible;
+                          }
+                        },
+                        child: Text(
+                          'Paylaş',
+                          style: TextStyle(
+                              color:
+                                  Theme.of(context).listTileTheme.iconColor!),
+                        ),
+                      );
+                    }),
+                    labelText: 'a244'.tr,
+                    labelStyle: TextStyle(
                       color: Theme.of(context).listTileTheme.iconColor!,
                     ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Theme.of(context).listTileTheme.iconColor!,
+                    filled: true,
+                    fillColor: Theme.of(context).appBarTheme.backgroundColor,
+                    contentPadding: EdgeInsets.all(8),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).listTileTheme.iconColor!,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Theme.of(context).listTileTheme.iconColor!,
+                      ),
                     ),
                   ),
                 ),

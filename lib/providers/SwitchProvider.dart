@@ -33,7 +33,7 @@ class SwitchModel extends ChangeNotifier {
   bool get isVisible => _isVisible;
 
   set isVisible(bool value) {
-    _isVisible = value;
+    isVisible = value;
     notifyListeners();
   }
 }
