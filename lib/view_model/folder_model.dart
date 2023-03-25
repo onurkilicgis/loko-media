@@ -8,6 +8,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 class FolderModel {
+
+  static getRootPath(String filename)async{
+    final Directory root = await getApplicationDocumentsDirectory();
+    return '${root.path}/albums/$filename';
+  }
+
   static generateAudioPath() async {
     int album_id = await MyLocal.getIntData('aktifalbum');
     final Directory root = await getApplicationDocumentsDirectory();

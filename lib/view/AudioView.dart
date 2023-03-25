@@ -4,16 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sound/public/flutter_sound_player.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:typed_data';
 import '../models/Album.dart';
 import '../providers/SwitchProvider.dart';
 import 'AudioRecorder.dart';
 
 class AudioView extends StatefulWidget {
-  late Medias medias;
-  late bool appbarstatus;
+   Medias medias;
+   late bool appbarstatus;
+   late String type;
 
-  AudioView({required this.medias, required this.appbarstatus});
+  AudioView({required this.medias, required this.appbarstatus,required this.type});
 
   @override
   State<AudioView> createState() => _AudioViewState();
@@ -85,7 +87,8 @@ class _AudioViewState extends State<AudioView> {
                           ),
                         ),
                       )),
-            widget.medias.name == null
+           widget.medias!=null ?
+             widget.medias.name == null
                 ? Text('')
                 : Positioned(
                     top: 15,
@@ -93,7 +96,7 @@ class _AudioViewState extends State<AudioView> {
                       widget.medias.name!,
                       style: TextStyle(fontSize: 18),
                     ),
-                  ),
+                  ):Text('')
           ]),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -150,7 +153,11 @@ class _AudioViewState extends State<AudioView> {
                     if (player.isPlaying) {
                       await pausePlay();
                     } else {
-                      await startPlay(widget.medias.path);
+                     if(widget.type=='file'){
+                       await startPlay(widget.medias.path!);
+                     } else{
+                       await startPlay(widget.medias.path!);
+                     }
                       playGostersinmi = false;
                     }
                   }
@@ -183,11 +190,18 @@ class _AudioViewState extends State<AudioView> {
     }
   }
 
-  Future startPlay(filePath) async {
-    await player.startPlayer(
-        //oynatmak istediğin dosya
-        // fromDataBuffer: dosya,
-        fromURI: filePath);
+  Future startPlay(String filePath) async {
+    if(widget.type=='url'){
+      var response = await http.get(Uri.parse(filePath));
+      List<int> bytes = response.bodyBytes;
+      Uint8List buffer = Uint8List.fromList(bytes);
+      await player.startPlayer(
+        fromDataBuffer: buffer
+      );
+    }else{
+      await player.startPlayer(fromURI: filePath);
+      }
+
   }
 
   Future stopPlay() async {

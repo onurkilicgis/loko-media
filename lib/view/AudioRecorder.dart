@@ -388,16 +388,17 @@ class AudioRecorderState extends State<AudioRecorder> {
     String filePath,
   ) async {
     try {
-      if (filePath == null) return;
-      if (filePath != null) {
-        Loading.waiting('102'.tr);
-      }
-
       dynamic positions = await GPS.getGPSPosition();
       if (positions['status'] == false) {
         SBBildirim.uyari(positions['message']);
         return;
       }
+      if (filePath == null) return;
+      if (filePath != null) {
+        Loading.waiting('a102'.tr);
+      }
+
+
       await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
       final imageTemporary = File(filePath);
       int aktifAlbumId = await MyLocal.getIntData('aktifalbum');
@@ -505,7 +506,7 @@ class AudioRecorderState extends State<AudioRecorder> {
     );
   }
 
-  static String formatTime(Duration duration) {
+  static  formatTime(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final hours = twoDigits(duration.inHours);
     final minutes = twoDigits(duration.inMinutes.remainder(60));

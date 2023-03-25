@@ -54,7 +54,7 @@ class Media_VM {
                       } else if (acmaAdi == 'a206'.tr) {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) =>
-                                AudioView(medias: media, appbarstatus: true)));
+                                AudioView(medias: media, appbarstatus: true, type: 'file',)));
                       } else if (acmaAdi == 'a207'.tr) {
                         dynamic tip = json.decode(media.settings!);
                         if (tip['type'] == 'txt') {

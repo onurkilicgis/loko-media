@@ -81,7 +81,7 @@ class _PlayMedyaState extends State<PlayMedya> {
                                 color:
                                     Theme.of(context).scaffoldBackgroundColor,
                                 child: AudioView(
-                                    medias: mymedia, appbarstatus: false),
+                                    medias: mymedia, appbarstatus: false, type: 'file',),
                               );
                             }
                           case 'txt':

@@ -1,10 +1,22 @@
+import 'dart:convert';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loko_media/services/MyLocal.dart';
+import 'package:loko_media/view/AudioRecorder.dart';
 import 'package:maps_launcher/maps_launcher.dart';
-
+import 'package:video_player/video_player.dart';
+import 'package:http/http.dart' as http;
+import '../models/Album.dart';
 import '../services/API2.dart';
+import 'AudioView.dart';
+import 'dart:typed_data';
+import 'package:http/src/response.dart';
+
+import 'VideoPlayer.dart';
 
 class Paylasimlar extends StatefulWidget {
   int? id;
@@ -41,7 +53,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
     super.initState();
   }
 
-  getKapak(dynamic item) {
+  getKapak(dynamic item){
     String type = item['type'];
     if (type == 'album') {
       String kapakUrl = item['kapak']['url'];
@@ -73,6 +85,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
               String mediaURL =
                   API.generateStorageFileUrl(token, media['fid'].toString());
               String mediaType = media['type'];
+
               switch (mediaType) {
                 case 'image':
                   {
@@ -96,6 +109,25 @@ class _PaylasimlarState extends State<Paylasimlar> {
                       ),
                     );
                   }
+                case 'video':{
+                 //return await openVideo(mediaURL);
+                  return Container(child: MyVideoPlayer(type: 'url',path:mediaURL,item: media, ),);
+                }
+
+                case 'audio':
+                  {
+                    Medias mediam = new Medias(album_id: 0, name: '', miniName: '', fileType: 'audio', path: mediaURL, latitude: 0, longitude: 0, altitude: 0);
+                    mediam.settings = json.encode(media['settings']);
+                    return Container(
+                      color:
+                      Theme.of(context).scaffoldBackgroundColor,
+                      child: AudioView(
+                        appbarstatus: false, type: 'url', medias: mediam),
+                    );
+                  }
+
+
+
                 default:
                   {
                     return Container();
@@ -104,6 +136,39 @@ class _PaylasimlarState extends State<Paylasimlar> {
             }),
       );
     } else {}
+  }
+
+  openVideo(String mediaURL) async {
+
+    var response =  await http.get(Uri.parse(mediaURL));
+    List<int> bytes = response.bodyBytes;
+    Uint8List buffer = Uint8List.fromList(bytes);
+    return Container(
+      child: Chewie(
+        controller: ChewieController(
+            videoPlayerController:
+            VideoPlayerController.network(buffer.toString()),
+            autoPlay: false,
+            allowFullScreen: true,
+            //fullScreenByDefault: true,
+            autoInitialize: true,
+            looping: false,
+            aspectRatio: 0.7,
+            errorBuilder: (context, errorMessage) {
+              return Center(
+                  child: Text(
+                    errorMessage,
+                    style: TextStyle(color: Colors.white),
+                  ));
+            },
+            // allowFullScreen: true,
+            additionalOptions: (context) {
+              return <OptionItem>[
+                //OptionItem(onTap: onTap, iconData: iconData, title: title)
+              ];
+            }),
+      ),
+    );
   }
 
   getUserInfo(dynamic item) {
