@@ -60,11 +60,11 @@ class Media_VM {
                         if (tip['type'] == 'txt') {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
-                                  TxtView(medias: media, appbarstatus: true)));
+                                  TxtView(medias: media, appbarstatus: true,type: 'file',)));
                         } else {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
-                                  PdfView(medias: media, appbarstatus: true)));
+                                  PdfView(medias: media, appbarstatus: true,type: 'file',)));
                         }
                       }
                     }),

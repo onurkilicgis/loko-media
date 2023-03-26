@@ -90,12 +90,12 @@ class _PlayMedyaState extends State<PlayMedya> {
                               if (tip['type'] == 'txt') {
                                 return Container(
                                   child: TxtView(
-                                      medias: mymedia, appbarstatus: false),
+                                      medias: mymedia, appbarstatus: false,type: 'file',),
                                 );
                               } else {
                                 return Container(
                                   child: PdfView(
-                                      medias: mymedia, appbarstatus: false),
+                                      medias: mymedia, appbarstatus: false,type: 'file',),
                                 );
                               }
                             }

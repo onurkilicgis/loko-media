@@ -16,6 +16,8 @@ import 'AudioView.dart';
 import 'dart:typed_data';
 import 'package:http/src/response.dart';
 
+import 'PdfView.dart';
+import 'TxtView.dart';
 import 'VideoPlayer.dart';
 
 class Paylasimlar extends StatefulWidget {
@@ -116,7 +118,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
 
                 case 'audio':
                   {
-                    Medias mediam = new Medias(album_id: 0, name: '', miniName: '', fileType: 'audio', path: mediaURL, latitude: 0, longitude: 0, altitude: 0);
+                    Medias mediam = new Medias(album_id: 0, name: medias.name, miniName: '', fileType: 'audio', path: mediaURL, latitude: 0, longitude: 0, altitude: 0);
                     mediam.settings = json.encode(media['settings']);
                     return Container(
                       color:
@@ -124,6 +126,23 @@ class _PaylasimlarState extends State<Paylasimlar> {
                       child: AudioView(
                         appbarstatus: false, type: 'url', medias: mediam),
                     );
+                  }
+                case 'txt':
+                  {
+                    Medias mediax= Medias(album_id: 0, name: '',miniName: '',fileType: 'txt',path: mediaURL,latitude: 0,longitude: 0,altitude: 0);
+                    mediax.settings = json.encode(media['settings']);
+                    dynamic tip = json.decode(mediax.settings!);
+                    if (tip['type'] == 'txt') {
+                      return Container(
+                        child: TxtView(
+                            medias: mediax, appbarstatus: false,type:'url',item: media,),
+                      );
+                    } else {
+                      return Container(
+                        child: PdfView(
+                            medias: mediax, appbarstatus: false,type: 'url',item: media,),
+                      );
+                    }
                   }
 
 
