@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 class SwitchModel extends ChangeNotifier {
   late String userSelection;
   String _switchControl = 'dark';
-  bool get isSwitchControl => _switchControl=='dark'?true:false;
+  bool get isSwitchControl => _switchControl == 'dark' ? true : false;
   SwitchModel({required this.userSelection}) {
     if (this.userSelection == 'dark') {
       this._switchControl = 'dark';
@@ -13,9 +13,9 @@ class SwitchModel extends ChangeNotifier {
   }
 
   set isSwitchControl(bool value) {
-    if(value==true){
+    if (value == true) {
       _switchControl = 'dark';
-    }else {
+    } else {
       _switchControl = 'light';
     }
     notifyListeners(); //tetikleyici, yani dinleyicileri bilgilendir.
@@ -26,5 +26,14 @@ class SwitchModel extends ChangeNotifier {
     if (data != null) {
       isSwitchControl = data;
     }
+  }
+
+  bool _isVisible = true;
+
+  bool get isVisible => _isVisible;
+
+  set isVisible(bool value) {
+    isVisible = value;
+    notifyListeners();
   }
 }

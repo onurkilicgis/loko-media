@@ -8,7 +8,7 @@ class MyTheme {
         color: Color(0xff232326),
       )),
       progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: Color(0xffe3e6ea),
+        color: Color(0xffe8e5e5),
       ),
       primarySwatch: Colors.red,
       brightness: Brightness.light,
