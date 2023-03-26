@@ -1,12 +1,9 @@
 import 'dart:convert';
-
-import 'package:audioplayers/audioplayers.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loko_media/services/MyLocal.dart';
-import 'package:loko_media/view/AudioRecorder.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:http/http.dart' as http;
@@ -14,8 +11,7 @@ import '../models/Album.dart';
 import '../services/API2.dart';
 import 'AudioView.dart';
 import 'dart:typed_data';
-import 'package:http/src/response.dart';
-
+import 'Yorumlar.dart';
 import 'PdfView.dart';
 import 'TxtView.dart';
 import 'VideoPlayer.dart';
@@ -30,8 +26,19 @@ class Paylasimlar extends StatefulWidget {
 }
 
 class _PaylasimlarState extends State<Paylasimlar> {
+  TextEditingController commentController = TextEditingController();
   List<dynamic> items = [];
   String token = '';
+  dynamic user;
+
+  List<dynamic> yorumlar = [];
+  List<dynamic> yorumEkle = [];
+
+  Future<void> getUser() async {
+    String userString = await MyLocal.getStringData('user');
+    user = json.decode(userString);
+  }
+
   getSharesMedya() async {
     dynamic medya =
         await API.postRequest("api/lokomedia/getShares", {'offset': "0"});
@@ -51,11 +58,12 @@ class _PaylasimlarState extends State<Paylasimlar> {
   @override
   void initState() {
     getToken();
+    getUser();
     getSharesMedya();
     super.initState();
   }
 
-  getKapak(dynamic item){
+  getKapak(dynamic item) {
     String type = item['type'];
     if (type == 'album') {
       String kapakUrl = item['kapak']['url'];
@@ -86,12 +94,23 @@ class _PaylasimlarState extends State<Paylasimlar> {
               dynamic media = medias[index];
               String mediaURL =
                   API.generateStorageFileUrl(token, media['fid'].toString());
+              Medias mymedia = new Medias(
+                path: mediaURL,
+                fileType: media['type'],
+                latitude: media['point']['coordinates'][1],
+                longitude: media['point']['coordinates'][0],
+                miniName: '',
+                name: '',
+                settings: json.encode(media['settings']),
+                altitude: 0,
+                album_id: 0,
+              );
+
               String mediaType = media['type'];
 
               switch (mediaType) {
                 case 'image':
                   {
-                    //drive.getAFile(media['url']);
                     return Padding(
                       padding: const EdgeInsets.only(left: 4, right: 4),
                       child: Container(
@@ -111,41 +130,69 @@ class _PaylasimlarState extends State<Paylasimlar> {
                       ),
                     );
                   }
-                case 'video':{
-                 //return await openVideo(mediaURL);
-                  return Container(child: MyVideoPlayer(type: 'url',path:mediaURL,item: media, ),);
-                }
+                case 'video':
+                  {
+                    //return await openVideo(mediaURL);
+                    return Container(
+                      child: MyVideoPlayer(
+                        type: 'url',
+                        path: mediaURL,
+                        item: media,
+                      ),
+                    );
+                  }
 
                 case 'audio':
                   {
-                    Medias mediam = new Medias(album_id: 0, name: medias.name, miniName: '', fileType: 'audio', path: mediaURL, latitude: 0, longitude: 0, altitude: 0);
+                    Medias mediam = new Medias(
+                        album_id: 0,
+                        name: medias.name,
+                        miniName: '',
+                        fileType: 'audio',
+                        path: mediaURL,
+                        latitude: 0,
+                        longitude: 0,
+                        altitude: 0);
                     mediam.settings = json.encode(media['settings']);
                     return Container(
-                      color:
-                      Theme.of(context).scaffoldBackgroundColor,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       child: AudioView(
-                        appbarstatus: false, type: 'url', medias: mediam),
+                          appbarstatus: false, type: 'url', medias: mediam),
                     );
                   }
                 case 'txt':
                   {
-                    Medias mediax= Medias(album_id: 0, name: '',miniName: '',fileType: 'txt',path: mediaURL,latitude: 0,longitude: 0,altitude: 0);
+                    Medias mediax = Medias(
+                        album_id: 0,
+                        name: '',
+                        miniName: '',
+                        fileType: 'txt',
+                        path: mediaURL,
+                        latitude: 0,
+                        longitude: 0,
+                        altitude: 0);
                     mediax.settings = json.encode(media['settings']);
                     dynamic tip = json.decode(mediax.settings!);
                     if (tip['type'] == 'txt') {
                       return Container(
                         child: TxtView(
-                            medias: mediax, appbarstatus: false,type:'url',item: media,),
+                          medias: mediax,
+                          appbarstatus: false,
+                          type: 'url',
+                          item: media,
+                        ),
                       );
                     } else {
                       return Container(
                         child: PdfView(
-                            medias: mediax, appbarstatus: false,type: 'url',item: media,),
+                          medias: mediax,
+                          appbarstatus: false,
+                          type: 'url',
+                          item: media,
+                        ),
                       );
                     }
                   }
-
-
 
                 default:
                   {
@@ -158,15 +205,14 @@ class _PaylasimlarState extends State<Paylasimlar> {
   }
 
   openVideo(String mediaURL) async {
-
-    var response =  await http.get(Uri.parse(mediaURL));
+    var response = await http.get(Uri.parse(mediaURL));
     List<int> bytes = response.bodyBytes;
     Uint8List buffer = Uint8List.fromList(bytes);
     return Container(
       child: Chewie(
         controller: ChewieController(
             videoPlayerController:
-            VideoPlayerController.network(buffer.toString()),
+                VideoPlayerController.network(buffer.toString()),
             autoPlay: false,
             allowFullScreen: true,
             //fullScreenByDefault: true,
@@ -176,9 +222,9 @@ class _PaylasimlarState extends State<Paylasimlar> {
             errorBuilder: (context, errorMessage) {
               return Center(
                   child: Text(
-                    errorMessage,
-                    style: TextStyle(color: Colors.white),
-                  ));
+                errorMessage,
+                style: TextStyle(color: Colors.white),
+              ));
             },
             // allowFullScreen: true,
             additionalOptions: (context) {
@@ -230,13 +276,14 @@ class _PaylasimlarState extends State<Paylasimlar> {
     List<Widget> iconlar = [];
     iconlar.add(IconButton(
       //padding:EdgeInsets.only(top:0,bottom: 0),
-      onPressed: () async{
-        dynamic gelen = await API.postRequest('api/lokomedia/like', {'share_id':item['id']});
-        if(didILike==false){
-          item['didILike']=true;
+      onPressed: () async {
+        dynamic gelen = await API
+            .postRequest('api/lokomedia/like', {'share_id': item['id']});
+        if (didILike == false) {
+          item['didILike'] = true;
           item['like'] = gelen['data']['sayi'];
-        }else{
-          item['didILike']=false;
+        } else {
+          item['didILike'] = false;
           item['like'] = gelen['data']['sayi'];
         }
         setState(() {
@@ -244,14 +291,15 @@ class _PaylasimlarState extends State<Paylasimlar> {
         });
       },
       icon: Icon(
-        didILike==false?Icons.favorite_border:Icons.favorite,
-        color: didILike==false?Theme.of(context).tabBarTheme.unselectedLabelColor:Colors.redAccent,
+        didILike == false ? Icons.favorite_border : Icons.favorite,
+        color: didILike == false
+            ? Theme.of(context).tabBarTheme.unselectedLabelColor
+            : Colors.redAccent,
       ),
     ));
     iconlar.add(IconButton(
-      onPressed: () async{
-        dynamic result = await API.postRequest('api/lokomedia/getComments', {'share_id':item['id']});
-        print(result['data']);
+      onPressed: () async {
+        getCommentRequest(item);
       },
       icon: Icon(Icons.mode_comment_outlined,
           color: Theme.of(context).tabBarTheme.unselectedLabelColor),
@@ -264,7 +312,8 @@ class _PaylasimlarState extends State<Paylasimlar> {
       ));
       iconlar.add(IconButton(
         onPressed: () {
-          MapsLauncher.launchCoordinates(item['point']['coordinates'][1], item['point']['coordinates'][0]);
+          MapsLauncher.launchCoordinates(
+              item['point']['coordinates'][1], item['point']['coordinates'][0]);
         },
         icon: Icon(Icons.navigation_outlined,
             color: Theme.of(context).tabBarTheme.unselectedLabelColor),
@@ -281,14 +330,14 @@ class _PaylasimlarState extends State<Paylasimlar> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(left:26.0),
+            padding: const EdgeInsets.only(left: 26.0),
             child: Row(
               children: iconlar,
             ),
           ),
           InkWell(
             child: IconButton(
-              padding: EdgeInsets.only(top: 0, bottom: 0,right: 36),
+              padding: EdgeInsets.only(top: 0, bottom: 0, right: 36),
               onPressed: () {},
               icon: Icon(Icons.delete,
                   color: Theme.of(context).tabBarTheme.unselectedLabelColor),
@@ -299,17 +348,25 @@ class _PaylasimlarState extends State<Paylasimlar> {
     );
   }
 
-  getTitleAndComment(dynamic item) {
+  getTitleAndContent(dynamic item) {
     List<TextSpan> ekler = [];
     ekler.add(TextSpan(
       text: item['name'],
       style: TextStyle(
-          color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+          color: Theme.of(context).textTheme.headlineSmall!.color,
+          fontSize: 13,
+          fontWeight: FontWeight.bold),
     ));
-    ekler.add(TextSpan(text: ' - '));
+    ekler.add(TextSpan(
+        text: item['content'] != null ? '-' : '',
+        style: TextStyle(
+          color: Theme.of(context).textTheme.headlineSmall!.color,
+        )));
     ekler.add(TextSpan(
       text: item['content'],
-      style: TextStyle(color: Colors.white, fontSize: 12),
+      style: TextStyle(
+          color: Theme.of(context).textTheme.headlineSmall!.color,
+          fontSize: 12),
     ));
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -317,7 +374,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
       margin: EdgeInsets.symmetric(
         horizontal: 14,
       ),
-      padding: EdgeInsets.only(bottom: 10,left:26,right:22),
+      padding: EdgeInsets.only(bottom: 10, left: 26, right: 22),
       child: RichText(
         softWrap: true,
         overflow: TextOverflow.visible,
@@ -326,20 +383,24 @@ class _PaylasimlarState extends State<Paylasimlar> {
     );
   }
 
-  getLikesAndComments(dynamic item) {
+  getLikes(dynamic item) {
     List<TextSpan> ekler = [];
-    List<dynamic> yorumlar = [];
+
     int likes = item['like'];
 
     if (likes == 0) {
       ekler.add(TextSpan(
         text: "a136".tr,
-        style: TextStyle(color: Colors.white, fontSize: 10),
+        style: TextStyle(
+            color: Theme.of(context).textTheme.headlineSmall!.color,
+            fontSize: 10),
       ));
-    }else{
+    } else {
       ekler.add(TextSpan(
-        text: '${likes} Beğeni',
-        style: TextStyle(color: Colors.white, fontSize: 10),
+        text: likes == 1 ? '${likes}' + 'a242'.tr : '${likes}' + 'a243'.tr,
+        style: TextStyle(
+            color: Theme.of(context).textTheme.headlineSmall!.color,
+            fontSize: 10),
       ));
     }
     return Container(
@@ -348,13 +409,116 @@ class _PaylasimlarState extends State<Paylasimlar> {
       margin: EdgeInsets.symmetric(
         horizontal: 14,
       ),
-      padding: EdgeInsets.only(bottom: 10,left:26,right: 32),
+      padding: EdgeInsets.only(bottom: 10, left: 26, right: 32),
       child: RichText(
         softWrap: true,
         overflow: TextOverflow.visible,
         text: TextSpan(children: ekler),
       ),
     );
+  }
+
+  getComments(dynamic item) {
+    if (yorumlar.length == 0) {
+      return ListTile(
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(40),
+          child: Image(
+            image: NetworkImage(user['img']),
+            width: 40,
+            height: 40,
+            fit: BoxFit.cover,
+          ),
+        ),
+        title: TextField(
+          onChanged: (value) {
+            value = commentController.text;
+          },
+          controller: commentController,
+          textAlign: TextAlign.left,
+          keyboardType: TextInputType.text,
+          cursorColor: Theme.of(context).textTheme.headlineSmall!.color,
+          textCapitalization: TextCapitalization.words,
+          maxLines: 1,
+          decoration: InputDecoration(
+            suffixIcon: TextButton(
+              onPressed: () async {
+                dynamic result = await API.postRequest(
+                    'api/lokomedia/addComment', {
+                  'share_id': item['id'],
+                  'comment': commentController.text
+                });
+                if (result['status'] == true) {
+                  yorumEkle = result['data']['comments'];
+                }
+              },
+              child: Text(
+                'Paylaş',
+                style: TextStyle(
+                    color: Theme.of(context).listTileTheme.iconColor!),
+              ),
+            ),
+            labelText: 'a244'.tr,
+            labelStyle: TextStyle(
+              color: Theme.of(context).listTileTheme.iconColor!,
+            ),
+            filled: true,
+            fillColor: Theme.of(context).progressIndicatorTheme.color,
+            contentPadding: EdgeInsets.all(8),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(7),
+              borderSide: BorderSide(
+                color: Theme.of(context).listTileTheme.iconColor!,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Theme.of(context).listTileTheme.iconColor!,
+              ),
+            ),
+          ),
+        ),
+      );
+    } else {
+      return GestureDetector(
+        onTap: () async {
+          getCommentRequest(item);
+        },
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              yorumlar.length == 1
+                  ? '1 Yorumu Gör'
+                  : '${yorumlar.length} yorumun tümünü gör...',
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.headlineSmall!.color,
+                  fontSize: 12),
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
+  getCommentRequest(dynamic item) async {
+    dynamic result = await API
+        .postRequest('api/lokomedia/getComments', {'share_id': item['id']});
+    if (result['status'] == true) {
+      yorumlar = result['data']['comments'];
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Yorumlar(
+                    comment: yorumlar,
+                    user: user,
+                    title: item['name'],
+                    content: item['content'],
+                    name: item['user'],
+                    id: item['id'],
+                  )));
+    }
   }
 
   createItem(dynamic item, int index) {
@@ -369,8 +533,9 @@ class _PaylasimlarState extends State<Paylasimlar> {
               getUserInfo(item),
               getKapak(item),
               getIcons(item, index),
-              getTitleAndComment(item),
-              getLikesAndComments(item),
+              getLikes(item),
+              getTitleAndContent(item),
+              getComments(item),
             ],
           ),
         );
@@ -395,7 +560,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
                             physics: NeverScrollableScrollPhysics(),
                             itemCount: items.length,
                             itemBuilder: (ctx, i) {
-                              return createItem(items[i],i);
+                              return createItem(items[i], i);
                             })
                       ],
                     ),

@@ -53,18 +53,27 @@ class Media_VM {
                         model.openLongVideo(media);
                       } else if (acmaAdi == 'a206'.tr) {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                AudioView(medias: media, appbarstatus: true, type: 'file',)));
+                            builder: (context) => AudioView(
+                                  medias: media,
+                                  appbarstatus: true,
+                                  type: 'file',
+                                )));
                       } else if (acmaAdi == 'a207'.tr) {
                         dynamic tip = json.decode(media.settings!);
                         if (tip['type'] == 'txt') {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  TxtView(medias: media, appbarstatus: true,type: 'file',)));
+                              builder: (context) => TxtView(
+                                    medias: media,
+                                    appbarstatus: true,
+                                    type: 'file',
+                                  )));
                         } else {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  PdfView(medias: media, appbarstatus: true,type: 'file',)));
+                              builder: (context) => PdfView(
+                                    medias: media,
+                                    appbarstatus: true,
+                                    type: 'file',
+                                  )));
                         }
                       }
                     }),

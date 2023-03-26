@@ -11,11 +11,12 @@ import '../providers/SwitchProvider.dart';
 import 'AudioRecorder.dart';
 
 class AudioView extends StatefulWidget {
-   Medias medias;
-   late bool appbarstatus;
-   late String type;
+  Medias medias;
+  late bool appbarstatus;
+  late String type;
 
-  AudioView({required this.medias, required this.appbarstatus,required this.type});
+  AudioView(
+      {required this.medias, required this.appbarstatus, required this.type});
 
   @override
   State<AudioView> createState() => _AudioViewState();
@@ -87,16 +88,17 @@ class _AudioViewState extends State<AudioView> {
                           ),
                         ),
                       )),
-           widget.medias!=null ?
-             widget.medias.name == null
-                ? Text('')
-                : Positioned(
-                    top: 15,
-                    child: Text(
-                      widget.medias.name!,
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ):Text('')
+            widget.medias != null
+                ? widget.medias.name == null
+                    ? Text('')
+                    : Positioned(
+                        top: 15,
+                        child: Text(
+                          widget.medias.name!,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      )
+                : Text('')
           ]),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -153,11 +155,11 @@ class _AudioViewState extends State<AudioView> {
                     if (player.isPlaying) {
                       await pausePlay();
                     } else {
-                     if(widget.type=='file'){
-                       await startPlay(widget.medias.path!);
-                     } else{
-                       await startPlay(widget.medias.path!);
-                     }
+                      if (widget.type == 'file') {
+                        await startPlay(widget.medias.path!);
+                      } else {
+                        await startPlay(widget.medias.path!);
+                      }
                       playGostersinmi = false;
                     }
                   }
@@ -191,17 +193,14 @@ class _AudioViewState extends State<AudioView> {
   }
 
   Future startPlay(String filePath) async {
-    if(widget.type=='url'){
+    if (widget.type == 'url') {
       var response = await http.get(Uri.parse(filePath));
       List<int> bytes = response.bodyBytes;
       Uint8List buffer = Uint8List.fromList(bytes);
-      await player.startPlayer(
-        fromDataBuffer: buffer
-      );
-    }else{
+      await player.startPlayer(fromDataBuffer: buffer);
+    } else {
       await player.startPlayer(fromURI: filePath);
-      }
-
+    }
   }
 
   Future stopPlay() async {

@@ -394,10 +394,7 @@ class AudioRecorderState extends State<AudioRecorder> {
         return;
       }
       if (filePath == null) return;
-      if (filePath != null) {
-        Loading.waiting('a102'.tr);
-      }
-
+      Loading.waiting('a102'.tr);
 
       await AlbumDataBase.createAlbumIfTableEmpty('İsimsiz Album');
       final imageTemporary = File(filePath);
@@ -465,9 +462,17 @@ class AudioRecorderState extends State<AudioRecorder> {
 
                     decoration: InputDecoration(
                       focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white)),
-                      labelStyle: TextStyle(color: Colors.white),
+                          borderSide: BorderSide(
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall!
+                                  .color!)),
                       labelText: 'a104'.tr,
+                      labelStyle: TextStyle(
+                          color: Theme.of(context)
+                              .textTheme
+                              .headlineSmall!
+                              .color!),
                     ),
                     onChanged: (value) {},
                   ),
@@ -506,7 +511,7 @@ class AudioRecorderState extends State<AudioRecorder> {
     );
   }
 
-  static  formatTime(Duration duration) {
+  static formatTime(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final hours = twoDigits(duration.inHours);
     final minutes = twoDigits(duration.inMinutes.remainder(60));
