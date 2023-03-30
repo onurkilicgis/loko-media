@@ -94,7 +94,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
             itemBuilder: (BuildContext context, index, int pageViewIndex) {
               dynamic media = medias[index];
               String mediaURL =
-                  API.generateStorageFileUrl(token, media['fid'].toString());
+              API.generateStorageFileUrl(token, media['fid'].toString());
               Medias mymedia = new Medias(
                 path: mediaURL,
                 fileType: media['type'],
@@ -127,7 +127,10 @@ class _PaylasimlarState extends State<Paylasimlar> {
                               fit: BoxFit.cover,
                             ),
                             color:
-                                Theme.of(context).bannerTheme.backgroundColor),
+                            Theme
+                                .of(context)
+                                .bannerTheme
+                                .backgroundColor),
                       ),
                     );
                   }
@@ -156,7 +159,9 @@ class _PaylasimlarState extends State<Paylasimlar> {
                         altitude: 0);
                     mediam.settings = json.encode(media['settings']);
                     return Container(
-                      color: Theme.of(context).scaffoldBackgroundColor,
+                      color: Theme
+                          .of(context)
+                          .scaffoldBackgroundColor,
                       child: AudioView(
                           appbarstatus: false, type: 'url', medias: mediam),
                     );
@@ -298,12 +303,18 @@ class _PaylasimlarState extends State<Paylasimlar> {
             : Colors.redAccent,
       ),
     ));
-    iconlar.add(IconButton(
-      onPressed: () async {
-        getCommentRequest(item);
-      },
-      icon: Icon(Icons.mode_comment_outlined,
-          color: Theme.of(context).tabBarTheme.unselectedLabelColor),
+    iconlar.add(InkWell(
+      highlightColor: Colors.black,
+      splashColor: Colors.red,
+      child: IconButton(
+        //splashColor: Colors.red,
+        //highlightColor: Colors.black,//Theme.of(context).listTileTheme.iconColor,
+        onPressed: () async {
+          getCommentRequest(item);
+        },
+        icon: Icon(Icons.mode_comment_outlined,
+            color: Theme.of(context).tabBarTheme.unselectedLabelColor),
+      ),
     ));
     if (item['point'] != null) {
       iconlar.add(IconButton(
@@ -420,8 +431,8 @@ class _PaylasimlarState extends State<Paylasimlar> {
   }
 
   getComments(dynamic item) {
-    List<dynamic> comments = item['comment'];
-    if (comments.length == 0) {
+    int comments = item['comment_num'];
+    if (comments == 0) {
       return ListTile(
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(40),
@@ -494,9 +505,9 @@ class _PaylasimlarState extends State<Paylasimlar> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              comments.length == 1
+              comments == 1
                   ? '1 Yorumu Gör'
-                  : '${comments.length} yorumun tümünü gör...',
+                  : '${comments} yorumun tümünü gör...',
               style: TextStyle(
                   color: Theme.of(context).textTheme.headlineSmall!.color,
                   fontSize: 12),

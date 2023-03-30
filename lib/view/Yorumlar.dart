@@ -114,7 +114,21 @@ class _YorumlarState extends State<Yorumlar> {
                     Util.evetHayir(context, 'Yorum Silme',
                         'Silmek İstediğinize Emin Misiniz?', (cevap) async {
                       if (cevap == true) {
-                        SBBildirim.bilgi('Yorum silindi');
+                        dynamic result = await API.postRequest(
+                            'api/lokomedia/deleteComment', {
+                          'share_id': widget.id,
+                          'comment_id': comments[index]['id']
+                        });
+                        if (result['status'] == true) {
+                          comments = result['data']['comments'];
+                          setState(() {
+
+                          });
+                         // visible.isVisible;
+                         SBBildirim.bilgi('Yorum silindi');
+                        }
+
+
                       }
                     });
                   },
@@ -148,7 +162,7 @@ class _YorumlarState extends State<Yorumlar> {
                       )),
                 );
               }),
-          // isVisible == true ? getBottomSheet() : Container()
+
         ],
       )),
     );
