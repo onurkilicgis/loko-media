@@ -60,6 +60,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
     getToken();
     getUser();
     getSharesMedya();
+
     super.initState();
   }
 
@@ -451,6 +452,9 @@ class _PaylasimlarState extends State<Paylasimlar> {
                 if (result['status'] == true) {
                   yorumEkle = result['data']['comments'];
                 }
+                setState(() {
+                   getCommentRequest(item);
+                });
               },
               child: Text(
                 'Paylaş',

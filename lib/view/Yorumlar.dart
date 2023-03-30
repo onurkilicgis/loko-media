@@ -153,6 +153,7 @@ class _YorumlarState extends State<Yorumlar> {
     );
   }
 
+
   getBottomSheet() {
     showModalBottomSheet(
         backgroundColor: Theme.of(context).listTileTheme.tileColor,
@@ -202,6 +203,7 @@ class _YorumlarState extends State<Yorumlar> {
                             commentController.clear();
                             visible.isVisible;
                           }
+
                         },
                         child: Text(
                           'Paylaş',
