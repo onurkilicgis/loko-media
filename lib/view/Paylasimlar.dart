@@ -420,7 +420,8 @@ class _PaylasimlarState extends State<Paylasimlar> {
   }
 
   getComments(dynamic item) {
-    if (yorumlar.length == 0) {
+    List<dynamic> comments = item['comment'];
+    if (comments.length == 0) {
       return ListTile(
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(40),
@@ -493,9 +494,9 @@ class _PaylasimlarState extends State<Paylasimlar> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              yorumlar.length == 1
+              comments.length == 1
                   ? '1 Yorumu Gör'
-                  : '${yorumlar.length} yorumun tümünü gör...',
+                  : '${comments.length} yorumun tümünü gör...',
               style: TextStyle(
                   color: Theme.of(context).textTheme.headlineSmall!.color,
                   fontSize: 12),

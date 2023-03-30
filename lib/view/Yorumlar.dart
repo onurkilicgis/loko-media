@@ -30,13 +30,14 @@ class Yorumlar extends StatefulWidget {
 class _YorumlarState extends State<Yorumlar> {
   TextEditingController commentController = TextEditingController();
   List<dynamic> yorumEkle = [];
+  List<dynamic> comments =[];
 
   bool isVisible = true;
 
   @override
   void initState() {
     super.initState();
-
+    comments = widget.comment;
     Future.delayed(Duration.zero, () {
       getBottomSheet();
     });
@@ -99,10 +100,10 @@ class _YorumlarState extends State<Yorumlar> {
           ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: widget.comment.length,
+              itemCount: comments.length,
               itemBuilder: (BuildContext context, int index) {
                 DateTime pastDateTime =
-                    DateTime.parse(widget.comment[index]['tarih']);
+                    DateTime.parse(comments[index]['tarih']);
                 DateTime now = DateTime.now();
                 Duration difference = now.difference(pastDateTime);
                 var days = difference.inDays;
@@ -120,7 +121,7 @@ class _YorumlarState extends State<Yorumlar> {
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(40),
                     child: Image(
-                      image: NetworkImage(widget.comment[index]['img']),
+                      image: NetworkImage(comments[index]['img']),
                       width: 40,
                       height: 40,
                       fit: BoxFit.cover,
@@ -129,7 +130,7 @@ class _YorumlarState extends State<Yorumlar> {
                   title: Row(
                     children: [
                       Text(
-                        widget.comment[index]['name'],
+                        comments[index]['name'],
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.bold),
                       ),
@@ -142,7 +143,7 @@ class _YorumlarState extends State<Yorumlar> {
                   subtitle: Align(
                       alignment: Alignment.topLeft,
                       child: Text(
-                        widget.comment[index]['text'],
+                        comments[index]['text'],
                         style: TextStyle(fontSize: 15),
                       )),
                 );
@@ -199,14 +200,16 @@ class _YorumlarState extends State<Yorumlar> {
                             'comment': commentController.text
                           });
                           if (result['status'] == true) {
-                            yorumEkle = result['data']['comments'];
+                            comments = result['data']['comments'];
                             commentController.clear();
                             visible.isVisible;
                           }
+                          setState(() {
 
+                          });
                         },
                         child: Text(
-                          'Paylaş',
+                          'Gönder',
                           style: TextStyle(
                               color:
                                   Theme.of(context).listTileTheme.iconColor!),
