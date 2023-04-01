@@ -72,4 +72,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation platform('com.google.firebase:firebase-bom:31.1.1')
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.16.2'
+    implementation 'com.google.android.exoplayer:exoplayer-dash:2.16.2'
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.16.2'
+    implementation 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.16.2'
 }

@@ -30,6 +30,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
   List<dynamic> items = [];
   String token = '';
   dynamic user;
+  dynamic userComments = {};
 
   List<dynamic> yorumlar = [];
   List<dynamic> yorumEkle = [];
@@ -66,7 +67,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
 
   getKapak(dynamic item) {
     String type = item['type'];
-    if (type == 'album') {
+    if (true) {
       String kapakUrl = item['kapak']['url'];
       int kapakIndex = 0;
       int medyaSayisi = item['medias'].length;
@@ -150,7 +151,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
                   {
                     Medias mediam = new Medias(
                         album_id: 0,
-                        name: medias.name,
+                        name: '',
                         miniName: '',
                         fileType: 'audio',
                         path: mediaURL,
@@ -430,9 +431,10 @@ class _PaylasimlarState extends State<Paylasimlar> {
     );
   }
 
-  getComments(dynamic item) {
+  getComments(dynamic item, int index) {
     int comments = item['comment_num'];
     if (comments == 0) {
+      TextEditingController commentContrlr = TextEditingController();
       return ListTile(
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(40),
@@ -445,9 +447,11 @@ class _PaylasimlarState extends State<Paylasimlar> {
         ),
         title: TextField(
           onChanged: (value) {
-            value = commentController.text;
+            userComments['yorum-'+item['id'].toString()] = value;
+
+            //value = commentContrlr.text;
           },
-          controller: commentController,
+          //controller: commentController,
           textAlign: TextAlign.left,
           keyboardType: TextInputType.text,
           cursorColor: Theme.of(context).textTheme.headlineSmall!.color,
@@ -456,16 +460,19 @@ class _PaylasimlarState extends State<Paylasimlar> {
           decoration: InputDecoration(
             suffixIcon: TextButton(
               onPressed: () async {
+                String text = userComments['yorum-'+item['id'].toString()];
                 dynamic result = await API.postRequest(
                     'api/lokomedia/addComment', {
                   'share_id': item['id'],
-                  'comment': commentController.text
+                  'comment': text
                 });
                 if (result['status'] == true) {
                   yorumEkle = result['data']['comments'];
                 }
+                item['comment_num']++;
                 setState(() {
-                   getCommentRequest(item);
+                  items[index]=item;
+                  getCommentRequest(item);
                 });
               },
               child: Text(
@@ -538,7 +545,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
   }
 
   createItem(dynamic item, int index) {
-    if (item['type'] == 'album') {
+    if (true) {
       if (item['medias'].length > 0) {
         return Container(
           width: MediaQuery.of(context).size.width,
@@ -551,7 +558,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
               getIcons(item, index),
               getLikes(item),
               getTitleAndContent(item),
-              getComments(item),
+              getComments(item, index),
             ],
           ),
         );
