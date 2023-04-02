@@ -464,6 +464,7 @@ class _PaylasimlarState extends State<Paylasimlar> {
                 dynamic result = await API.postRequest(
                     'api/lokomedia/addComment', {
                   'share_id': item['id'],
+                  'type': item['type'],
                   'comment': text
                 });
                 if (result['status'] == true) {

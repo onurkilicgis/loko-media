@@ -26,6 +26,7 @@ class _VideoPlayerState extends State<MyVideoPlayer> {
   bool loadStatus = false;
   late ioo.File file;
 
+
   loadFile()async{
     if(widget.type=='url'){
       var response = await http.get(Uri.parse(widget.path));
@@ -48,9 +49,11 @@ class _VideoPlayerState extends State<MyVideoPlayer> {
   @override
   void initState() {
     // TODO: implement initState
+
     loadFile();
     super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -58,14 +61,17 @@ class _VideoPlayerState extends State<MyVideoPlayer> {
     return loadStatus == false ? Container():Container(
       child: Chewie(
         controller: ChewieController(
-            videoPlayerController:
-            VideoPlayerController.file(file),
+            videoPlayerController: VideoPlayerController.file(
+              file,videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+            ),
             autoPlay: false,
             allowFullScreen: true,
             //fullScreenByDefault: true,
+
             autoInitialize: true,
             looping: false,
             aspectRatio: 0.7,
+
             errorBuilder: (context, errorMessage) {
               return Center(
                   child: Text(
