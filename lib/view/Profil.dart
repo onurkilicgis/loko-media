@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../services/API2.dart';
+import 'UserProfilPage.dart';
 
 class Profil extends StatefulWidget {
   dynamic user;
@@ -68,7 +69,20 @@ class _ProfilState extends State<Profil> {
                             ),
                           ),
                           child: Icon(Icons.more_horiz),
-                          onSelected: (value) {},
+                          onSelected: (value) {
+                            if(value==2){
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => UserProfilePage(
+
+                                        uid: item['user']['id'],
+                                        img:item['user']['img']
+                                      )));
+
+
+                            }
+                              },
                           itemBuilder: (BuildContext context) => [
                                 PopupMenuItem(
                                   child: Row(

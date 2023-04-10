@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loko_media/services/MyLocal.dart';
 import 'package:loko_media/services/utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -24,6 +25,18 @@ class AuthService {
     } catch (err) {
       errorHandling(err);
     }
+  }
+
+
+
+
+
+  Future<User?> updatePerson(String name) async{
+    var user= await _auth.currentUser;
+    print(user);
+    /* user.user.updateDisplayName(name);
+
+    return user.user;*/
   }
 
   // şifre sıfırlama fonksiyonu

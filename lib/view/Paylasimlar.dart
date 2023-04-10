@@ -304,11 +304,11 @@ class _PaylasimlarState extends State<Paylasimlar> {
             : Colors.redAccent,
       ),
     ));
-    iconlar.add(InkWell(
-      highlightColor: Colors.black,
-      splashColor: Colors.red,
+    iconlar.add(InkResponse(
+
+
       child: IconButton(
-        //splashColor: Colors.red,
+        splashColor: Colors.red,
         //highlightColor: Colors.black,//Theme.of(context).listTileTheme.iconColor,
         onPressed: () async {
           getCommentRequest(item);

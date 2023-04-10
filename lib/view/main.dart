@@ -81,6 +81,13 @@ Future<void> main() async {
   Workmanager().initialize(callbackDispatcher, isInDebugMode: kDebugMode);
   ByteData data = await PlatformAssetBundle().load('assets/ca/lets-encrypt-r3.pem');
   SecurityContext.defaultContext.setTrustedCertificatesBytes(data.buffer.asUint8List());
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+      projectId: "gislayer-company", apiKey: "AIzaSyAQdDNuUDUtZLvzYPReh4wEiJS3IlH7eew", appId:"1:619817136028:android:8bcd52269e508af9f96259", messagingSenderId: "619817136028",
+
+    ),
+  );
+
 
   // localhost:1990/index.html harita dosyalarımızı yayınlanladımız yer.
   InAppLocalhostServer localhostServer = InAppLocalhostServer(
